@@ -27,7 +27,7 @@ export function Header() {
 
         {/* Botão de Login */}
         <Button asChild>
-          <Link href="/login">Login</Link>
+          <Link href="/entrar">Login</Link>
         </Button>
       </nav>
     </header>
