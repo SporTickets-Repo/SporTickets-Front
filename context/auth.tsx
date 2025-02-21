@@ -2,6 +2,7 @@
 import { UserProfile } from "@/interface/user";
 import { authService } from "@/service/auth";
 import { userService } from "@/service/user";
+import { useRouter } from "next/navigation";
 import React, {
   createContext,
   FC,
@@ -31,6 +32,7 @@ const AuthContext = createContext<AuthContextProps>({
 const useAuth = () => useContext(AuthContext);
 
 const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
+  const router = useRouter();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
@@ -41,9 +43,14 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   }, [token]);
 
   const login = async (email: string, password: string) => {
-    const response = await authService.login(email, password);
-    setToken(response.access_token);
-    await fetchUser();
+    try {
+      const response = await authService.login(email, password);
+      setToken(response.access_token);
+      await fetchUser();
+      router.push("/");
+    } catch (error) {
+      throw error;
+    }
   };
 
   const register = async (userData: any) => {
@@ -55,10 +62,11 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     if (!token) return;
     try {
       const response = await userService.getMe(token);
+      console.log("User fetched:", response);
       setUser(response);
     } catch (error) {
-      console.error("Failed to fetch user:", error);
       logout();
+      throw error;
     }
   };
 

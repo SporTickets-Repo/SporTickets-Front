@@ -1,11 +1,11 @@
 "use client";
+import { useAuth } from "@/context/auth";
 import { AuthStep } from "@/hooks/useAuthSteps";
 import { cn } from "@/lib/utils";
 import { passwordSchema } from "@/utils/validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
@@ -22,19 +22,27 @@ type FormData = {
 };
 
 const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
-  const router = useRouter();
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
     setValue,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: yupResolver(passwordSchema),
   });
 
   const onSubmit = async (data: FormData) => {
-    // console.log("Login com:", data);
-    // router.push('/');
+    try {
+      await login(data.email, data.password);
+      console.log("Login com:");
+    } catch (error: any) {
+      setError("password", {
+        type: "manual",
+        message: "E-mail ou senha inválidos",
+      });
+    }
   };
 
   useEffect(() => {
@@ -46,6 +54,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
       <div className="w-full space-y-4">
         <div className="space-y-2  mb-6">
           <Button
+            type="button"
             variant="outline"
             className={cn("p-4 mb-4")}
             onClick={() => nextStep(AuthStep.ENTER_EMAIL)}

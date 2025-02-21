@@ -58,6 +58,7 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
       <div className="w-full space-y-4">
         <div className="space-y-2 mb-6">
           <Button
+            type="button"
             variant="outline"
             className="p-4 mb-4"
             onClick={() => nextStep(AuthStep.ENTER_EMAIL)}
