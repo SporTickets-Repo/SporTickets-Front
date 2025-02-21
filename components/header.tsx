@@ -1,6 +1,6 @@
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export function Header() {
   return (
@@ -10,9 +10,9 @@ export function Header() {
         <Image
           src="/assets/logos/Logo-Horizontal-para-fundo-Branco.png"
           alt="Logo"
-          width={200}
-          height={40}
-          className=" cursor-pointer"
+          width={1500}
+          height={267}
+          className=" cursor-pointer h-10 w-auto"
         />
       </Link>
 
