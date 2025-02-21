@@ -16,15 +16,4 @@ export const userService = {
       throw error;
     }
   },
-
-  checkEmail: async (email: string): Promise<{ exists: boolean }> => {
-    try {
-      const response = await axios.get<{ exists: boolean }>(
-        `${USER_API_URL}/check-email/${email}`
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
 };
