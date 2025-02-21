@@ -36,7 +36,6 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
   const onSubmit = async (data: FormData) => {
     try {
       await login(data.email, data.password);
-      console.log("Login com:");
     } catch (error: any) {
       setError("password", {
         type: "manual",

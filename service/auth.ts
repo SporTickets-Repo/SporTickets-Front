@@ -3,6 +3,7 @@ import axios from "axios";
 import {
   ForgotPasswordResponse,
   LoginResponse,
+  RegisterBody,
   RegisterResponse,
   ResetPasswordResponse,
 } from "@/interface/auth";
@@ -22,14 +23,14 @@ export const authService = {
     }
   },
 
-  register: async (userData: any): Promise<RegisterResponse> => {
+  register: async (userData: RegisterBody): Promise<RegisterResponse> => {
     try {
       const response = await axios.post<RegisterResponse>(
         `${API_URL}/register`,
         userData
       );
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },

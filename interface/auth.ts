@@ -28,3 +28,15 @@ export interface ForgotPasswordResponse {
 export interface ResetPasswordResponse {
   message: string;
 }
+
+export interface RegisterBody {
+  name: string;
+  document: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  bornAt: string;
+  cep: string;
+  sex: string;
+  phone: string;
+}

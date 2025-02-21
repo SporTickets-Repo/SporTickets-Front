@@ -1,4 +1,5 @@
 "use client";
+import { RegisterBody } from "@/interface/auth";
 import { UserProfile } from "@/interface/user";
 import { authService } from "@/service/auth";
 import { userService } from "@/service/user";
@@ -16,7 +17,7 @@ interface AuthContextProps {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (userData: any) => Promise<void>;
+  registration: (userData: any) => Promise<void>;
   fetchUser: () => Promise<void>;
 }
 
@@ -25,7 +26,7 @@ const AuthContext = createContext<AuthContextProps>({
   token: null,
   login: async () => {},
   logout: () => {},
-  register: async () => {},
+  registration: async () => {},
   fetchUser: async () => {},
 });
 
@@ -53,9 +54,13 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   };
 
-  const register = async (userData: any) => {
-    const response = await authService.register(userData);
-    setUser(response);
+  const registration = async (userData: RegisterBody) => {
+    try {
+      const response = await authService.register(userData);
+      setUser(response);
+    } catch (error: any) {
+      throw error;
+    }
   };
 
   const fetchUser = async () => {
@@ -77,7 +82,7 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, logout, register, fetchUser }}
+      value={{ user, token, login, logout, registration, fetchUser }}
     >
       {children}
     </AuthContext.Provider>
