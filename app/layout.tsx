@@ -23,10 +23,8 @@ export default function RootLayout({
       <body
         className={rubik.className}
       >
-
         <div className="flex min-h-screen flex-col">
           <Header />
-          {/* Garante que o conteúdo ocupa toda a altura disponível */}
           <main className="flex-1 flex flex-col">{children}</main>
           <Footer />
         </div>
