@@ -1,15 +1,15 @@
-"use client"
-import { useAuthSteps, AuthStep } from '@/hooks/useAuthSteps';
-import { useForm } from 'react-hook-form';
-import { passwordSchema } from '@/utils/validationSchema';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Input } from './ui/input';
-import { cn } from '@/lib/utils';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { Button } from './ui/button';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import Link from 'next/link';
+"use client";
+import { AuthStep } from "@/hooks/useAuthSteps";
+import { cn } from "@/lib/utils";
+import { passwordSchema } from "@/utils/validationSchema";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 interface StepEnterPasswordProps {
   nextStep: (next: AuthStep) => void;
@@ -32,18 +32,17 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
     resolver: yupResolver(passwordSchema),
   });
 
-
-  const onSubmit = (data: FormData) => {
-    console.log("Login com:", data);
-    router.push('/');
+  const onSubmit = async (data: FormData) => {
+    // console.log("Login com:", data);
+    // router.push('/');
   };
 
   useEffect(() => {
-    setValue('email', email);
+    setValue("email", email);
   }, [email]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='w-full  max-w-md'>
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full  max-w-md">
       <div className="w-full space-y-4">
         <div className="space-y-2  mb-6">
           <Button
@@ -82,21 +81,24 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
           />
         </div>
         <div>
-
-          <Link href="/redefinir-senha" className="text-cyan-700 font-medium underline">
+          <Link
+            href="/redefinir-senha"
+            className="text-cyan-700 font-medium underline"
+          >
             Esqueci minha senha
           </Link>
         </div>
 
         <Button
-          className={cn("w-full h-12 text-base font-normal justify-center px-4")}
+          className={cn(
+            "w-full h-12 text-base font-normal justify-center px-4"
+          )}
           type="submit"
           disabled={isSubmitting}
         >
           Continuar
           <ArrowRight className="ml-1 text-cyan-400" />
         </Button>
-
       </div>
     </form>
   );

@@ -74,4 +74,16 @@ export const authService = {
       throw error;
     }
   },
+
+  checkEmail: async (email: string): Promise<boolean> => {
+    try {
+      const response = await axios.get<boolean>(
+        `${API_URL}/check-email/${email}`
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

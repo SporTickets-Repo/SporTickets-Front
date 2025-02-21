@@ -1,3 +1,4 @@
+"use client";
 import { UserProfile } from "@/interface/user";
 import { authService } from "@/service/auth";
 import { userService } from "@/service/user";

@@ -4,8 +4,12 @@ import "./globals.css";
 
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { AuthProvider } from "@/context/auth";
 
-const rubik = Rubik({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const rubik = Rubik({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "SporTickets",
@@ -17,18 +21,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en">
-      <body
-        className={rubik.className}
-      >
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1 flex flex-col">{children}</main>
-          <Footer />
-        </div>
-
+      <body className={rubik.className}>
+        <AuthProvider>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1 flex flex-col">{children}</main>
+            <Footer />
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );
