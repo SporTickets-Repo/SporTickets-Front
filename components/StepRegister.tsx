@@ -1,17 +1,16 @@
 "use client";
+import { AuthStep } from "@/hooks/useAuthSteps";
 import { useEffect } from "react";
-import { useAuthSteps, AuthStep } from '@/hooks/useAuthSteps';
 
-import { useForm } from 'react-hook-form';
-import { registerSchema } from '@/utils/validationSchema';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
-import { cn } from '@/lib/utils';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { registerSchema } from "@/utils/validationSchema";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
-import DatePicker from "./ui/datePicker";
+import { DatePicker } from "./ui/datePicker";
 import PasswordStrengthMeter from "./ui/passwordStrengthMeter";
 
 type FormData = {
@@ -22,7 +21,7 @@ type FormData = {
   document: string;
   bornAt: Date;
   phone: string;
-  sex: string;
+  sex: "MALE" | "FEMALE";
 };
 
 interface StepRegisterProps {
@@ -31,7 +30,6 @@ interface StepRegisterProps {
 }
 
 const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
-
   const router = useRouter();
 
   const {
@@ -67,38 +65,70 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
             <ArrowLeft />
           </Button>
 
-          <h1 className="text-2xl font-semibold tracking-tight">Parece que você é novo por aqui!</h1>
-          <p className="text-sm text-muted-foreground">Crie a sua conta e fique por dentro do melhores eventos da cidade.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Parece que você é novo por aqui!
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Crie a sua conta e fique por dentro do melhores eventos da cidade.
+          </p>
         </div>
 
         {/* Campos do Formulário */}
-        <Input type="email" placeholder="E-mail" readOnly {...register("email")} />
-        <Input type="text" placeholder="Nome Completo" {...register("name")} error={errors.name?.message} />
-        <Input type="text" placeholder="Documento (CPF)" {...register("document")} error={errors.document?.message} />
+        <Input
+          type="email"
+          placeholder="E-mail"
+          readOnly
+          {...register("email")}
+        />
+        <Input
+          type="text"
+          placeholder="Nome Completo"
+          {...register("name")}
+          error={errors.name?.message}
+        />
+        <Input
+          type="text"
+          placeholder="Documento (CPF)"
+          {...register("document")}
+          error={errors.document?.message}
+        />
 
         {/* Campo de Telefone com Máscara */}
-        <Input type="text" placeholder="Telefone" {...register("phone")} error={errors.phone?.message} />
+        <Input
+          type="text"
+          placeholder="Telefone"
+          {...register("phone")}
+          error={errors.phone?.message}
+        />
 
         {/* DatePicker */}
         <DatePicker
-          selectedDate={watch("bornAt")}
-          onChange={(date) => setValue("bornAt", date || new Date())}
-          error={errors.bornAt?.message}
+          date={watch("bornAt")}
+          setDate={(date) => setValue("bornAt", date || new Date())}
         />
 
         {/* Campo de Sexo */}
         <select {...register("sex")} className="w-full p-3 border rounded-md">
           <option value="">Selecione o sexo</option>
-          <option value="male">Masculino</option>
-          <option value="female">Feminino</option>
-          <option value="other">Outro</option>
+          <option value="MALE">Masculino</option>
+          <option value="FEMALE">Feminino</option>
         </select>
 
         {/* Senha e Validação */}
-        <Input type="password" placeholder="Senha" {...register("password")} error={errors.password?.message} />
+        <Input
+          type="password"
+          placeholder="Senha"
+          {...register("password")}
+          error={errors.password?.message}
+        />
         <PasswordStrengthMeter password={watch("password")} />
 
-        <Input type="password" placeholder="Confirme sua Senha" {...register("confirmPassword")} error={errors.confirmPassword?.message} />
+        <Input
+          type="password"
+          placeholder="Confirme sua Senha"
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
+        />
 
         {/* Botão de Cadastro */}
         <Button type="submit" disabled={isSubmitting} className="w-full">
