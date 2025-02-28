@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
 
   return (
-    <div className="flex flex-1 container mx-auto p-8 gap-8">
+    <div className="flex flex-1 container p-8 gap-8">
       <div className="flex flex-1 flex-col items-center justify-center aling-start">
         <div className="flex flex-col">
           <Image

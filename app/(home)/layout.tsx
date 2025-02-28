@@ -7,17 +7,15 @@ export const metadata: Metadata = {
   description: "SporTickets seu site de ingressos para eventos esportivos",
 };
 
-export default function PublicLayout({
+export default function HomeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <>
-      <Header logoImage="/assets/logos/Logo-Horizontal-para-fundo-Branco.png" />
-      <div className="flex-1 flex flex-col min-h-[calc(100vh_-_81px)] overflow-x-hidden pt-[100px]">
-        {children}
-      </div>
+      <Header />
+      {children}
       <Footer />
     </>
   );

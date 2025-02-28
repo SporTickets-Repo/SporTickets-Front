@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={rubik.className}>
         <AuthProvider>
           <div className="flex min-h-screen flex-col">
-            <main className="flex-1 flex flex-col min-h-[calc(100vh_-_81px)] overflow-x-hidden ">
+            <main className="flex-1 flex flex-col min-h-[calc(100vh_-_81px)] overflow-x-hidden">
               {children}
             </main>
           </div>

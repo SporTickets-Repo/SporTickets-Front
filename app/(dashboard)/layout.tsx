@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "SporTickets seu site de ingressos para eventos esportivos",
 };
 
-export default function PublicLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

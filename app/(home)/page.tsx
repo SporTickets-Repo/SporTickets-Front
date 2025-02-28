@@ -84,7 +84,7 @@ function App() {
   return (
     <div className="min-h-screen text-white bg-black">
       <div className="flex flex-col min-h-[70vh] w-screen relative z-40">
-        <div className="flex flex-1 flex-col justify-center items-center md:max-w-4xl text-black gap-2 container mx-auto px-4">
+        <div className="flex flex-1 flex-col justify-center items-center md:max-w-4xl text-black gap-2 container">
           <div className="relative w-full">
             <Input
               placeholder="Pesquisar"
@@ -133,7 +133,7 @@ function App() {
       </div>
 
       {/* Weekly Trends Section */}
-      <div className="container mx-auto px-4 mb-6">
+      <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-bold">Tendências da semana</h2>
           <button className="bg-gray-800 p-1 rounded">
@@ -148,7 +148,7 @@ function App() {
       </div>
 
       {/* Available Events Section */}
-      <div className="container mx-auto px-4 mb-6">
+      <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-bold">Eventos disponíveis</h2>
           <button className="bg-gray-800 p-1 rounded">
@@ -163,7 +163,7 @@ function App() {
       </div>
 
       {/* Events Near You Section */}
-      <div className="container mx-auto px-4 mb-6">
+      <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-bold">Eventos perto de você</h2>
           <button className="bg-gray-800 p-1 rounded">
