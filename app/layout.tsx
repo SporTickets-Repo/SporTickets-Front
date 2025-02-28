@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
 import "./globals.css";
 
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
 import { AuthProvider } from "@/context/auth";
 
 const rubik = Rubik({
@@ -26,11 +24,9 @@ export default function RootLayout({
       <body className={rubik.className}>
         <AuthProvider>
           <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1 flex flex-col min-h-[calc(100vh_-_81px)] ">
+            <main className="flex-1 flex flex-col min-h-[calc(100vh_-_81px)] overflow-x-hidden ">
               {children}
             </main>
-            <Footer />
           </div>
         </AuthProvider>
       </body>
