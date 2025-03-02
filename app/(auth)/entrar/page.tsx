@@ -5,6 +5,7 @@ import StepLogin from "@/components/StepLogin";
 import StepRegister from "@/components/StepRegister";
 import { AuthStep, useAuthSteps } from "@/hooks/useAuthSteps";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function LoginPage() {
@@ -15,13 +16,15 @@ export default function LoginPage() {
     <div className="flex flex-1 container p-8 gap-8">
       <div className="flex flex-1 flex-col items-center justify-center aling-start">
         <div className="flex flex-col">
-          <Image
-            src="/assets/logos/Logo-Horizontal-para-fundo-Branco.png"
-            alt="Sportickets Logo"
-            className="h-12 w-auto mb-4"
-            width={1500}
-            height={267}
-          />
+          <Link href="/">
+            <Image
+              src="/assets/logos/Logo-Horizontal-para-fundo-Branco.png"
+              alt="Sportickets Logo"
+              className="h-12 w-auto mb-4"
+              width={1500}
+              height={267}
+            />
+          </Link>
         </div>
         {step === AuthStep.LOGIN && <StepLogin nextStep={nextStep} />}
         {step === AuthStep.ENTER_EMAIL && (
