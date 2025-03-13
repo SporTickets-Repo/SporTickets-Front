@@ -46,7 +46,7 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="/faq"
+                    href="/suporte"
                     className="text-md text-muted-foreground hover:text-foreground"
                   >
                     FAQ

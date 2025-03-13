@@ -52,10 +52,9 @@ const testimonials = [
   },
 ];
 
-export default function Home() {
+export default function About() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
+    <div className="min-h-screen">
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
@@ -67,7 +66,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Image Grid */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-2">
           <div className="relative h-[498px] rounded-2xl overflow-hidden">
             <img
@@ -95,7 +93,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-start  mb-10">Nossa missão</h2>
@@ -135,7 +132,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Organizers Section */}
       <section className="py-16">
         <div className="flex flex-col max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-2">
           <h2 className="text-3xl font-bold mb-4">Para organizadores</h2>
@@ -151,7 +147,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold  mb-12">
@@ -191,7 +186,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-16 bg-black/80 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-6">
