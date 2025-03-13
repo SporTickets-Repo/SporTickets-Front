@@ -19,6 +19,7 @@ export default {
       colors: {
         "blue-secondary": "#1AD4F6",
         "purple-primary": "#3C1672",
+        "orange-tertiary": "#FE4F11",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

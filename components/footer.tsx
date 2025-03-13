@@ -30,7 +30,7 @@ export function Footer() {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/sobre-nos"
+                    href="/sobre"
                     className="text-md text-muted-foreground hover:text-foreground"
                   >
                     Sobre nós
