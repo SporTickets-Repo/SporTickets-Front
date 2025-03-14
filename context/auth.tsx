@@ -50,35 +50,10 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    if (storedToken) {
-      setToken(storedToken);
-    }
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    if (storedToken) {
-      setToken(storedToken);
-    }
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
   const login = async (email: string, password: string) => {
     try {
       const response = await authService.login(email, password);
       setToken(response.access_token);
-      localStorage.setItem("token", response.access_token);
       localStorage.setItem("token", response.access_token);
       await fetchUser();
       router.push("/");
@@ -103,7 +78,6 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
       const response = await userService.getMe();
       setUser(response);
       localStorage.setItem("user", JSON.stringify(response));
-      localStorage.setItem("user", JSON.stringify(response));
     } catch (error) {
       logout();
       throw error;
@@ -117,6 +91,13 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     localStorage.removeItem("user");
     router.push("/login");
   };
+
+  useEffect(() => {
+    if (token) {
+      fetchUser();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   return (
     <AuthContext.Provider

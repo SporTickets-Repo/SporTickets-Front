@@ -1,12 +1,12 @@
 import EventCard from "@/components/pages/home/event-card";
 import SportTypeCard from "@/components/pages/home/sport-type-card";
 import { Input } from "@/components/ui/input";
-import { Event } from "@/interface/event";
+import { EventSummary } from "@/interface/event";
 import { ChevronRight, SearchIcon, Volleyball } from "lucide-react";
 import Image from "next/image";
 
 // Event data from your JSON
-const events: Event[] = [
+const events: EventSummary[] = [
   {
     id: "9d11e079-6ff1-40ef-9db5-0b6bc53ccb40",
     createdBy: "ba2e8f30-3a40-420c-89a7-32c00c507f67",

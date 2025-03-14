@@ -1,16 +1,12 @@
 import { Event } from "@/interface/event";
 import axios from "axios";
 
-const USER_API_URL = "http://localhost:4000/events/";
+const EVENT_API_URL = "http://localhost:4000/events";
 
-export const userService = {
-  getMe: async (authToken: string): Promise<Event> => {
+export const eventService = {
+  getEventBySlug: async (slug: string): Promise<Event> => {
     try {
-      const response = await axios.get<Event>(`${USER_API_URL}/slug`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+      const response = await axios.get<Event>(`${EVENT_API_URL}/slug/${slug}`);
       return response.data;
     } catch (error) {
       throw error;

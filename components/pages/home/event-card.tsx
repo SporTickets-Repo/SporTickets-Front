@@ -1,14 +1,14 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Event } from "@/interface/event";
+import { EventSummary } from "@/interface/event";
 import { format, formatDate } from "date-fns";
 import { MapPin, Tag, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 interface EventCardProps {
-  event: Event;
+  event: EventSummary;
 }
 
 export default function EventCard({ event }: EventCardProps) {
