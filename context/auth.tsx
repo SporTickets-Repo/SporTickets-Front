@@ -17,7 +17,7 @@ interface AuthContextProps {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  registration: (userData: any) => Promise<void>;
+  registration: (userData: RegisterBody) => Promise<void>;
   fetchUser: () => Promise<void>;
 }
 
@@ -38,6 +38,18 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (storedToken) {
+      setToken(storedToken);
+    }
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  useEffect(() => {
     if (token) {
       fetchUser();
     }
@@ -47,6 +59,7 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     try {
       const response = await authService.login(email, password);
       setToken(response.access_token);
+      localStorage.setItem("token", response.access_token);
       await fetchUser();
       router.push("/");
     } catch (error) {
@@ -58,6 +71,7 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     try {
       const response = await authService.register(userData);
       setUser(response);
+      localStorage.setItem("user", JSON.stringify(response));
     } catch (error: any) {
       throw error;
     }
@@ -67,8 +81,8 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     if (!token) return;
     try {
       const response = await userService.getMe(token);
-      console.log("User fetched:", response);
       setUser(response);
+      localStorage.setItem("user", JSON.stringify(response));
     } catch (error) {
       logout();
       throw error;
@@ -78,6 +92,9 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const logout = () => {
     setToken(null);
     setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push("/login");
   };
 
   return (

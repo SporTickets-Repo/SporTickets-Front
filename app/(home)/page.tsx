@@ -129,6 +129,7 @@ function App() {
           width={2560}
           height={852}
           className="object-cover w-screen h-auto min-h-[70vh] absolute -z-10"
+          unoptimized
         />
       </div>
 

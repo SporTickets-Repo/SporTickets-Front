@@ -10,10 +10,10 @@ import { useParams } from "next/navigation";
 
 export default function EventPage() {
   const { slug } = useParams() as { slug: string };
-  console.log(slug);
+
   return (
     <div className="container">
-      <main className="flex-1 p-4 md:p-6">
+      <div className="flex-1 p-4 md:p-6">
         <div className="mx-auto max-w-6xl">
           {/* Event Banner */}
           <EventHeader />
@@ -75,7 +75,7 @@ export default function EventPage() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
