@@ -85,11 +85,11 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   const logout = () => {
+    router.push("/");
     setToken(null);
     setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    router.push("/login");
   };
 
   useEffect(() => {
