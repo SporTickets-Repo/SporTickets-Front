@@ -1,7 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
 export function ForgotPasswordForm() {
@@ -9,7 +9,7 @@ export function ForgotPasswordForm() {
     <div className="flex flex-col justify-center align-center bg-muted p-6 md:p-10">
       <Card className="w-full max-w-4xl overflow-hidden shadow-lg">
         <CardContent className="grid md:grid-cols-2 p-0">
-          <div>
+          <div className="p-8">
             <div className="flex flex-col items-center mb-6">
               <img src="/assets/logos/Logo-Horizontal-para-fundo-Branco.png" alt="Sportickets Logo" className="h-12 mb-10" />
               <div className="flex flex-col w-full align-start ">

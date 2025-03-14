@@ -5,7 +5,7 @@ import Link from "next/link";
 export function Footer() {
   return (
     <footer className="w-full border-t bg-background">
-      <div className="container mx-auto px-6 py-8 md:py-12">
+      <div className="container py-8 md:py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-x-64">
           {/* Logo and Description */}
           <div className="space-y-4">
@@ -30,7 +30,7 @@ export function Footer() {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/sobre-nos"
+                    href="/sobre"
                     className="text-md text-muted-foreground hover:text-foreground"
                   >
                     Sobre nós
@@ -46,7 +46,7 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="/faq"
+                    href="/suporte"
                     className="text-md text-muted-foreground hover:text-foreground"
                   >
                     FAQ

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useCreateEvent from "./useCreateEvent";
@@ -7,7 +7,7 @@ export default function CreateEventPage() {
   const { nome, setNome, handleSubmit } = useCreateEvent();
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container p-4">
       <h1 className="text-3xl font-bold mb-4">Criar Evento</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -28,11 +28,9 @@ export default function CreateEventPage() {
           <label htmlFor="descricao" className="block text-sm font-medium">
             Descrição
           </label>
-
         </div>
         <Button type="submit">Criar Evento</Button>
       </form>
     </div>
   );
-};
-
+}
