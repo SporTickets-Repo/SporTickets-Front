@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { RegisterBody } from "@/interface/auth";
 import { UserProfile } from "@/interface/user";
@@ -50,15 +51,34 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (token) {
-      fetchUser();
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (storedToken) {
+      setToken(storedToken);
     }
-  }, [token]);
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (storedToken) {
+      setToken(storedToken);
+    }
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
       const response = await authService.login(email, password);
       setToken(response.access_token);
+      localStorage.setItem("token", response.access_token);
       localStorage.setItem("token", response.access_token);
       await fetchUser();
       router.push("/");
@@ -80,8 +100,9 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const fetchUser = async () => {
     if (!token) return;
     try {
-      const response = await userService.getMe(token);
+      const response = await userService.getMe();
       setUser(response);
+      localStorage.setItem("user", JSON.stringify(response));
       localStorage.setItem("user", JSON.stringify(response));
     } catch (error) {
       logout();
