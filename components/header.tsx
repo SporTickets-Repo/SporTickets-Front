@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 import Image from "next/image";
@@ -31,7 +32,7 @@ export function Header({
       <nav className="flex items-center gap-6">
         {/* Botão de Login */}
         <Link href="/entrar">
-          <Button className="bg-blue-secondary text-purple-primary px-2 sm:px-4">
+          <Button variant="secondary" className="px-2 sm:px-4">
             <User size={24} />
             <span className="font-extrabold">Entrar</span>
           </Button>

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { api } from "@/service/api";
 
 import {
   ForgotPasswordResponse,
@@ -8,12 +8,10 @@ import {
   ResetPasswordResponse,
 } from "@/interface/auth";
 
-const API_URL = "http://localhost:4000/auth";
-
 export const authService = {
   login: async (email: string, password: string): Promise<LoginResponse> => {
     try {
-      const response = await axios.post<LoginResponse>(`${API_URL}/login`, {
+      const response = await api.post<LoginResponse>("/auth/login", {
         identifier: email,
         password,
       });
@@ -25,29 +23,21 @@ export const authService = {
 
   register: async (userData: RegisterBody): Promise<RegisterResponse> => {
     try {
-      const response = await axios.post<RegisterResponse>(
-        `${API_URL}/register`,
+      const response = await api.post<RegisterResponse>(
+        "/auth/register",
         userData
       );
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
       throw error;
     }
   },
 
-  forgotPassword: async (
-    email: string,
-    token: string
-  ): Promise<ForgotPasswordResponse> => {
+  forgotPassword: async (email: string): Promise<ForgotPasswordResponse> => {
     try {
-      const response = await axios.post<ForgotPasswordResponse>(
-        `${API_URL}/forgot-password`,
-        { email },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await api.post<ForgotPasswordResponse>(
+        "/auth/forgot-password",
+        { email }
       );
       return response.data;
     } catch (error) {
@@ -57,18 +47,12 @@ export const authService = {
 
   resetPassword: async (
     token: string,
-    newPassword: string,
-    authToken: string
+    newPassword: string
   ): Promise<ResetPasswordResponse> => {
     try {
-      const response = await axios.post<ResetPasswordResponse>(
-        `${API_URL}/reset-password`,
-        { token, newPassword },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
+      const response = await api.post<ResetPasswordResponse>(
+        "/auth/reset-password",
+        { token, newPassword }
       );
       return response.data;
     } catch (error) {
@@ -78,10 +62,7 @@ export const authService = {
 
   checkEmail: async (email: string): Promise<boolean> => {
     try {
-      const response = await axios.get<boolean>(
-        `${API_URL}/check-email/${email}`
-      );
-      console.log(response.data);
+      const response = await api.get<boolean>(`/auth/check-email/${email}`);
       return response.data;
     } catch (error) {
       throw error;
