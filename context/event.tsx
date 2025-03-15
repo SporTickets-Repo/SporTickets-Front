@@ -32,7 +32,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(true);
       setError(null);
       try {
-        console.log("slug", slug);
+        //console.log("slug", slug);
         const eventData = await eventService.getEventBySlug(slug);
         setEvent(eventData);
       } catch (err) {
