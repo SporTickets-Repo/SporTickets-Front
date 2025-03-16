@@ -10,7 +10,7 @@ interface EventLocationProps {
 
 export default function EventLocation({ address, place }: EventLocationProps) {
   const mapsQuery = `${address.logradouro}, ${address.bairro}, ${address.localidade}, ${address.uf}, Brasil`;
-  const mapsURL = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodeURIComponent(
+  const mapsURL = `https://www.google.com/maps/embed/v1/place?key=AIzaSyD-lOTxZ25VmmSCL1TJrhkA3LE7zonBKB4&q=${encodeURIComponent(
     mapsQuery
   )}`;
 
@@ -20,7 +20,7 @@ export default function EventLocation({ address, place }: EventLocationProps) {
         width="100%"
         height="200"
         loading="lazy"
-        className="border-0 rounded-lg"
+        className="border-0 rounded-lg bg-zinc-400"
         allowFullScreen
         src={mapsURL}
       ></iframe>
