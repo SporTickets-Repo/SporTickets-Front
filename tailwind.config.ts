@@ -25,6 +25,7 @@ export default {
           "green-400": "#5FE893",
           "green-500": "#3D995C",
           "green-600": "#006326",
+          "green-700": "#1D823E",
         },
         "blue-secondary": "#1AD4F6",
         "purple-primary": "#3C1672",

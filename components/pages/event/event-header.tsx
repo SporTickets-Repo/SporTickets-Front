@@ -1,14 +1,20 @@
 import Image from "next/image";
 
-export default function EventHeader() {
+interface EventHeaderProps {
+  alt: string;
+  image: string;
+}
+
+export default function EventHeader({ alt, image }: EventHeaderProps) {
   return (
-    <div className="overflow-hidden rounded-lg">
+    <div className="overflow-hidden rounded-xl">
       <Image
-        src="/placeholder.svg?height=200&width=800"
-        alt="3ª ETAPA - Campeonato Paulista de Esportes de Areia"
+        src={image}
+        alt={alt}
         width={800}
         height={200}
         className="h-auto w-full object-cover"
+        unoptimized
         priority
       />
     </div>

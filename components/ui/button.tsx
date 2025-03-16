@@ -12,22 +12,23 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-sporticket-orange text-white hover:bg-sporticket-orange/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-blue-secondary text-md font-bold text-purple-primary shadow-sm hover:bg-blue-secondary/80",
+          "bg-sporticket-blue text-md font-bold text-sporticket-purple shadow-sm hover:bg-sporticket-blue/80",
         tertiary:
           "bg-neutral-100 text-sporticket-blue-600 shadow-sm hover:bg-neutral-100/90",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-sporticket-orange underline mt-1 h-auto p-0 text-sm font-medium hover:text-sporticket-orange/60",
         ghost: "hover:bg-accent hover:text-accent-foreground",
+        select: "bg-sporticket-purple text-white hover:sporticket-purple/90",
       },
       size: {
         default: "h-12 px-6 py-4",
         sm: "h-8 rounded-xl px-3 text-xs",
         lg: "h-10 rounded-xl px-8",
         xl: "h-10 rounded-xl px-40",
-        icon: "h-9 w-9 rounded-md",
+        icon: "h-9 w-9 rounded",
       },
     },
     defaultVariants: {

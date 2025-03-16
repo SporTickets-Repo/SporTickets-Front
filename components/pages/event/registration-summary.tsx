@@ -1,105 +1,114 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useEvent } from "@/context/event";
+import { TicketType } from "@/interface/tickets";
+import { ArrowRight, Minus, Plus } from "lucide-react";
 
-export default function RegistrationSummary() {
-  const [masculinoCount, setMasculinoCount] = useState(1);
-  const [femininoCount, setFemininoCount] = useState(0);
+interface RegistrationSummaryProps {
+  ticketTypes: TicketType[];
+}
 
-  const price = 50.0;
-  const total = (masculinoCount + femininoCount) * price;
+export default function RegistrationSummary({
+  ticketTypes,
+}: RegistrationSummaryProps) {
+  const { updateTicketQuantity, selectedTickets } = useEvent();
+
+  const getQuantity = (ticketTypeId: string) => {
+    return (
+      selectedTickets.find((t) => t.ticketType.id === ticketTypeId)?.quantity ||
+      0
+    );
+  };
+
+  const total = selectedTickets.reduce((acc, ticket) => {
+    return acc + parseFloat(ticket.ticketLot.price) * ticket.quantity;
+  }, 0);
 
   return (
-    <Card className="overflow-hidden">
-      <div className="bg-green-100 p-2 text-center text-xs text-green-800">
-        00:04:34
-      </div>
-
-      <div className="p-4">
+    <div className="overflow-hidden">
+      <div className="">
         <div className="mb-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">MASCULINO DUPLA</h3>
-              <p className="text-xs text-gray-500">Resta 1 vaga disponível</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-medium">R$ 50,00</span>
-              <div className="flex items-center">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-6 w-6 rounded-r-none"
-                  onClick={() =>
-                    setMasculinoCount(Math.max(0, masculinoCount - 1))
-                  }
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-                <div className="flex h-6 w-6 items-center justify-center border-y bg-white text-xs">
-                  {masculinoCount}
-                </div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-6 w-6 rounded-l-none"
-                  onClick={() =>
-                    setMasculinoCount(Math.min(1, masculinoCount + 1))
-                  }
-                >
-                  <ChevronUp className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
+          {ticketTypes.map((ticket) => {
+            const activeLot = ticket.ticketLots.find((lot) => lot.isActive);
 
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">FEMININO DUPLA</h3>
-              <p className="text-xs text-gray-500">Resta 1 vaga disponível</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-medium">R$ 50,00</span>
-              <div className="flex items-center">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-6 w-6 rounded-r-none"
-                  onClick={() =>
-                    setFemininoCount(Math.max(0, femininoCount - 1))
-                  }
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-                <div className="flex h-6 w-6 items-center justify-center border-y bg-white text-xs">
-                  {femininoCount}
+            if (!activeLot) return null;
+
+            return (
+              <div
+                key={ticket.id}
+                className={`flex items-center justify-between bg-zinc-100 mb-4 p-4 rounded-lg ${
+                  activeLot.quantity === 0 && "opacity-50 pointer-events-none"
+                }`}
+              >
+                <div>
+                  <h3 className="font-medium">{ticket.name}</h3>
+                  <p className="text-xs text-gray-500">
+                    Resta {activeLot.quantity} vagas
+                  </p>
+                  <span className="font-light text-sm text-sporticket-green-700">
+                    R$ {parseFloat(activeLot.price).toFixed(2)}
+                  </span>
                 </div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-6 w-6 rounded-l-none"
-                  onClick={() =>
-                    setFemininoCount(Math.min(1, femininoCount + 1))
-                  }
-                >
-                  <ChevronUp className="h-4 w-4" />
-                </Button>
+                {activeLot.quantity > 0 ? (
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center">
+                      <Button
+                        variant="select"
+                        size="icon"
+                        className="h-6 w-6 "
+                        onClick={() =>
+                          updateTicketQuantity(
+                            ticket.id,
+                            Math.max(0, getQuantity(ticket.id) - 1)
+                          )
+                        }
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <p className="text-3xs w-[30px] text-center">
+                        {getQuantity(ticket.id)}
+                      </p>
+                      <Button
+                        variant="select"
+                        size="icon"
+                        className="h-6 w-6 "
+                        onClick={() =>
+                          updateTicketQuantity(
+                            ticket.id,
+                            Math.min(
+                              activeLot.quantity,
+                              getQuantity(ticket.id) + 1
+                            )
+                          )
+                        }
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-sporticket-orange font-light text-md">
+                    ESGOTADO
+                  </span>
+                )}
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
 
-        <div className="mb-4 flex items-center justify-between border-t pt-3">
-          <span className="font-medium">Total</span>
-          <span className="text-lg font-bold">R$ {total.toFixed(2)}</span>
-        </div>
+        <div className="space-y-3 bg-zinc-100 p-4 rounded-lg">
+          <div className="mb-4 flex items-center justify-between  ">
+            <span className="font-light">Total</span>
+            <span className="text-lg font-bold">R$ {total.toFixed(2)}</span>
+          </div>
 
-        <Button className="w-full bg-orange-500 hover:bg-orange-600">
-          Realizar Inscrição →
-        </Button>
+          <Button className="w-full" variant="destructive">
+            Realizar Inscrição
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
-    </Card>
+    </div>
   );
 }
