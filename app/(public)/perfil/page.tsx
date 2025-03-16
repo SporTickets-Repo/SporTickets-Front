@@ -4,29 +4,20 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth";
 import { Camera, Trophy, Users } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function UserPage() {
   const { user, logout } = useAuth();
-
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!user) {
-      router.push("/entrar");
-    }
-  }, [router, user]);
 
   return (
     <section className="container py-4">
       {/* Header Image */}
       <div className="relative h-80 w-full rounded-3xl">
         <Image
-          src={user?.profileImageUrl || "/assets/icons/default-profile.png"}
+          src={user?.profileImageUrl || "/assets/icons/default-banner.png"}
           alt="Cover"
           fill
           className="object-cover rounded-3xl"
+          unoptimized
         />
 
         {/* Profile Image and Edit Button */}
@@ -37,6 +28,7 @@ export default function UserPage() {
             width={240}
             height={240}
             className="rounded-full border-4 border-white"
+            unoptimized
           />
         </div>
 
