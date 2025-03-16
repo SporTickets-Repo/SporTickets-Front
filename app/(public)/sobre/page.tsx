@@ -69,7 +69,7 @@ export default function About() {
         <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-2">
           <div className="relative h-[498px] rounded-2xl overflow-hidden">
             <img
-              src="https://images.unsplash.com/photo-1552168324-d612d77725e3?w=800"
+              src="assets/images/quadra.png"
               alt="Basketball court"
               className="object-cover w-full h-full"
             />
@@ -77,14 +77,14 @@ export default function About() {
           <div className="flex flex-col gap-2">
             <div className="relative h-[245px] rounded-2xl overflow-hidden ">
               <img
-                src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800"
+                src="assets/images/ball.png"
                 alt="Running track"
                 className="object-cover w-full h-full"
               />
             </div>
             <div className="relative h-[245px] rounded-2xl overflow-hidden ">
               <img
-                src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800"
+                src="assets/images/run.png"
                 alt="Running track"
                 className="object-cover w-full h-full"
               />
