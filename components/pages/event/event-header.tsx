@@ -13,7 +13,7 @@ export default function EventHeader({ alt, image }: EventHeaderProps) {
         alt={alt}
         width={800}
         height={200}
-        className="h-auto w-full object-cover"
+        className="h-[30vh] w-full object-cover"
         unoptimized
         priority
       />
