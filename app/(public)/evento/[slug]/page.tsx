@@ -44,7 +44,7 @@ export default function EventPage() {
                   {formatDateWithoutYear(event.startDate)} •{" "}
                   {formatHour(event.startDate)}
                 </Badge>
-                <h1 className="text-2xl font-bold">{event.name}</h1>
+                <h1 className="text-2xl font-bold italic">{event.name}</h1>
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-600">
                   <span>{event.title}</span>
                   <span className="text-gray-400">|</span>

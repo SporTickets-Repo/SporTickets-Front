@@ -57,7 +57,7 @@ export default function FAQPage() {
   );
 
   return (
-    <main className=" py-16">
+    <div className=" py-16">
       <div className=" grid grid-cols-2 gap-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2">
           <div className="text-cyan-700 bg-cyan-500/10 rounded-full  px-3 py-1 w-16 flex items-center justify-center">
@@ -103,6 +103,6 @@ export default function FAQPage() {
           )}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
