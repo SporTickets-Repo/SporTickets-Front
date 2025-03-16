@@ -6,7 +6,8 @@ export interface Event {
   id: string;
   createdBy: string;
   slug: string;
-  status: string;
+  status: EventStatus;
+  type: EventType;
   name: string;
   place: string;
   title: string;
@@ -27,7 +28,8 @@ export interface EventSummary {
   id: string;
   createdBy: string;
   slug: string;
-  status: string;
+  status: EventStatus;
+  type: EventType;
   name: string;
   place: string;
   title: string;
@@ -39,4 +41,23 @@ export interface EventSummary {
   startDate: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export enum EventStatus {
+  DRAFT = "DRAFT",
+  REGISTRATION = "REGISTRATION",
+  PROGRESS = "PROGRESS",
+  CANCELLED = "CANCELLED",
+  FINISHED = "FINISHED",
+}
+
+export enum EventType {
+  FUTVOLEI = "FUTVOLEI",
+  BEACH_TENIS = "BEACH_TENIS",
+  ALTINHA = "ALTINHA",
+  FUTEBOL = "FUTEBOL",
+  FUTEBOL_ARREIA = "FUTEBOL_ARREIA",
+  FUTSAL = "FUTSAL",
+  VOLEI = "VOLEI",
+  GERAL = "GERAL",
 }

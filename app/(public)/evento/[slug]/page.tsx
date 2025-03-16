@@ -9,9 +9,15 @@ import RegistrationSummary from "@/components/pages/event/registration-summary";
 import { Badge } from "@/components/ui/badge";
 import { useEvent } from "@/context/event";
 import { formatDateWithoutYear, formatHour } from "@/utils/dateTime";
-import { MapPin } from "lucide-react";
+import { getEventIcon } from "@/utils/eventIcons";
+import {
+  translateEventStatus,
+  translateEventType,
+} from "@/utils/eventTranslations";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
+import { IoPin } from "react-icons/io5";
+import { LuMedal } from "react-icons/lu";
 
 export default function EventPage() {
   const { slug } = useParams() as { slug: string };
@@ -26,16 +32,16 @@ export default function EventPage() {
   if (!event)
     return <p className="text-center text-gray-500">Evento não encontrado.</p>;
 
+  const EventIcon = getEventIcon(event.type);
+
   return (
     <div className="container">
       <div className="flex-1 p-4 md:p-6">
         <div className="mx-auto max-w-6xl">
-          {/* Event Banner */}
           <EventHeader alt={event.name} image={event.bannerUrl || ""} />
-          {/* Event Details */}
+
           <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              {/* Event Title and Info */}
               <div className="mb-4">
                 <Badge
                   variant="secondary"
@@ -45,24 +51,45 @@ export default function EventPage() {
                   {formatHour(event.startDate)}
                 </Badge>
                 <h1 className="text-2xl font-bold italic">{event.name}</h1>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-600">
-                  <span>{event.title}</span>
-                  <span className="text-gray-400">|</span>
-                  <span>{event.place}</span>
-                  <span className="text-gray-400">|</span>
+                <div className="flex items-center text-xs my-1 ">
+                  {event.type && (
+                    <div className="flex items-center gap-2">
+                      <EventIcon className="text-gray-400" />
+                      <span className="text-gray-600">
+                        {translateEventType(event.type)}
+                      </span>
+                      <span className="mr-1 text-gray-600">•</span>
+                    </div>
+                  )}
+
                   <div className="flex items-center gap-1">
-                    <span>{event.status}</span>
+                    <LuMedal size={12} className="text-gray-400" />
+                    <span className={`text-gray-600`}>
+                      {"Diversas Categorias"}
+                    </span>
+                    <span className="mr-1 text-gray-600">•</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <IoPin size={14} className="text-gray-400" />
+                    <span className="text-gray-600">
+                      {event.address?.localidade}, {event.address?.uf}
+                    </span>
                   </div>
                 </div>
-                <div className="mt-1 flex items-center gap-1 text-sm text-gray-600">
-                  <MapPin size={14} />
-                  <span>
-                    {event.address?.localidade}, {event.address?.uf}
+                <div className="flex items-center mt-2 text-xs text-sporticket-green-500 font-semibold">
+                  <span className="">
+                    {translateEventStatus(event.status) || "ABERTO"}
                   </span>
+                  <span className="mx-1">•</span>
+                  <span className="">{"Vagas não informadas"}</span>
                 </div>
               </div>
 
               <EventLocation address={event.address} place={event.place} />
+
+              <div className="block lg:hidden order-last">
+                <RegistrationSummary ticketTypes={event.ticketTypes} />
+              </div>
 
               <EventDescription description={event.description} />
 
@@ -71,8 +98,7 @@ export default function EventPage() {
               <EventRanking />
             </div>
 
-            {/* Registration Summary */}
-            <div className="lg:col-span-1">
+            <div className="hidden lg:block lg:col-span-1 order-none">
               <RegistrationSummary ticketTypes={event.ticketTypes} />
             </div>
           </div>

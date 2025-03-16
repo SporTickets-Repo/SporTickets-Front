@@ -26,7 +26,7 @@ export default function RegistrationSummary({
   }, 0);
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden mb-5">
       <div className="">
         {ticketTypes.map((ticket) => {
           const activeLot = ticket.ticketLots.find((lot) => lot.isActive);

@@ -3,9 +3,15 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { EventSummary } from "@/interface/event";
 import { formatDateWithoutYear, formatHour } from "@/utils/dateTime";
-import { MapPin } from "lucide-react";
+import { getEventIcon } from "@/utils/eventIcons";
+import {
+  translateEventStatus,
+  translateEventType,
+} from "@/utils/eventTranslations";
 import Image from "next/image";
 import Link from "next/link";
+import { IoPin } from "react-icons/io5";
+import { LuMedal } from "react-icons/lu";
 
 interface EventCardProps {
   event: EventSummary;
@@ -13,10 +19,11 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, dark = false }: EventCardProps) {
+  const EventIcon = getEventIcon(event.type);
+
   return (
     <Link href={`/evento/${event.slug}`}>
       <Card className="overflow-hidden bg-transparent border-0 shadow-none">
-        {/* Imagem do evento */}
         <div className="relative">
           {event.bannerUrl ? (
             <Image
@@ -38,37 +45,32 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
           </Badge>
         </div>
 
-        {/* Conteúdo do Card */}
         <CardContent className="p-3">
           <h3 className={`font-bold mb-1 ${dark ? "text-white" : ""}`}>
             {event.title}
           </h3>
 
-          {/* <div className="flex items-center text-xs mt-1 text-gray-300">
-            <Tag size={12} className="mr-1" />
-            <span>{event.description || "Sem categoria"}</span>
-            <span className="mx-1">•</span>
-            <User size={12} className="mr-1" />
-            <span>{event.regulation || "Nível não informado"}</span>
-            <span className="mx-1">•</span>
-            <span
-              className={
-                event.additionalInfo === "GRÁTIS"
-                  ? "text-blue-400 font-bold"
-                  : ""
-              }
-            >
-              {event.additionalInfo || "Preço não informado"}
-            </span>
-          </div> */}
+          <div className="flex items-center text-xs my-1 ">
+            {event.type && (
+              <div className="flex items-center gap-1">
+                <EventIcon className="text-gray-400" />
+                <span className={`${dark ? "text-white" : "text-gray-600"}`}>
+                  {translateEventType(event.type)}
+                </span>
+                <span className="mr-1 text-gray-600">•</span>
+              </div>
+            )}
 
-          <div>
-            <MapPin
-              size={12}
-              className={`inline mr-1 ${
-                dark ? "text-zinc-400" : "text-zinc-400"
-              }`}
-            />
+            <div className="flex items-center gap-1">
+              <LuMedal size={12} className="text-gray-400" />
+              <span className={`${dark ? "text-white" : "text-gray-600"}`}>
+                {"Diversas Categorias"}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 -ml-[2px]">
+            <IoPin className={` ${dark ? "text-zinc-400" : "text-zinc-400"}`} />
             <span
               className={`text-xs ${dark ? "text-white" : "text-zinc-600"}`}
             >
@@ -77,7 +79,9 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
           </div>
 
           <div className="flex items-center mt-2 text-xs text-sporticket-green-500 font-semibold">
-            <span className="">{event.status || "ABERTO"}</span>
+            <span className="">
+              {translateEventStatus(event.status) || "ABERTO"}
+            </span>
             <span className="mx-1">•</span>
             <span className="">{"Vagas não informadas"}</span>
           </div>
