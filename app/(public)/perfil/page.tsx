@@ -1,12 +1,19 @@
 "use client";
 
+import { OrganizerProfile } from "@/components/pages/profile/organizer-profile";
+import { UserProfile } from "@/components/pages/profile/user-profile";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth";
-import { Camera, Trophy, Users } from "lucide-react";
+import { UserRole } from "@/interface/user";
 import Image from "next/image";
 
 export default function UserPage() {
   const { user, logout } = useAuth();
+
+  const isOrganizer =
+    user?.role === UserRole.PARTNER ||
+    user?.role === UserRole.ADMIN ||
+    user?.role === UserRole.MASTER;
 
   return (
     <section className="container py-4">
@@ -16,18 +23,20 @@ export default function UserPage() {
           src={user?.profileImageUrl || "/assets/icons/default-banner.png"}
           alt="Cover"
           fill
-          className="object-cover rounded-3xl"
+          className={`rounded-3xl bg-gray-500/30 ${
+            user?.profileImageUrl ? "object-contain" : "object-cover"
+          }`}
           unoptimized
         />
 
         {/* Profile Image and Edit Button */}
-        <div className="absolute -bottom-24 left-16 flex items-end">
+        <div className="absolute -bottom-44 md:-bottom-52 left-1/2 transform -translate-y-1/2 -translate-x-1/2 md:left-48 flex items-end">
           <Image
             src={user?.profileImageUrl || "/assets/icons/default-profile.png"}
             alt={user?.name || "Profile"}
             width={240}
             height={240}
-            className="rounded-full border-4 border-white"
+            className="rounded-full border-4 border-white h-[180px] w-[180px] md:h-[240px] md:w-[240px] object-cover min-w-[180px] min-h-[180px]"
             unoptimized
           />
         </div>
@@ -41,76 +50,19 @@ export default function UserPage() {
       </div>
 
       {/* Profile Section */}
-      <div className="">
-        {/* User Info */}
-        <div className="pt-16">
-          <h1 className="text-2xl font-bold">
-            {user?.name || "NeymarFanatic99"}
+      <div className="flex flex-1 flex-col gap-4 py-6">
+        <div className="flex flex-1 flex-col md:pl-[20rem] pt-20 md:pt-0 items-center md:items-start">
+          <h1 className="text-3xl font-bold">
+            {user?.name || "Nome de Exibição"}
           </h1>
           <p className="text-muted-foreground">
-            @{user?.fantasyName || "neymar.lover"}
+            {user?.email || "Email de Exibição"}
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {user?.siteUrl ||
-              "Apaixonado por esportes e sempre em busca de novos desafios!"}
-          </p>
-
-          {/* Stats */}
-          <div className="flex gap-8 mt-6">
-            <div className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="font-bold">17</p>
-                <p className="text-sm text-muted-foreground">Jogos</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="font-bold">#13.563</p>
-                <p className="text-sm text-muted-foreground">Posição</p>
-              </div>
-            </div>
-            <div>
-              <p className="font-bold">79%</p>
-              <p className="text-sm text-muted-foreground">Vitórias</p>
-            </div>
-          </div>
-
-          {/* Profile Completion */}
-          <div className="mt-8 space-y-6">
-            <h2 className="text-lg font-semibold">Complete seu perfil</h2>
-            <p className="text-sm text-muted-foreground">2/3 completo</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="border rounded-lg p-6 text-center space-y-2">
-                <Camera className="h-8 w-8 mx-auto text-muted-foreground" />
-                <h3 className="font-medium">Foto de Perfil</h3>
-                <p className="text-sm text-muted-foreground">
-                  Adicionar uma foto para personalizar seu perfil
-                </p>
-              </div>
-              <div className="border rounded-lg p-6 text-center space-y-2">
-                <Users className="h-8 w-8 mx-auto text-muted-foreground" />
-                <h3 className="font-medium">Nome de Exibição</h3>
-                <p className="text-sm text-muted-foreground">
-                  Escolha um nome para ser mostrado no perfil
-                </p>
-              </div>
-              <div className="border rounded-lg p-6 text-center space-y-2">
-                <Trophy className="h-8 w-8 mx-auto text-muted-foreground" />
-                <h3 className="font-medium">Crie uma Bio</h3>
-                <p className="text-sm text-muted-foreground">
-                  Escreva uma descrição sobre você e seus esportes favoritos
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <Button variant="destructive" className="mt-8" onClick={logout}>
-            Sair
-          </Button>
         </div>
+
+        {isOrganizer && <OrganizerProfile />}
+
+        {user?.role === UserRole.USER && <UserProfile />}
       </div>
     </section>
   );
