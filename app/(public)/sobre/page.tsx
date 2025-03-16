@@ -3,6 +3,7 @@
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import Image from "next/image";
 
 import { Calendar, Star, Trophy, Users } from "lucide-react";
 
@@ -68,25 +69,34 @@ export default function About() {
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-2">
           <div className="relative h-[498px] rounded-2xl overflow-hidden">
-            <img
+            <Image
               src="assets/images/quadra.png"
               alt="Basketball court"
               className="object-cover w-full h-full"
+              unoptimized
+              width={498}
+              height={498}
             />
           </div>
           <div className="flex flex-col gap-2">
             <div className="relative h-[245px] rounded-2xl overflow-hidden ">
-              <img
+              <Image
                 src="assets/images/ball.png"
                 alt="Running track"
                 className="object-cover w-full h-full"
+                unoptimized
+                width={245}
+                height={245}
               />
             </div>
             <div className="relative h-[245px] rounded-2xl overflow-hidden ">
-              <img
+              <Image
                 src="assets/images/run.png"
                 alt="Running track"
                 className="object-cover w-full h-full"
+                unoptimized
+                width={245}
+                height={245}
               />
             </div>
           </div>
@@ -144,10 +154,29 @@ export default function About() {
             Venda sem complicação, controle total, segurança garantida e alcance
             mais pessoas.
           </p>
+
+          <div className="relative w-full mt-4 flex items-center justify-center py-16">
+            <Image
+              src="/assets/backgrounds/mapGlobe.png"
+              alt="globe"
+              layout="fill"
+              objectFit="cover"
+              className="absolute inset-0 w-full h-full"
+              unoptimized
+            />
+            <div className="relative p-4 w-[50vw] text-center text-gray-900 border border-black rounded-xl backdrop-blur-sm ">
+              <h1>Lorem ipsum dolor</h1>
+              <p>
+                Lorem ipsum dolor sit amet. Non dolores suscipit est
+                necessitatibus minima sed quis eligendi ut optio totam ut
+                similique enim.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold  mb-12">
             O que os nossos clientes estão dizendo
