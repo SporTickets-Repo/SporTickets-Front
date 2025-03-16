@@ -33,17 +33,17 @@ function App() {
           </div>
           <div className="flex flex-wrap w-full gap-2 justify-center align-center">
             <SportTypeCard
-              className="w-full sm:w-[165px]"
+              className="w-[165px]"
               Icon={Volleyball}
               title="Vôlei"
             />
             <SportTypeCard
-              className="w-full sm:w-[165px]"
+              className="w-[165px]"
               Icon={Volleyball}
               title="Vôlei"
             />
             <SportTypeCard
-              className="w-full sm:w-[165px]"
+              className="w-[165px]"
               Icon={Volleyball}
               title="Vôlei"
             />
@@ -56,7 +56,7 @@ function App() {
               <ArrowRight size={16} />
             </Button>
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {eventsMock.map((eventsMock, index) => (
               <EventCard key={index} event={eventsMock} dark />
             ))}
@@ -94,7 +94,31 @@ function App() {
         </div>
       </div>
 
-      <div className="bg-black text-white py-10 mb-5">
+      <div className="container mb-6 h-[50vh] relative">
+        <Image
+          src="/assets/images/banner1.png"
+          alt="Logo"
+          layout="fill"
+          objectFit="cover"
+          className="absolute inset-0 w-full h-full -z-10"
+          unoptimized
+        />
+        <div className="flex flex-col justify-end items-start w-full h-full px-8 py-6">
+          <h2 className="text-2xl font-bold text-white mb-4 italic">
+            Pronto para jogar? Descubra eventos e garanta seu ingresso!
+          </h2>
+        </div>
+      </div>
+
+      <div className="relative w-full text-white py-10 mb-5">
+        <Image
+          src="/assets/backgrounds/arquibancada.png"
+          alt="Logo"
+          layout="fill"
+          objectFit="cover"
+          className="absolute inset-0 w-full h-full -z-10"
+          unoptimized
+        />
         <div className="container flex justify-between items-center ">
           <div className="flex flex-col gap-1">
             <h1 className="text-xl font-semibold">É um produtos de eventos?</h1>
