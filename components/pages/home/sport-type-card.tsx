@@ -13,7 +13,7 @@ export default function SportTypeCard({
 }: SportTypeCardProps) {
   return (
     <Card
-      className={`bg-[#1E211B] text-white border border-[#1E211B] ${className}`}
+      className={`bg-white/10 text-white border-0 backdrop-blur ${className} cursor-pointer hover:bg-white/20 `}
     >
       <CardContent className="flex items-center justify-center p-6 sm:p-8">
         <Icon />
