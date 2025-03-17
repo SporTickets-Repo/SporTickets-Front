@@ -1,5 +1,5 @@
 "use client";
-import { EventSummary } from "@/interface/event";
+import { EventStatus, EventSummary, EventType } from "@/interface/event";
 import { eventService } from "@/service/event";
 import { useEffect, useState } from "react";
 
@@ -9,7 +9,8 @@ export default function useHome() {
       id: "9d11e079-6ff1-40ef-9db5-0b6bc53ccb40",
       createdBy: "ba2e8f30-3a40-420c-89a7-32c00c507f67",
       slug: "event-name1",
-      status: "DRAFT",
+      status: EventStatus.DRAFT,
+      type: EventType.FUTVOLEI,
       name: "Sportickets event",
       place: "Event place",
       title: "Volleyball event",
@@ -27,7 +28,8 @@ export default function useHome() {
       id: "b0c0c9ce-2357-47eb-8249-7c42d75f8c5d",
       createdBy: "ba2e8f30-3a40-420c-89a7-32c00c507f67",
       slug: "event-name2",
-      status: "DRAFT",
+      status: EventStatus.DRAFT,
+      type: EventType.FUTVOLEI,
       name: "Sportickets event",
       place: "Event place",
       title: "Volleyball event",
@@ -44,7 +46,8 @@ export default function useHome() {
       id: "c439d51e-abf0-4c42-b563-0f73a665422c",
       createdBy: "ba2e8f30-3a40-420c-89a7-32c00c507f67",
       slug: "event-name3",
-      status: "DRAFT",
+      status: EventStatus.DRAFT,
+      type: EventType.FUTVOLEI,
       name: "Sportickets event",
       place: "Event place",
       title: "Volleyball event",
@@ -62,7 +65,8 @@ export default function useHome() {
       id: "73021238-2b9f-4f20-ab64-575ba44bc48f",
       createdBy: "ba2e8f30-3a40-420c-89a7-32c00c507f67",
       slug: "event-name",
-      status: "DRAFT",
+      status: EventStatus.DRAFT,
+      type: EventType.FUTVOLEI,
       name: "Sportickets event",
       place: "Event place",
       title: "Volleyball event",
