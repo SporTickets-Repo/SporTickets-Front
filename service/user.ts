@@ -10,4 +10,17 @@ export const userService = {
       throw error;
     }
   },
+
+  updateUser: async (payload: FormData): Promise<UserProfile> => {
+    try {
+      const response = await api.patch<UserProfile>("/user/update", payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

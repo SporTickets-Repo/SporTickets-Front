@@ -23,3 +23,8 @@ export enum UserRole {
   PARTNER = "PARTNER",
   MASTER = "MASTER",
 }
+
+export enum UserSex {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+}

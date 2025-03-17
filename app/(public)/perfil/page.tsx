@@ -1,14 +1,14 @@
 "use client";
 
+import { EditProfileDialog } from "@/components/pages/profile/edit-profile/edit-profile-dialog";
 import { OrganizerProfile } from "@/components/pages/profile/organizer-profile";
 import { UserProfile } from "@/components/pages/profile/user-profile";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth";
 import { UserRole } from "@/interface/user";
 import Image from "next/image";
 
 export default function UserPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const isOrganizer =
     user?.role === UserRole.PARTNER ||
@@ -43,9 +43,7 @@ export default function UserPage() {
 
         {/* Edit Profile Button */}
         <div className="flex justify-end absolute right-5 top-5">
-          <Button variant="default-inverse" className="gap-2">
-            Editar Perfil
-          </Button>
+          <EditProfileDialog />
         </div>
       </div>
 
