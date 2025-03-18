@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, SearchIcon, Volleyball } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useHome from "./useHome";
@@ -46,21 +47,27 @@ function App() {
             />
           </div>
           <div className="flex flex-wrap w-full gap-2 justify-center align-center">
-            <SportTypeCard
-              className="w-[165px]"
-              Icon={Volleyball}
-              title="Vôlei"
-            />
-            <SportTypeCard
-              className="w-[165px]"
-              Icon={Volleyball}
-              title="Vôlei"
-            />
-            <SportTypeCard
-              className="w-[165px]"
-              Icon={Volleyball}
-              title="Vôlei"
-            />
+            <Link href="/evento/buscar?type=FUTVOLEI">
+              <SportTypeCard
+                className="w-[165px]"
+                Icon={Volleyball}
+                title="Vôlei"
+              />
+            </Link>
+            <Link href="/evento/buscar?type=FUTVOLEI">
+              <SportTypeCard
+                className="w-[165px]"
+                Icon={Volleyball}
+                title="Vôlei"
+              />
+            </Link>
+            <Link href="/evento/buscar?type=FUTVOLEI">
+              <SportTypeCard
+                className="w-[165px]"
+                Icon={Volleyball}
+                title="Vôlei"
+              />
+            </Link>
           </div>
         </div>
         <div className="container mb-6">

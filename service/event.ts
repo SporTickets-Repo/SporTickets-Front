@@ -34,7 +34,8 @@ export const eventService = {
     name?: string,
     startDate?: string,
     minPrice?: number,
-    maxPrice?: number
+    maxPrice?: number,
+    type?: string
   ): Promise<EventSummary[]> => {
     try {
       const params: Record<string, string | number> = {};
@@ -43,6 +44,7 @@ export const eventService = {
       if (startDate) params.startDate = startDate;
       if (minPrice !== undefined && minPrice > 0) params.minPrice = minPrice;
       if (maxPrice !== undefined && maxPrice > 0) params.maxPrice = maxPrice;
+      if (type) params.type = type;
 
       const response = await api.get<EventSummary[]>(`/events/filter`, {
         params,

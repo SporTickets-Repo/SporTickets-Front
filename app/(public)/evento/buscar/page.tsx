@@ -19,6 +19,7 @@ export default function SearchEventPage() {
   const searchParams = useSearchParams();
 
   const [searchName, setSearchName] = useState("");
+  const [searchType, setSearchType] = useState("");
   const [loading, setLoading] = useState(true);
 
   const debouncedSearchName = useDebounce(searchName, 500);
@@ -34,7 +35,8 @@ export default function SearchEventPage() {
         debouncedSearchName,
         selectedDate?.toISOString() ?? "",
         priceRange[0],
-        priceRange[1]
+        priceRange[1],
+        searchType
       );
       setEvents(response);
     } catch (error) {
@@ -42,7 +44,7 @@ export default function SearchEventPage() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearchName, selectedDate, priceRange]);
+  }, [debouncedSearchName, selectedDate, priceRange, searchType]);
 
   const applyFilters = useCallback(() => {
     const params = new URLSearchParams();
@@ -58,12 +60,17 @@ export default function SearchEventPage() {
       params.set("maxPrice", String(priceRange[1]));
     }
 
+    if (searchType) {
+      params.set("type", searchType);
+    }
+
     router.replace(`${pathname}?${params.toString()}`);
     handleSearch();
   }, [
     debouncedSearchName,
     selectedDate,
     priceRange,
+    searchType,
     router,
     pathname,
     handleSearch,
@@ -71,8 +78,13 @@ export default function SearchEventPage() {
 
   useEffect(() => {
     const paramName = searchParams.get("name") || "";
+    const paramType = searchParams.get("type") || "";
     if (paramName) {
       setSearchName(paramName);
+    }
+
+    if (paramType) {
+      setSearchType(paramType);
     }
   }, [searchParams]);
 
