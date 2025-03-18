@@ -5,10 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, SearchIcon, Volleyball } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import useHome from "./useHome";
 
 function App() {
   const { events, eventsMock } = useHome();
+  const [searchText, setSearchText] = useState("");
+  const router = useRouter();
+
+  const handleSearch = (e): void => {
+    if (e.key === "Enter" && searchText.trim() !== "") {
+      router.push(`/evento/buscar?name=${encodeURIComponent(searchText)}`);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <div className="flex flex-col min-h-[70vh] relative z-40 text-white bg-black pb-5 mb-5">
@@ -25,6 +36,9 @@ function App() {
             <Input
               placeholder="Pesquisar"
               className="w-full pr-10 py-8 px-4 rounded-2xl !text-lg"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyDown={handleSearch}
             />
             <SearchIcon
               size={24}

@@ -29,4 +29,28 @@ export const eventService = {
       throw error;
     }
   },
+
+  getFilteredEvents: async (
+    name?: string,
+    startDate?: string,
+    minPrice?: number,
+    maxPrice?: number
+  ): Promise<EventSummary[]> => {
+    try {
+      const params: Record<string, string | number> = {};
+
+      if (name) params.name = name;
+      if (startDate) params.startDate = startDate;
+      if (minPrice !== undefined && minPrice > 0) params.minPrice = minPrice;
+      if (maxPrice !== undefined && maxPrice > 0) params.maxPrice = maxPrice;
+
+      const response = await api.get<EventSummary[]>(`/events/filter`, {
+        params,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
