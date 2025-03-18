@@ -6,7 +6,7 @@ export interface UserProfile {
   documentType: string;
   name: string;
   sex: string;
-  role: string;
+  role: UserRole | string;
   bornAt: string;
   cep: string;
   profileImageUrl?: string | null;
@@ -15,4 +15,16 @@ export interface UserProfile {
   fantasyName?: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export enum UserRole {
+  USER = "USER",
+  ADMIN = "ADMIN",
+  PARTNER = "PARTNER",
+  MASTER = "MASTER",
+}
+
+export enum UserSex {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
 }

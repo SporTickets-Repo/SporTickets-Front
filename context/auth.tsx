@@ -4,6 +4,7 @@ import { RegisterBody } from "@/interface/auth";
 import { UserProfile } from "@/interface/user";
 import { authService } from "@/service/auth";
 import { userService } from "@/service/user";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import React, {
   createContext,
@@ -22,6 +23,8 @@ interface AuthContextProps {
   fetchUser: () => Promise<void>;
 }
 
+const cookiesExpirationDays = 1;
+
 const AuthContext = createContext<AuthContextProps>({
   user: null,
   token: null,
@@ -39,8 +42,8 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
+    const storedToken = Cookies.get("token");
+    const storedUser = Cookies.get("user");
 
     if (storedToken) {
       setToken(storedToken);
@@ -53,10 +56,19 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       const response = await authService.login(email, password);
+
+      Cookies.set("token", response.access_token, {
+        expires: cookiesExpirationDays,
+        secure: true,
+      });
       setToken(response.access_token);
-      localStorage.setItem("token", response.access_token);
+
       await fetchUser();
-      router.push("/");
+
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect");
+
+      router.push(redirect || "/");
     } catch (error) {
       throw error;
     }
@@ -65,19 +77,29 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const registration = async (userData: RegisterBody) => {
     try {
       const response = await authService.register(userData);
+
+      Cookies.set("user", JSON.stringify(response), {
+        expires: cookiesExpirationDays,
+        secure: true,
+      });
       setUser(response);
-      localStorage.setItem("user", JSON.stringify(response));
     } catch (error: any) {
       throw error;
     }
   };
 
   const fetchUser = async () => {
-    if (!token) return;
+    const storedToken = Cookies.get("token");
+    if (!storedToken) return;
+
     try {
       const response = await userService.getMe();
+
+      Cookies.set("user", JSON.stringify(response), {
+        expires: cookiesExpirationDays,
+        secure: true,
+      });
       setUser(response);
-      localStorage.setItem("user", JSON.stringify(response));
     } catch (error) {
       logout();
       throw error;
@@ -85,11 +107,13 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   const logout = () => {
+    Cookies.remove("token");
+    Cookies.remove("user");
+
     setToken(null);
     setUser(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    router.push("/login");
+
+    router.push("/");
   };
 
   useEffect(() => {
