@@ -28,7 +28,7 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
           {event.bannerUrl ? (
             <Image
               src={event.bannerUrl}
-              alt={event.title}
+              alt={event.name}
               width={600}
               height={400}
               className="w-full h-44 object-cover rounded-lg bg-gray-500"
@@ -47,7 +47,7 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
 
         <CardContent className="p-3">
           <h3 className={`font-bold mb-1 ${dark ? "text-white" : ""}`}>
-            {event.title}
+            {event.name}
           </h3>
 
           <div className="flex items-center text-xs my-1 ">

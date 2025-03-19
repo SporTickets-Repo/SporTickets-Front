@@ -1,8 +1,5 @@
 "use client";
 
-import { LogOut, User, UserIcon } from "lucide-react";
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,10 +11,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/auth";
+import { LogOut, User, UserIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function UserNav() {
   const { user, logout } = useAuth();
+  const pathname = usePathname();
 
   return (
     <nav className="flex items-center gap-6">
@@ -72,7 +73,7 @@ export function UserNav() {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Link href="/entrar">
+        <Link href={`/entrar?redirect=${pathname}`}>
           <Button
             variant="secondary"
             className="px-2 sm:px-4 flex items-center"

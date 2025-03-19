@@ -86,11 +86,11 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
         <Button
           variant={"outline"}
           className={cn(
-            "w-full justify-start text-left font-normal bg-neutral-100",
+            "w-fit justify-start text-left font-normal bg-neutral-100",
             !date && "text-muted-foreground "
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
+          <CalendarIcon className="mr-2 h-4 w-4" color="#6426B1" />
           {date ? (
             format(date, "dd/MM/yyyy", { locale: ptBR })
           ) : (
