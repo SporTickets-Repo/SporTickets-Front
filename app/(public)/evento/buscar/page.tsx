@@ -92,7 +92,7 @@ export default function SearchEventPage() {
 
   useEffect(() => {
     applyFilters();
-  }, [debouncedSearchName, selectedDate, priceRange, searchType]);
+  }, [debouncedSearchName, selectedDate, priceRange, searchType, applyFilters]);
 
   const swrKey = useMemo(() => {
     const paramName = searchParams.get("name") || "";

@@ -1,25 +1,26 @@
 "use client";
 import EventCard from "@/components/pages/home/event-card";
+import { HomeSearchBar } from "@/components/pages/home/search-bar";
 import SportTypeCard from "@/components/pages/home/sport-type-card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ArrowRight, SearchIcon, Volleyball } from "lucide-react";
+import { getEventIcon } from "@/utils/eventIcons";
+import { translateEventType } from "@/utils/eventTranslations";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo } from "react";
 import useHome from "./useHome";
 
 function App() {
   const { events, eventsMock } = useHome();
-  const [searchText, setSearchText] = useState("");
-  const router = useRouter();
 
-  const handleSearch = (e): void => {
-    if (e.key === "Enter" && searchText.trim() !== "") {
-      router.push(`/evento/buscar?name=${encodeURIComponent(searchText)}`);
-    }
-  };
+  const eventTypes = useMemo(
+    () =>
+      events
+        .map((event) => event.type)
+        .filter((value, index, self) => self.indexOf(value) === index),
+    [events]
+  );
 
   return (
     <div className="min-h-screen">
@@ -34,40 +35,18 @@ function App() {
         />
         <div className="flex flex-1 flex-col justify-center items-center md:max-w-4xl text-black gap-2 container mt-48 mb-24">
           <div className="relative w-full">
-            <Input
-              placeholder="Pesquisar"
-              className="w-full pr-10 py-8 px-4 rounded-2xl !text-lg"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={handleSearch}
-            />
-            <SearchIcon
-              size={24}
-              className="absolute right-5 top-1/2 transform -translate-y-1/2"
-            />
+            <HomeSearchBar />
           </div>
           <div className="flex flex-wrap w-full gap-2 justify-center align-center">
-            <Link href="/evento/buscar?type=FUTVOLEI">
-              <SportTypeCard
-                className="w-[165px]"
-                Icon={Volleyball}
-                title="Vôlei"
-              />
-            </Link>
-            <Link href="/evento/buscar?type=FUTVOLEI">
-              <SportTypeCard
-                className="w-[165px]"
-                Icon={Volleyball}
-                title="Vôlei"
-              />
-            </Link>
-            <Link href="/evento/buscar?type=FUTVOLEI">
-              <SportTypeCard
-                className="w-[165px]"
-                Icon={Volleyball}
-                title="Vôlei"
-              />
-            </Link>
+            {eventTypes.map((type, index) => (
+              <Link key={index} href={`/evento/buscar?type=${type}`}>
+                <SportTypeCard
+                  className="w-[165px]"
+                  Icon={getEventIcon(type)}
+                  title={translateEventType(type)}
+                />
+              </Link>
+            ))}
           </div>
         </div>
         <div className="container mb-6">
