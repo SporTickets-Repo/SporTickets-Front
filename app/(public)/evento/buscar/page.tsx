@@ -126,13 +126,8 @@ export default function SearchEventPage() {
     isLoading,
   } = useSWR<EventSummary[]>(swrKey, swrFetcher);
 
-  const eventTypes = useMemo(
-    () =>
-      (events ?? [])
-        .map((event) => event.type)
-        .filter((value, index, self) => self.indexOf(value) === index),
-    [events]
-  );
+  const eventTypes =
+    useSWR("eventTypes", eventService.getEventTypes)?.data?.sort() || [];
 
   return (
     <div className="container py-8">
@@ -150,8 +145,8 @@ export default function SearchEventPage() {
           />
         </div>
 
-        <div className="flex items-center gap-4">
-          <div>
+        <div className="flex flex-col md:flex-row items-start gap-4">
+          <div className="flex flex-col">
             <DatePicker date={selectedDate} setDate={setSelectedDate} />
             {selectedDate && (
               <button
@@ -175,6 +170,7 @@ export default function SearchEventPage() {
                 <SelectValue placeholder="Selecione um tipo" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
                 {eventTypes.map((type) => (
                   <SelectItem key={type} value={type}>
                     {translateEventType(type)}
