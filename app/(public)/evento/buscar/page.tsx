@@ -14,6 +14,15 @@ import { Loader2 } from "lucide-react";
 import { EventSummary } from "@/interface/event";
 import { eventService } from "@/service/event";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { translateEventType } from "@/utils/eventTranslations";
+
 async function swrFetcher([, name, startDate, minPrice, maxPrice, type]: [
   string,
   string,
@@ -117,9 +126,17 @@ export default function SearchEventPage() {
     isLoading,
   } = useSWR<EventSummary[]>(swrKey, swrFetcher);
 
+  const eventTypes = useMemo(
+    () =>
+      (events ?? [])
+        .map((event) => event.type)
+        .filter((value, index, self) => self.indexOf(value) === index),
+    [events]
+  );
+
   return (
     <div className="container py-8">
-      <div className="mb-6 space-y-2">
+      <div className="mb-6 space-y-4">
         <div>
           <Label htmlFor="name" className="block font-semibold mb-2">
             Nome do Evento
@@ -133,7 +150,7 @@ export default function SearchEventPage() {
           />
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4">
           <div>
             <DatePicker date={selectedDate} setDate={setSelectedDate} />
             {selectedDate && (
@@ -145,6 +162,26 @@ export default function SearchEventPage() {
                 Limpar data
               </button>
             )}
+          </div>
+
+          <div>
+            <Select
+              value={searchType}
+              onValueChange={(val) => {
+                setSearchType(val);
+              }}
+            >
+              <SelectTrigger className="bg-neutral-50 w-[200px]">
+                <SelectValue placeholder="Selecione um tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                {eventTypes.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {translateEventType(type)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
