@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import { EventSummary } from "@/interface/event";
 import { eventService } from "@/service/event";
 
+import useHome from "@/app/(home)/useHome";
 import {
   Select,
   SelectContent,
@@ -126,8 +127,7 @@ export default function SearchEventPage() {
     isLoading,
   } = useSWR<EventSummary[]>(swrKey, swrFetcher);
 
-  const eventTypes =
-    useSWR("eventTypes", eventService.getEventTypes)?.data?.sort() || [];
+  const { eventTypes } = useHome();
 
   return (
     <div className="container py-8">

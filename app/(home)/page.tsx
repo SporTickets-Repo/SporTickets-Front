@@ -8,19 +8,10 @@ import { translateEventType } from "@/utils/eventTranslations";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
 import useHome from "./useHome";
 
 function App() {
-  const { events, eventsMock } = useHome();
-
-  const eventTypes = useMemo(
-    () =>
-      events
-        .map((event) => event.type)
-        .filter((value, index, self) => self.indexOf(value) === index),
-    [events]
-  );
+  const { events, eventsMock, eventTypes } = useHome();
 
   return (
     <div className="min-h-screen">

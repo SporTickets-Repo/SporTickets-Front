@@ -1,7 +1,7 @@
 "use client";
 import { EventStatus, EventSummary, EventType } from "@/interface/event";
 import { eventService } from "@/service/event";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function useHome() {
   const eventsMock: EventSummary[] = [
@@ -100,5 +100,13 @@ export default function useHome() {
     fetchEvents();
   }, []);
 
-  return { events, eventsMock };
+  const eventTypes = useMemo(
+    () =>
+      events
+        .map((event) => event.type)
+        .filter((value, index, self) => self.indexOf(value) === index),
+    [events]
+  );
+
+  return { events, eventsMock, eventTypes, loading };
 }
