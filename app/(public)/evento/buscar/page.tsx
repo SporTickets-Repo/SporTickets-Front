@@ -2,49 +2,66 @@
 
 import { useDebounce } from "@uidotdev/usehooks";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 
 import EventCard from "@/components/pages/home/event-card";
 import { DatePicker } from "@/components/ui/datePicker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
 
 import { EventSummary } from "@/interface/event";
 import { eventService } from "@/service/event";
-import { Loader2 } from "lucide-react";
+
+async function swrFetcher([, name, startDate, minPrice, maxPrice, type]: [
+  string,
+  string,
+  string,
+  number,
+  number,
+  string
+]) {
+  return eventService.getFilteredEvents(
+    name,
+    startDate,
+    minPrice,
+    maxPrice,
+    type
+  );
+}
 
 export default function SearchEventPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [searchName, setSearchName] = useState("");
+  const paramName = searchParams.get("name") || "";
+  const [searchName, setSearchName] = useState(paramName);
   const [searchType, setSearchType] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    searchParams.get("startDate")
+      ? new Date(searchParams.get("startDate")!)
+      : undefined
+  );
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
 
   const debouncedSearchName = useDebounce(searchName, 500);
 
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
-  const [events, setEvents] = useState<EventSummary[]>([]);
+  useEffect(() => {
+    const paramType = searchParams.get("type") || "";
+    const paramMinPrice = searchParams.get("minPrice") || "";
+    const paramMaxPrice = searchParams.get("maxPrice") || "";
 
-  const handleSearch = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await eventService.getFilteredEvents(
-        debouncedSearchName,
-        selectedDate?.toISOString() ?? "",
-        priceRange[0],
-        priceRange[1],
-        searchType
-      );
-      setEvents(response);
-    } catch (error) {
-      console.error("Erro ao buscar eventos:", error);
-    } finally {
-      setLoading(false);
+    setSearchType(paramType);
+
+    if (paramMinPrice || paramMaxPrice) {
+      setPriceRange([
+        paramMinPrice ? Number(paramMinPrice) : 0,
+        paramMaxPrice ? Number(paramMaxPrice) : 0,
+      ]);
     }
-  }, [debouncedSearchName, selectedDate, priceRange, searchType]);
+  }, [searchParams]);
 
   const applyFilters = useCallback(() => {
     const params = new URLSearchParams();
@@ -59,13 +76,11 @@ export default function SearchEventPage() {
       params.set("minPrice", String(priceRange[0]));
       params.set("maxPrice", String(priceRange[1]));
     }
-
     if (searchType) {
       params.set("type", searchType);
     }
 
     router.replace(`${pathname}?${params.toString()}`);
-    handleSearch();
   }, [
     debouncedSearchName,
     selectedDate,
@@ -73,24 +88,34 @@ export default function SearchEventPage() {
     searchType,
     router,
     pathname,
-    handleSearch,
   ]);
 
   useEffect(() => {
+    applyFilters();
+  }, [debouncedSearchName, selectedDate, priceRange, searchType]);
+
+  const swrKey = useMemo(() => {
     const paramName = searchParams.get("name") || "";
     const paramType = searchParams.get("type") || "";
-    if (paramName) {
-      setSearchName(paramName);
-    }
+    const paramStartDate = searchParams.get("startDate") || "";
+    const paramMinPrice = Number(searchParams.get("minPrice") || "0");
+    const paramMaxPrice = Number(searchParams.get("maxPrice") || "0");
 
-    if (paramType) {
-      setSearchType(paramType);
-    }
+    return [
+      "filteredEvents",
+      paramName,
+      paramStartDate,
+      paramMinPrice,
+      paramMaxPrice,
+      paramType,
+    ];
   }, [searchParams]);
 
-  useEffect(() => {
-    applyFilters();
-  }, [applyFilters]);
+  const {
+    data: events,
+    error,
+    isLoading,
+  } = useSWR<EventSummary[]>(swrKey, swrFetcher);
 
   return (
     <div className="container py-8">
@@ -124,18 +149,22 @@ export default function SearchEventPage() {
         </div>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="flex flex-1 justify-center items-center h-96">
           <Loader2 className="animate-spin self-center w-8 h-8 text-primary" />
         </div>
-      ) : events.length > 0 ? (
+      ) : error ? (
+        <div className="text-center text-red-500">
+          Ocorreu um erro ao buscar eventos.
+        </div>
+      ) : events && events.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           {events.map((event) => (
-            <EventCard key={event?.id} event={event} />
+            <EventCard key={event.id} event={event} />
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500">Nenhum evento encotrado</p>
+        <p className="text-center text-gray-500">Nenhum evento encontrado</p>
       )}
     </div>
   );
