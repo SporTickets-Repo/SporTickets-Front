@@ -20,7 +20,7 @@ export interface TicketType {
   description: string;
   restriction: string;
   userType: string;
-  mode: string;
+  teamSize: number;
   ticketLots: TicketLot[];
   categories: Category[];
   personalizedFields: PersonalizedField[];

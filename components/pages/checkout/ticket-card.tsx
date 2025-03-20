@@ -17,19 +17,18 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
     onSelect(ticket);
   };
 
-  const maxPlayers = () => {
-    switch (ticket.ticketType.mode) {
-      case "SOLO":
-        return 1;
-      case "DUO":
-        return 2;
-      default:
-        return 1;
-    }
-  };
+  const maxPlayers = ticket.ticketType.teamSize;
 
   const completedTicket = () => {
-    if (ticket.players.length === maxPlayers() && ticket.category.id) {
+    console.log(ticket, maxPlayers);
+    if (
+      ticket.players.length === maxPlayers &&
+      ticket.players.every(
+        (player) =>
+          player.personalizedField?.length ===
+          ticket.ticketType.personalizedFields?.length
+      )
+    ) {
       return true;
     }
     return false;
@@ -51,7 +50,7 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
               {ticket.category.title} {ticket.ticketType.description}
             </p>
             <div className="space-y-2">
-              {Array.from({ length: maxPlayers() }, (_, index) => {
+              {Array.from({ length: maxPlayers }, (_, index) => {
                 const player = ticket.players[index];
                 return (
                   <div key={index} className="flex items-center">

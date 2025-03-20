@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
@@ -56,8 +56,25 @@ export default function Home() {
     console.log(player);
   };
 
+  const handleSelectPlayer = (player: Player) => {
+    setEditingPlayer(player);
+  };
+
+  useEffect(() => {
+    if (editingPlayer) {
+      setPlayerFormOpen(true);
+    }
+  }, [editingPlayer]);
+
+  useEffect(() => {
+    setCurrentTicket(
+      selectedTickets.find((ticket) => ticket.id === currentTicket.id) ||
+        selectedTickets[0]
+    );
+  }, [selectedTickets]);
+
   return (
-    <div className="min-h-screen container">
+    <div className="min-h-screen container px-24">
       <div className="flex items-center space-x-4 mt-2 mb-4 ">
         <Button
           variant="tertiary"
@@ -82,9 +99,12 @@ export default function Home() {
           ) : (
             <PlayersList
               players={currentTicket.players}
-              selectedPlayers={currentTicket.players}
-              onSelectPlayer={(player) => setEditingPlayer(player)}
+              onSelectPlayer={(player) => handleSelectPlayer(player)}
               onAddPlayer={() => setPlayerFormOpen(true)}
+              maxPlayers={currentTicket.ticketType.teamSize}
+              numberPersonalizedFields={
+                currentTicket.ticketType.personalizedFields?.length
+              }
             />
           )}
         </div>
@@ -167,7 +187,7 @@ export default function Home() {
           setEditingPlayer(null);
         }}
         currentTicket={currentTicket}
-        player={editingPlayer ? editingPlayer : undefined}
+        player={editingPlayer}
       />
 
       <CouponDialog

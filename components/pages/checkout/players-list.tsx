@@ -6,19 +6,22 @@ import type { Player } from "@/interface/tickets";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { FiUserPlus } from "react-icons/fi";
+import { PlayerCard } from "./player-card";
 
 interface PlayersListProps {
   players: Player[];
-  selectedPlayers: Player[];
   onSelectPlayer: (player: Player) => void;
   onAddPlayer: () => void;
+  maxPlayers: number;
+  numberPersonalizedFields: number;
 }
 
 export function PlayersList({
   players,
-  selectedPlayers,
   onSelectPlayer,
   onAddPlayer,
+  maxPlayers,
+  numberPersonalizedFields,
 }: PlayersListProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -28,24 +31,21 @@ export function PlayersList({
       )
     : players;
 
-  const isPlayerSelected = (player: Player) => {
-    return selectedPlayers.some((p) => p.Userid === player.Userid);
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-lg font-semibold">Jogadores Salvos</h2>
+          <h2 className="text-lg font-semibold">Jogadores adicionados</h2>
           <p className="text-sm text-muted-foreground">
-            Selecionado {selectedPlayers.length}/{players.length}
+            Adicionados {players.length}/{maxPlayers}
           </p>
         </div>
         <Button
           variant="outline"
           size="sm"
-          className="text-sporticket-purple border-sporticket-purple hover:bg-sporticket-purple-50"
+          className="text-md text-sporticket-purple border-sporticket-purple hover:bg-sporticket-purple-50"
           onClick={onAddPlayer}
+          disabled={players.length === maxPlayers}
         >
           Novo Jogador
         </Button>
@@ -63,52 +63,15 @@ export function PlayersList({
 
       <div className="space-y-2">
         {filteredPlayers.length > 0 ? (
-          filteredPlayers.map((player) => (
-            <div
-              key={player.Userid}
-              className={`flex items-center justify-between p-3 rounded-lg cursor-pointer ${
-                isPlayerSelected(player)
-                  ? "bg-sporticket-purple-50"
-                  : "bg-white"
-              }`}
+          filteredPlayers.map((player, index) => (
+            <PlayerCard
+              key={index}
+              player={player}
               onClick={() => onSelectPlayer(player)}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-                  {player.photoUrl ? (
-                    <img
-                      src={player.photoUrl || "/placeholder.svg"}
-                      alt={player.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600">
-                      {player.name.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="font-medium">{player.name}</p>
-                  {player.personalizedFields?.length > 0 && (
-                    <p className="text-xs text-yellow-600">
-                      Completar informações {player.personalizedFields.length}/
-                      {player.personalizedFields.length}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div
-                className={`w-5 h-5 rounded-full border ${
-                  isPlayerSelected(player)
-                    ? "bg-sporticket-purple border-sporticket-purple"
-                    : "border-gray-300"
-                } flex items-center justify-center`}
-              >
-                {isPlayerSelected(player) && (
-                  <div className="w-2 h-2 rounded-full bg-white"></div>
-                )}
-              </div>
-            </div>
+              completed={
+                numberPersonalizedFields === player.personalizedField?.length
+              }
+            />
           ))
         ) : (
           <div className="flex flex-col items-center justify-center py-8 text-center">
