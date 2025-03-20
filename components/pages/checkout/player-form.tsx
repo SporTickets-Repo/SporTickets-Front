@@ -59,7 +59,7 @@ export function PlayerForm({
 }: PlayerFormProps) {
   const { selectedTickets, setSelectedTickets } = useEvent();
   const hasPersonalizedFields =
-    currentTicket.ticketType.personalizedFields.length > 0;
+    currentTicket?.ticketType?.personalizedFields?.length > 0;
   const [step, setStep] = useState<"search" | "register" | "fields">(
     player ? "fields" : "search"
   );
@@ -149,7 +149,7 @@ export function PlayerForm({
 
   const updateTicketPlayers = (playerData: Player) => {
     setSelectedTickets((prevTickets) =>
-      prevTickets.map((t) =>
+      prevTickets?.map((t) =>
         t.id === currentTicket.id
           ? { ...t, players: [...t.players, playerData] }
           : t

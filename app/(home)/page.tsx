@@ -86,19 +86,21 @@ function App() {
         </div>
       </div>
 
-      <div className="container mb-6 h-[50vh] relative">
-        <Image
-          src="/assets/images/banner1.png"
-          alt="Logo"
-          layout="fill"
-          objectFit="cover"
-          className="absolute inset-0 w-full h-full -z-10"
-          unoptimized
-        />
-        <div className="flex flex-col justify-end items-start w-full h-full px-8 py-6">
-          <h2 className="text-2xl font-bold text-white mb-4 italic">
-            Pronto para jogar? Descubra eventos e garanta seu ingresso!
-          </h2>
+      <div className="container">
+        <div className="mb-6 h-[50vh] relative">
+          <Image
+            src="/assets/images/banner1.png"
+            alt="Logo"
+            layout="fill"
+            objectFit="cover"
+            className="absolute inset-0 w-full h-full -z-10 rounded-xl"
+            unoptimized
+          />
+          <div className="flex flex-col justify-end items-start w-full h-full px-8 py-6">
+            <h2 className="text-2xl font-bold text-white mb-4 italic">
+              Pronto para jogar? Descubra eventos e garanta seu ingresso!
+            </h2>
+          </div>
         </div>
       </div>
 
