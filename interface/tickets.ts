@@ -82,8 +82,32 @@ export interface TicketCheckout {
   ticketType: TicketType;
   coupon: Coupon;
   tickets: TicketUser[];
+  paymentData: PaymentData;
 }
 export interface TicketUser {
   userid: string;
   personalFields: PersonalizedFieldResponse[];
+}
+
+export interface PaymentData {
+  paymentMethod: string;
+  cardData: CardData;
+}
+
+export interface CardData {
+  cardNumber: string;
+  expirationMonth: number;
+  expirationYear: number;
+  securityCode: string;
+  cardHolder: CardHolder;
+}
+
+export interface CardHolder {
+  name: string;
+  identification: Identification;
+}
+
+export interface Identification {
+  type: string;
+  number: string;
 }
