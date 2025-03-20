@@ -28,3 +28,13 @@ export enum UserSex {
   MALE = "MALE",
   FEMALE = "FEMALE",
 }
+
+export interface registerWithoutPassword {
+  name: string;
+  document: string;
+  email: string;
+  cep: string;
+  sex: string;
+  bornAt: string;
+  phone: string;
+}

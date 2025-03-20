@@ -2,9 +2,9 @@
 
 import { TicketProps } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
+import { FaRegCircle } from "react-icons/fa6";
 import { HiTicket } from "react-icons/hi2";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { PiSealWarningFill } from "react-icons/pi";
 
 interface TicketCardProps {
   ticket: TicketProps;
@@ -78,7 +78,7 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
               }`}
             />
           ) : (
-            <PiSealWarningFill
+            <FaRegCircle
               className={`h-6 w-6 ${
                 !isSelected ? "text-yellow-600" : "text-sporticket-purple"
               }`}

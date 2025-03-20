@@ -1,3 +1,5 @@
+import { UserSex } from "./user";
+
 export interface TicketLot {
   id: string;
   ticketTypeId: string;
@@ -20,6 +22,8 @@ export interface TicketType {
   userType: string;
   mode: string;
   ticketLots: TicketLot[];
+  categories: Category[];
+  personalizedFields: PersonalizedField[];
 }
 
 export interface PersonalizedField {
@@ -40,15 +44,6 @@ export interface Category {
   quantity: number;
 }
 
-export interface Player {
-  Userid: string;
-  name: string;
-  email: string;
-  phone: string;
-  photoUrl: string;
-  personalizedFields: PersonalizedField[];
-}
-
 export interface Coupon {
   id: string;
   eventId: string;
@@ -56,6 +51,7 @@ export interface Coupon {
   percentage: number;
 }
 
+//Objeto de gerenciamento de respostas
 export interface TicketProps {
   id: string;
   ticketType: TicketType;
@@ -65,14 +61,29 @@ export interface TicketProps {
   coupon: Coupon;
 }
 
+export interface Player {
+  Userid: string;
+  name: string;
+  email: string;
+  phone: string;
+  photoUrl: string;
+  sex: UserSex;
+  personalizedField: PersonalizedFieldResponse[];
+}
+
+export interface PersonalizedFieldResponse {
+  personalizedFieldId: string;
+  answer: string;
+}
+
+//Objetos de envio de API
 export interface TicketCheckout {
   category: Category;
   ticketType: TicketType;
   coupon: Coupon;
   tickets: TicketUser[];
 }
-
 export interface TicketUser {
   userid: string;
-  personalFields: PersonalizedField[];
+  personalFields: PersonalizedFieldResponse[];
 }

@@ -8,6 +8,7 @@ import { CouponDialog } from "@/components/pages/checkout/coupon-dialog";
 import { EventHeader } from "@/components/pages/checkout/event-header";
 import { PaymentMethodDialog } from "@/components/pages/checkout/payment-method-dialog";
 import { PlayerForm } from "@/components/pages/checkout/player-form";
+import { PlayersEmptyList } from "@/components/pages/checkout/players-empty-list";
 import { PlayersList } from "@/components/pages/checkout/players-list";
 import { TicketCard } from "@/components/pages/checkout/ticket-card";
 import { useEvent } from "@/context/event";
@@ -15,10 +16,9 @@ import { Player, TicketProps } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FiUserPlus } from "react-icons/fi";
 
 export default function Home() {
-  const { selectedTickets } = useEvent();
+  const { selectedTickets, setSelectedTickets } = useEvent();
   const router = useRouter();
 
   if (selectedTickets.length === 0) {
@@ -78,31 +78,12 @@ export default function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="w-full">
           {currentTicket.players.length === 0 ? (
-            <div className="flex flex-col w-full space-y-4 items-center  mt-8 ">
-              <div className="max-w-[400px] flex flex-col space-y-4 items-center text-center">
-                <FiUserPlus size={48} className="text-zinc-400" />
-                <h2 className="text-lg font-bold mt-2">
-                  Nenhum Jogador Adicionado
-                </h2>
-                <p className="text-muted-foreground">
-                  Adicione os jogadores que irão participar do evento para
-                  completar a inscrição.
-                </p>
-                <Button
-                  variant="destructive"
-                  className="w-full"
-                  onClick={() => setPlayerFormOpen(true)}
-                >
-                  Adicionar Jogador
-                  <FiUserPlus size={16} />
-                </Button>
-              </div>
-            </div>
+            <PlayersEmptyList onAddPlayer={() => setPlayerFormOpen(true)} />
           ) : (
             <PlayersList
               players={currentTicket.players}
               selectedPlayers={currentTicket.players}
-              onSelectPlayer={handleAddPlayer}
+              onSelectPlayer={(player) => setEditingPlayer(player)}
               onAddPlayer={() => setPlayerFormOpen(true)}
             />
           )}
@@ -185,8 +166,8 @@ export default function Home() {
           setPlayerFormOpen(false);
           setEditingPlayer(null);
         }}
-        onSubmit={handleAddPlayer}
-        initialData={editingPlayer || undefined}
+        currentTicket={currentTicket}
+        player={editingPlayer ? editingPlayer : undefined}
       />
 
       <CouponDialog
