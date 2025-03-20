@@ -64,3 +64,15 @@ export interface TicketProps {
   category: Category;
   coupon: Coupon;
 }
+
+export interface TicketCheckout {
+  category: Category;
+  ticketType: TicketType;
+  coupon: Coupon;
+  tickets: TicketUser[];
+}
+
+export interface TicketUser {
+  userid: string;
+  personalFields: PersonalizedField[];
+}
