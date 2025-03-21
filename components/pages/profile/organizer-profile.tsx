@@ -1,5 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MetricDashboard } from "./metrics/metrics-dashboard";
 import { ProfileEventList } from "./organizer/profile-event-list";
 
 export function OrganizerProfile() {
@@ -39,7 +40,7 @@ export function OrganizerProfile() {
           <ProfileEventList events={events} />
         </TabsContent>
         <TabsContent value="metrics">
-          <p>Métricas</p>
+          <MetricDashboard />
         </TabsContent>
         <TabsContent value="tickets">
           <p>Ingressos</p>
