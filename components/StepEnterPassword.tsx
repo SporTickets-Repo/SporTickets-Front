@@ -90,7 +90,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
         </div>
         <div>
           <Link
-            href="/redefinir-senha"
+            href="/esqueceu-senha"
             className="text-cyan-700 font-medium underline"
           >
             Esqueci minha senha

@@ -60,6 +60,17 @@ export const authService = {
     }
   },
 
+  checkResetToken: async (token: string): Promise<boolean> => {
+    try {
+      const response = await api.get<boolean>(
+        `/auth/check-reset-password-token/${token}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   checkEmail: async (email: string): Promise<boolean> => {
     try {
       const response = await api.get<boolean>(`/auth/check-email/${email}`);
