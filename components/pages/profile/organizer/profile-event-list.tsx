@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
@@ -17,7 +18,7 @@ export function ProfileEventList({ events }: ProfileEventListProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-start">
-        <Link href="/create-event">
+        <Link href="/evento/criar">
           <Button
             variant="default-inverse"
             className="rounded-sm text-md font-medium py-5"
