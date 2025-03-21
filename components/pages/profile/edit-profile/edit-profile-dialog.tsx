@@ -37,21 +37,44 @@ import { Plus } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 
-// Schema de validação com zod para os campos de atualização
 const profileSchema = z.object({
-  name: z.string({ required_error: "Nome obrigatório" }),
-  document: z.string({ required_error: "Documento obrigatório" }),
-  email: z
-    .string({ required_error: "Email obrigatório" })
-    .email("Email inválido"),
-  phone: z.string({ required_error: "Telefone obrigatório" }),
+  name: z.string().min(3, "Nome obrigatório"),
+  document: z
+    .string()
+    .min(1, "Documento obrigatório")
+    .regex(/^\d{11}$/, "Documento deve conter 11 dígitos numéricos"),
+  email: z.string().min(3, "Email obrigatório").email("Email inválido"),
+  phone: z
+    .string()
+    .min(1, "Telefone obrigatório")
+    .regex(/^\d{10,11}$/, "Telefone deve conter 10 ou 11 dígitos numéricos"),
   sex: z.enum(Object.values(UserSex) as [string, ...string[]], {
-    required_error: "Sexo obrigatório",
+    invalid_type_error: "Sexo obrigatório",
   }),
   bornAt: z
-    .string({ required_error: "Data de nascimento obrigatória" })
-    .refine((value) => !isNaN(Date.parse(value)), { message: "Data inválida" }),
-  cep: z.string({ required_error: "CEP obrigatório" }),
+    .string()
+    .min(1, "Data de nascimento obrigatória")
+    .refine((value) => !isNaN(Date.parse(value)), {
+      message: "Data inválida",
+    })
+    .refine(
+      (value) => {
+        const date = new Date(value);
+        const now = new Date();
+        return date < now;
+      },
+      {
+        message: "Data de nascimento não pode ser no futuro",
+      }
+    ),
+
+  cep: z
+    .string()
+    .min(1, "CEP obrigatório")
+    .refine((value) => {
+      return /^\d{8}$/.test(value);
+    }, "CEP deve conter 8 dígitos numéricos"),
+
   imageFile: z.instanceof(File).optional(),
 });
 
@@ -277,7 +300,7 @@ export function EditProfileDialog() {
               control={form.control}
               name="bornAt"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col gap-2">
                   <FormLabel>Data de Nascimento</FormLabel>
                   <FormControl>
                     <DatePicker
