@@ -5,7 +5,6 @@ const EventType = z
   .nonempty({ message: "O tipo do evento é obrigatório" });
 
 const eventFormValuesSchema = z.object({
-  title: z.string().nonempty({ message: "O título é obrigatório" }),
   name: z.string().nonempty({ message: "O nome é obrigatório" }),
   slug: z.string().nonempty({ message: "O slug é obrigatório" }),
   type: z.string().nonempty({ message: "O tipo do evento é obrigatório" }),
@@ -28,15 +27,16 @@ const eventFormValuesSchema = z.object({
 });
 
 const userTypeEnum = z.enum(["ATHLETE", "VIEWER"]);
+const restrictionEnum = z.enum(["SAMECATEGORY", "NONE"]);
 
 const categorySchema = z.object({
   title: z
     .string()
     .nonempty({ message: "O título da categoria é obrigatório" }),
-  description: z.string().optional(),
   quantity: z.number().int().nonnegative({
     message: "A quantidade deve ser um número inteiro não negativo",
   }),
+  restriction: restrictionEnum.optional(),
 });
 
 const personalizedFieldSchema = z.object({
@@ -79,7 +79,7 @@ const ticketTypeSchema = z.object({
     .number()
     .int()
     .min(1, { message: "O tamanho do time deve ser no mínimo 1" }),
-  categories: z.any().optional(),
+  categories: z.array(categorySchema).optional(),
   personalizedFields: z.array(personalizedFieldSchema).optional(),
   ticketLots: z.array(ticketLotSchema).optional(),
 });

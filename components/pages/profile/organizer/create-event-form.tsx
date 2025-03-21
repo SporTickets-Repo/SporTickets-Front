@@ -32,14 +32,11 @@ export function CreateEventForm() {
     resolver: zodResolver(createEventFormValuesSchema),
     defaultValues: {
       event: {
-        title: "",
         name: "",
         slug: "",
         type: "",
         startDate: "",
-        startTime: "",
         endDate: "",
-        endTime: "",
         description: "",
         additionalInfo: "",
         cep: "",
@@ -75,13 +72,6 @@ export function CreateEventForm() {
   };
 
   function onSubmit(data: CreateEventFormValues) {
-    const startDateTime = new Date(
-      data.event.startDate + "T" + data.event.startTime
-    );
-    const endDateTime = new Date(data.event.endDate + "T" + data.event.endTime);
-
-    console.log("Start Date:", startDateTime);
-    console.log("End Date:", endDateTime);
     console.log("Event Data:", data);
   }
 
