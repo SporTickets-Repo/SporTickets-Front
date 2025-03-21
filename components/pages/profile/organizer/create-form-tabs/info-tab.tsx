@@ -16,17 +16,11 @@ import {
 } from "@/components/ui/select";
 import { Tiptap } from "@/components/ui/tiptap";
 import { cn } from "@/lib/utils";
-import {
-  Circle,
-  CircleCheck,
-  CreditCard,
-  ImageIcon,
-  QrCode,
-  Upload,
-} from "lucide-react";
+import { Circle, CircleCheck, ImageIcon, Upload } from "lucide-react";
 import Image from "next/image";
 import React, { useRef } from "react";
 import { useFormContext } from "react-hook-form";
+import { FaCreditCard, FaPix } from "react-icons/fa6";
 
 const slugSugestion = (name: string): string => {
   return name
@@ -527,14 +521,17 @@ export function InfoTab() {
                 Pagamento
               </FormLabel>
               <FormControl>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button
                     type="button"
                     variant="outline"
-                    className={cn("justify-start gap-2 text-sm", {
-                      "text-sporticket-purple border-sporticket-purple border":
-                        field.value?.includes("credit"),
-                    })}
+                    className={cn(
+                      "justify-start gap-2 text-sm w-fit text-wrap h-fit text-start",
+                      {
+                        "text-primary border-primary border":
+                          field.value?.includes("credit"),
+                      }
+                    )}
                     onClick={() => {
                       const current = field.value || [];
                       if (current.includes("credit")) {
@@ -546,8 +543,8 @@ export function InfoTab() {
                       }
                     }}
                   >
-                    <CreditCard className="w-4 h-4" />
-                    Cartão de Crédito/Débito
+                    <FaCreditCard className="w-4 h-4" />
+                    Cartão de Crédito
                     {field.value?.includes("credit") ? (
                       <CircleCheck className="w-4 h-4" />
                     ) : (
@@ -558,10 +555,13 @@ export function InfoTab() {
                   <Button
                     type="button"
                     variant="outline"
-                    className={cn("justify-start gap-2", {
-                      "text-sporticket-purple border-sporticket-purple border":
-                        field.value?.includes("pix"),
-                    })}
+                    className={cn(
+                      "justify-start gap-2 w-fit text-wrap h-fit text-start",
+                      {
+                        "text-primary border-primary border":
+                          field.value?.includes("pix"),
+                      }
+                    )}
                     onClick={() => {
                       const current = field.value || [];
                       if (current.includes("pix")) {
@@ -573,7 +573,7 @@ export function InfoTab() {
                       }
                     }}
                   >
-                    <QrCode className="w-4 h-4" />
+                    <FaPix className="w-4 h-4" />
                     Pix
                     {field.value?.includes("pix") ? (
                       <CircleCheck className="w-4 h-4" />

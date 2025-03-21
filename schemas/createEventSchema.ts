@@ -26,7 +26,12 @@ const eventFormValuesSchema = z.object({
   additionalInfo: z.string().min(15, {
     message: "As informações adicionais devem ter no mínimo 6 caracteres",
   }),
-  cep: z.string().nonempty({ message: "O CEP é obrigatório" }),
+  cep: z
+    .string()
+    .regex(/^\d{5}-\d{3}$/, {
+      message: "O CEP deve estar no formato 12345-678",
+    })
+    .nonempty({ message: "O CEP é obrigatório" }),
   place: z.string().nonempty({ message: "O local é obrigatório" }),
   bannerImageFile: z.string().optional(),
   smallImageFile: z.string().optional(),
