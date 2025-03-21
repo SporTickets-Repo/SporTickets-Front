@@ -1,6 +1,7 @@
 "use client";
+import { Coupon } from "@/interface/coupons";
 import { Event } from "@/interface/event";
-import { Category, Coupon, TicketProps } from "@/interface/tickets";
+import { Player, TicketProps } from "@/interface/tickets";
 import { eventService } from "@/service/event";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -70,8 +71,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
         id: uuidv4(),
         ticketType,
         ticketLot: activeLot,
-        players: [],
-        category: {} as Category,
+        players: [] as Player[],
         coupon: {} as Coupon,
       };
 

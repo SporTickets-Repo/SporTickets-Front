@@ -1,3 +1,4 @@
+import { Coupon } from "./coupons";
 import { UserSex } from "./user";
 
 export interface TicketLot {
@@ -44,20 +45,12 @@ export interface Category {
   quantity: number;
 }
 
-export interface Coupon {
-  id: string;
-  eventId: string;
-  name: string;
-  percentage: number;
-}
-
 //Objeto de gerenciamento de respostas
 export interface TicketProps {
   id: string;
   ticketType: TicketType;
   ticketLot: TicketLot;
   players: Player[];
-  category: Category;
   coupon: Coupon;
 }
 

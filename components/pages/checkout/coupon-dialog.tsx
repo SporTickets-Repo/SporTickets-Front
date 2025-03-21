@@ -16,6 +16,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useEvent } from "@/context/event";
+import { Coupon } from "@/interface/coupons";
+import { couponService } from "@/service/coupon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -28,10 +31,11 @@ const couponSchema = z.object({
 interface CouponDialogProps {
   open: boolean;
   onClose: () => void;
-  onApply: (code: string) => void;
+  eventId: string;
 }
 
-export function CouponDialog({ open, onClose, onApply }: CouponDialogProps) {
+export function CouponDialog({ open, onClose, eventId }: CouponDialogProps) {
+  const { setSelectedTickets, selectedTickets } = useEvent();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof couponSchema>>({
@@ -41,12 +45,21 @@ export function CouponDialog({ open, onClose, onApply }: CouponDialogProps) {
     },
   });
 
+  const aplyCoupon = (coupon: Coupon) => {
+    const newSelectedTickets = selectedTickets.map((ticket) => {
+      return {
+        ...ticket,
+        coupon: coupon,
+      };
+    });
+    setSelectedTickets(newSelectedTickets);
+  };
+
   const onSubmit = async (data: z.infer<typeof couponSchema>) => {
     setLoading(true);
     try {
-      // Here you would validate the coupon with your backend
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      onApply(data.code);
+      const response = await couponService.useCoupon(data.code, eventId);
+      aplyCoupon(response);
       onClose();
     } finally {
       setLoading(false);

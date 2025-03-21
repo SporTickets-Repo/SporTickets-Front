@@ -48,14 +48,6 @@ export default function Home() {
   const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
 
-  const handleApplyCoupon = (couponId: string) => {
-    console.log(couponId);
-  };
-
-  const handleAddPlayer = (player: Player) => {
-    console.log(player);
-  };
-
   const handleSelectPlayer = (player: Player) => {
     setEditingPlayer(player);
   };
@@ -193,7 +185,7 @@ export default function Home() {
       <CouponDialog
         open={couponDialogOpen}
         onClose={() => setCouponDialogOpen(false)}
-        onApply={handleApplyCoupon}
+        eventId={currentTicket.ticketType.eventId}
       />
 
       <PaymentMethodDialog

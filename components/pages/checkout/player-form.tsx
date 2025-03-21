@@ -71,7 +71,7 @@ export function PlayerForm({
   currentTicket,
   player,
 }: PlayerFormProps) {
-  const { selectedTickets, setSelectedTickets } = useEvent();
+  const { setSelectedTickets } = useEvent();
 
   const [step, setStep] = useState<"search" | "register" | "fields">(
     player ? "fields" : "search"
