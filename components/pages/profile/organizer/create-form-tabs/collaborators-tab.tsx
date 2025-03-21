@@ -73,6 +73,7 @@ export function CollaboratorsTab() {
     if (foundCollaborator) {
       append({
         userId: foundCollaborator.userId,
+        name: foundCollaborator.name,
       });
       setFoundCollaborator(null);
       setQuery("");
@@ -161,9 +162,7 @@ export function CollaboratorsTab() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="min-w-[200px]">
-                Colaborador (userId)
-              </TableHead>
+              <TableHead className="min-w-[200px]">Colaborador</TableHead>
               <TableHead className="w-[100px]">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -173,7 +172,7 @@ export function CollaboratorsTab() {
                 <TableCell className="break-all">
                   <FormField
                     control={control}
-                    name={`collaborators.${index}.userId`}
+                    name={`collaborators.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>

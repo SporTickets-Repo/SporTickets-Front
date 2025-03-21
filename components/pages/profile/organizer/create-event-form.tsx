@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,13 @@ import { TicketsTab } from "./create-form-tabs/tickets-tab";
 
 type TabType = "info" | "tickets" | "coupons" | "collaborators";
 
+const tabLabels = {
+  info: "Informações",
+  tickets: "Ingressos",
+  coupons: "Cupons",
+  collaborators: "Colaboradores",
+};
+
 export function CreateEventForm() {
   const methods = useForm<CreateEventFormValues>({
     resolver: zodResolver(createEventFormValuesSchema),
@@ -49,8 +56,8 @@ export function CreateEventForm() {
         neighborhood: "",
         place: "",
         regulation: "",
-        bannerImageFile: "",
-        smallImageFile: "",
+        bannerImageFile: undefined,
+        smallImageFile: undefined,
       },
       ticketTypes: [],
       collaborators: [],
@@ -64,6 +71,7 @@ export function CreateEventForm() {
   };
 
   const [activeTab, setActiveTab] = useState<TabType>("info");
+  const [tabErrors, setTabErrors] = useState<TabType[]>([]);
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -80,12 +88,38 @@ export function CreateEventForm() {
     }
   };
 
+  const tabOrder: TabType[] = ["info", "tickets", "coupons", "collaborators"];
+  const handleNextTab = () => {
+    const currentIndex = tabOrder.indexOf(activeTab);
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < tabOrder.length) {
+      setActiveTab(tabOrder[nextIndex]);
+    }
+  };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeTab]);
+
   function onSubmit(data: CreateEventFormValues) {
+    setTabErrors([]);
     console.log("Event Data:", data);
   }
 
+  const getTabErrors = (errors: any): TabType[] => {
+    const tabsWithErrors: TabType[] = [];
+
+    if (errors.event) tabsWithErrors.push("info");
+    if (errors.ticketTypes) tabsWithErrors.push("tickets");
+    if (errors.coupons) tabsWithErrors.push("coupons");
+    if (errors.collaborators) tabsWithErrors.push("collaborators");
+
+    return tabsWithErrors;
+  };
+
   const onError = (errors: any) => {
     console.log("Validation errors:", errors);
+    setTabErrors(getTabErrors(errors));
   };
 
   return (
@@ -101,56 +135,47 @@ export function CreateEventForm() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold">Configuração do evento</h1>
-          <p className="text-sm text-muted-foreground"></p>
         </div>
       </div>
-      <Card className="p-6 space-y-6 min-h-[80vh]">
+      <Card className="p-6 space-y-6 h-full ">
         <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-1/4 space-y-2">
+          <div className="w-full md:w-1/4 space-y-2 ">
             <nav className="space-y-2">
-              <Button
-                variant={activeTab === "info" ? "orange-inverse" : "ghost"}
-                className="w-full justify-start gap-2 h-10"
-                onClick={() => setActiveTab("info")}
-              >
-                <ClipboardList className="w-4 h-4" />
-                Informações
-              </Button>
-              <Button
-                variant={activeTab === "tickets" ? "orange-inverse" : "ghost"}
-                className="w-full justify-start gap-2 h-10"
-                onClick={() => setActiveTab("tickets")}
-              >
-                <Ticket className="w-4 h-4" />
-                Ingressos
-              </Button>
-              <Button
-                variant={activeTab === "coupons" ? "orange-inverse" : "ghost"}
-                className="w-full justify-start gap-2 h-10"
-                onClick={() => setActiveTab("coupons")}
-              >
-                <TicketPercent className="w-4 h-4" />
-                Cupons
-              </Button>
-              <Button
-                variant={
-                  activeTab === "collaborators" ? "orange-inverse" : "ghost"
-                }
-                className="w-full justify-start gap-2 h-10"
-                onClick={() => setActiveTab("collaborators")}
-              >
-                <Users2 className="w-4 h-4" />
-                Colaboradores
-              </Button>
+              {tabOrder.map((tab) => (
+                <Button
+                  key={tab}
+                  variant={activeTab === tab ? "orange-inverse" : "ghost"}
+                  className="w-full justify-start gap-2 h-10"
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab === "info" && <ClipboardList className="w-4 h-4" />}
+                  {tab === "tickets" && <Ticket className="w-4 h-4" />}
+                  {tab === "coupons" && <TicketPercent className="w-4 h-4" />}
+                  {tab === "collaborators" && <Users2 className="w-4 h-4" />}
+                  {tabLabels[tab]}
+                </Button>
+              ))}
             </nav>
+            <Separator orientation="horizontal" className="w-full" />
+
+            <div className="my-5 flex flex-col items-center gap-4">
+              {tabErrors.length > 0 && (
+                <div className="text-red-500 text-sm text-center">
+                  {tabErrors.map((tab) => (
+                    <p key={tab}>Aba de {tabLabels[tab]} incompleta.</p>
+                  ))}
+                </div>
+              )}
+              <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(onSubmit, onError)}>
+                  <Button type="submit">Criar evento</Button>
+                </form>
+              </FormProvider>
+            </div>
           </div>
 
-          <div className="hidden md:block px-6">
-            <Separator orientation="vertical" className="h-full" />
-          </div>
-          <div className="md:hidden my-6">
-            <Separator orientation="horizontal" />
-          </div>
+          <Separator orientation="vertical" className="hidden md:block px-6" />
+          <Separator orientation="horizontal" className="md:hidden my-6" />
 
           <div className="w-full md:w-3/4">
             <FormProvider {...methods}>
@@ -159,11 +184,13 @@ export function CreateEventForm() {
                 className="space-y-6"
               >
                 {renderActiveTab()}
-                {activeTab === "collaborators" && (
-                  <div className="flex justify-end gap-4">
-                    <Button type="submit">Criar evento</Button>
-                  </div>
-                )}
+                <div className="flex justify-end">
+                  {activeTab !== "collaborators" && (
+                    <Button type="button" onClick={handleNextTab}>
+                      Próximo
+                    </Button>
+                  )}
+                </div>
               </form>
             </FormProvider>
           </div>
