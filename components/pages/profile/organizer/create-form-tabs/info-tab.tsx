@@ -14,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Tiptap } from "@/components/ui/tiptap";
 import { cn } from "@/lib/utils";
 import {
@@ -26,11 +25,24 @@ import {
   Upload,
 } from "lucide-react";
 import Image from "next/image";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { useFormContext } from "react-hook-form";
+
+const slugSugestion = (name: string): string => {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ç/g, "c")
+    .replace(/[^a-zA-Z0-9 ]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+};
 
 export function InfoTab() {
   const { control, watch, setValue } = useFormContext();
+
+  const eventName = watch("event.name");
+  const eventSlug = watch("event.slug");
 
   const eventImagePreview = watch("smallImageFile") || null;
   const mainImagePreview = watch("bannerImageFile") || null;
@@ -48,7 +60,6 @@ export function InfoTab() {
 
   const eventImageRef = useRef<HTMLInputElement | null>(null);
   const mainImageRef = useRef<HTMLInputElement | null>(null);
-  const description = watch("event.description") || "";
 
   return (
     <div className="space-y-6 max-w-full px-4 sm:px-6">
@@ -58,29 +69,30 @@ export function InfoTab() {
         </h1>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 h-auto sm:h-40">
+      {/* Imagens (pequena e maior) */}
+      <div className="flex flex-col sm:flex-row gap-0 sm:gap-6 h-auto sm:h-40">
         <div className="w-full sm:w-1/3">
           <FormLabel htmlFor="event-cover" className="text-muted-foreground">
             Imagem do evento
           </FormLabel>
           <div
-            className="mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[80%] flex flex-col items-center justify-center gap-2"
+            className="mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
             onClick={() => eventImageRef.current?.click()}
           >
             {eventImagePreview ? (
               <Image
                 src={eventImagePreview}
                 alt="Imagem do evento"
-                width={40}
-                height={40}
-                className="w-full h-full rounded-lg object-contain"
+                width={600}
+                height={400}
+                className="w-full h-full rounded-lg object-cover"
               />
             ) : (
               <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full">
                 <ImageIcon className="w-4 h-4" />
                 <div className="flex flex-col items-center gap-1">
                   <p className="text-sm">Menor</p>
-                  <p className="text-xs text-muted-foreground">40x40 px</p>
+                  <p className="text-xs text-muted-foreground">600x400 px</p>
                 </div>
               </div>
             )}
@@ -97,7 +109,7 @@ export function InfoTab() {
         <div className="w-full sm:w-2/3">
           <FormLabel className="invisible">Spacer</FormLabel>
           <div
-            className="mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[80%] flex flex-col items-center justify-center gap-2"
+            className="sm:mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
             onClick={() => mainImageRef.current?.click()}
           >
             {mainImagePreview ? (
@@ -126,10 +138,12 @@ export function InfoTab() {
         </div>
       </div>
 
+      {/* Sobre o evento */}
       <div className="space-y-4">
         <FormLabel className="text-muted-foreground">Sobre o evento</FormLabel>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Nome do evento */}
           <FormField
             control={control}
             name="event.name"
@@ -148,20 +162,61 @@ export function InfoTab() {
               </FormItem>
             )}
           />
+
+          {/* URL do evento (com sugestão e input "domain" desabilitado) */}
           <FormField
             control={control}
             name="event.slug"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="event-slug">URL do evento</FormLabel>
-                <FormControl>
+                <FormLabel htmlFor="event-slug">
+                  URL do evento
+                  {eventName &&
+                    eventName.length > 3 &&
+                    eventSlug !== slugSugestion(eventName) && (
+                      <span className="font-normal pl-2">
+                        sugestão:{" "}
+                        <button
+                          className="text-blue-400 hover:text-blue-600"
+                          type="button"
+                          onClick={() =>
+                            setValue("event.slug", slugSugestion(eventName), {
+                              shouldValidate: true,
+                            })
+                          }
+                        >
+                          {slugSugestion(eventName)}
+                        </button>
+                      </span>
+                    )}
+                </FormLabel>
+
+                <div className="flex items-center mt-2">
+                  {/* Input desabilitado com domínio fixo */}
                   <Input
-                    id="event-slug"
-                    placeholder="copa-dos-craques"
-                    className="mt-2"
-                    {...field}
+                    className="rounded-r-none"
+                    disabled
+                    value="sportickets.com.br/"
                   />
-                </FormControl>
+
+                  {/* Input para o slug propriamente dito */}
+                  <FormControl>
+                    <Input
+                      id="event-slug"
+                      placeholder="copa-dos-craques"
+                      className="rounded-l-none"
+                      value={field.value || ""}
+                      onChange={(e) => {
+                        let value = e.target.value
+                          .normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "")
+                          .toLowerCase()
+                          .replace(/[^a-z0-9-]/g, "");
+                        field.onChange(value);
+                      }}
+                    />
+                  </FormControl>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -191,6 +246,7 @@ export function InfoTab() {
               </FormItem>
             )}
           />
+
           <FormField
             control={control}
             name="event.competitionLevel"
@@ -268,12 +324,13 @@ export function InfoTab() {
                 Descrição do evento
               </FormLabel>
               <FormControl>
-                <Textarea
-                  id="event-description"
-                  placeholder="Descreva os detalhes do seu evento..."
-                  className="mt-2 resize-none"
-                  rows={6}
-                  {...field}
+                <Tiptap
+                  onChange={(value: string) => {
+                    setValue("event.description", value, {
+                      shouldValidate: true,
+                    });
+                  }}
+                  initialContent={field.value}
                 />
               </FormControl>
               <FormMessage />
@@ -311,12 +368,13 @@ export function InfoTab() {
                 Informações adicionais
               </FormLabel>
               <FormControl>
-                <Textarea
-                  id="event-additional-information"
-                  placeholder="Informações adicionais sobre o evento..."
-                  className="mt-2 resize-none"
-                  rows={6}
-                  {...field}
+                <Tiptap
+                  onChange={(value: string) => {
+                    setValue("event.additionalInfo", value, {
+                      shouldValidate: true,
+                    });
+                  }}
+                  initialContent={field.value}
                 />
               </FormControl>
               <FormMessage />
@@ -324,6 +382,7 @@ export function InfoTab() {
           )}
         />
 
+        {/* Endereço */}
         <FormLabel className="text-muted-foreground">Endereço</FormLabel>
         <FormField
           control={control}
@@ -457,6 +516,7 @@ export function InfoTab() {
         </div>
       </div>
 
+      {/* Pagamento */}
       <div className="space-y-4">
         <FormField
           control={control}

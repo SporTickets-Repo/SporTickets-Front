@@ -30,6 +30,7 @@ type TabType = "info" | "tickets" | "coupons" | "collaborators";
 export function CreateEventForm() {
   const methods = useForm<CreateEventFormValues>({
     resolver: zodResolver(createEventFormValuesSchema),
+    mode: "onChange",
     defaultValues: {
       event: {
         name: "",

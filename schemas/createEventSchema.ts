@@ -1,12 +1,13 @@
 import * as z from "zod";
 
-const EventType = z
-  .string()
-  .nonempty({ message: "O tipo do evento é obrigatório" });
-
 const eventFormValuesSchema = z.object({
   name: z.string().nonempty({ message: "O nome é obrigatório" }),
-  slug: z.string().nonempty({ message: "O slug é obrigatório" }),
+  slug: z
+    .string()
+    .regex(/^[a-z0-9-]+$/, {
+      message: "O slug deve conter apenas letras minúsculas, números e hífens",
+    })
+    .nonempty({ message: "O slug é obrigatório" }),
   type: z.string().nonempty({ message: "O tipo do evento é obrigatório" }),
   startDate: z.string().nonempty({ message: "A data de início é obrigatória" }),
   startTime: z.string().nonempty({ message: "A hora de início é obrigatória" }),
@@ -16,11 +17,17 @@ const eventFormValuesSchema = z.object({
   endTime: z
     .string()
     .nonempty({ message: "A hora de encerramento é obrigatória" }),
-  description: z.string().optional(),
-  additionalInfo: z.string().optional(),
+  description: z.string().min(15, {
+    message: "A descrição deve ter no mínimo 6 caracteres",
+  }),
+  regulation: z.string().min(15, {
+    message: "O regulamento deve ter no mínimo 6 caracteres",
+  }),
+  additionalInfo: z.string().min(15, {
+    message: "As informações adicionais devem ter no mínimo 6 caracteres",
+  }),
   cep: z.string().nonempty({ message: "O CEP é obrigatório" }),
   place: z.string().nonempty({ message: "O local é obrigatório" }),
-  regulation: z.string().optional(),
   bannerImageFile: z.string().optional(),
   smallImageFile: z.string().optional(),
   paymentMethods: z.array(z.string()).optional(),
