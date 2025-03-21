@@ -10,13 +10,9 @@ const eventFormValuesSchema = z.object({
     .nonempty({ message: "O slug é obrigatório" }),
   type: z.string().nonempty({ message: "O tipo do evento é obrigatório" }),
   startDate: z.string().nonempty({ message: "A data de início é obrigatória" }),
-  startTime: z.string().nonempty({ message: "A hora de início é obrigatória" }),
   endDate: z
     .string()
     .nonempty({ message: "A data de encerramento é obrigatória" }),
-  endTime: z
-    .string()
-    .nonempty({ message: "A hora de encerramento é obrigatória" }),
   description: z.string().min(15, {
     message: "A descrição deve ter no mínimo 6 caracteres",
   }),
@@ -39,8 +35,12 @@ const eventFormValuesSchema = z.object({
   complement: z.string().optional(),
   neighborhood: z.string().nonempty({ message: "O bairro é obrigatório" }),
   place: z.string().nonempty({ message: "O local é obrigatório" }),
-  bannerImageFile: z.string().optional(),
-  smallImageFile: z.string().optional(),
+  bannerImageFile: z.instanceof(File, {
+    message: "O arquivo da imagem do banner é obrigatório",
+  }),
+  smallImageFile: z.instanceof(File, {
+    message: "O arquivo da imagem pequena é obrigatório",
+  }),
   paymentMethods: z.array(z.string()).optional(),
 });
 
