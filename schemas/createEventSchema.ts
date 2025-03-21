@@ -32,6 +32,12 @@ const eventFormValuesSchema = z.object({
       message: "O CEP deve estar no formato 12345-678",
     })
     .nonempty({ message: "O CEP é obrigatório" }),
+  city: z.string().nonempty({ message: "A cidade é obrigatória" }),
+  state: z.string().nonempty({ message: "O estado é obrigatório" }),
+  street: z.string().nonempty({ message: "A rua é obrigatória" }),
+  addressNumber: z.string().optional(),
+  complement: z.string().optional(),
+  neighborhood: z.string().nonempty({ message: "O bairro é obrigatório" }),
   place: z.string().nonempty({ message: "O local é obrigatório" }),
   bannerImageFile: z.string().optional(),
   smallImageFile: z.string().optional(),

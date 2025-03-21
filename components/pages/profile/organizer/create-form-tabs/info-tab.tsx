@@ -21,6 +21,7 @@ import Image from "next/image";
 import React, { useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { FaCreditCard, FaPix } from "react-icons/fa6";
+import { toast } from "sonner";
 
 const slugSugestion = (name: string): string => {
   return name
@@ -41,6 +42,39 @@ export function InfoTab() {
   const eventImagePreview = watch("smallImageFile") || null;
   const mainImagePreview = watch("bannerImageFile") || null;
 
+  const eventImageRef = useRef<HTMLInputElement | null>(null);
+  const mainImageRef = useRef<HTMLInputElement | null>(null);
+
+  const handleCepBlur = async (rawCep: string) => {
+    const cepLimpo = rawCep.replace(/\D/g, "");
+
+    if (cepLimpo.length !== 8) return;
+
+    try {
+      const response = await fetch(
+        `https://viacep.com.br/ws/${cepLimpo}/json/`
+      );
+      if (!response.ok) {
+        console.error("Erro ao buscar CEP");
+        return;
+      }
+      const data = await response.json();
+
+      if (data.erro) {
+        console.error("CEP não encontrado na base da ViaCEP");
+        toast.error("CEP não encontrado na base da ViaCEP");
+        return;
+      }
+
+      setValue("event.street", data.logradouro || "");
+      setValue("event.city", data.localidade || "");
+      setValue("event.state", data.uf || "");
+      setValue("event.neighborhood", data.bairro || "");
+    } catch (error) {
+      console.error("Erro na requisição ViaCEP:", error);
+    }
+  };
+
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     fieldName: "smallImageFile" | "bannerImageFile"
@@ -51,9 +85,6 @@ export function InfoTab() {
       setValue(fieldName, previewUrl);
     }
   };
-
-  const eventImageRef = useRef<HTMLInputElement | null>(null);
-  const mainImageRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <div className="space-y-6 max-w-full px-4 sm:px-6">
@@ -396,6 +427,7 @@ export function InfoTab() {
             </FormItem>
           )}
         />
+
         <FormField
           control={control}
           name="event.cep"
@@ -408,22 +440,24 @@ export function InfoTab() {
                   placeholder="00000-000"
                   className="mt-2"
                   {...field}
+                  onBlur={() => handleCepBlur(field.value)}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={control}
             name="event.city"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="event-city">Cidade</FormLabel>
+                <FormLabel htmlFor="event.city">Cidade</FormLabel>
                 <FormControl>
                   <Input
-                    id="event-city"
+                    id="event.city"
                     placeholder="Cidade"
                     className="mt-2"
                     {...field}
@@ -452,7 +486,26 @@ export function InfoTab() {
             )}
           />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormField
+            control={control}
+            name="event.neighborhood"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="event-neighborhood">Bairro</FormLabel>
+                <FormControl>
+                  <Input
+                    id="event-neighborhood"
+                    placeholder="Bairro"
+                    className="mt-2"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={control}
             name="event.street"
@@ -471,15 +524,18 @@ export function InfoTab() {
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={control}
-            name="event.address-number"
+            name="event.addressNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="event-address-number">Número</FormLabel>
+                <FormLabel htmlFor="event-addressNumber">Número</FormLabel>
                 <FormControl>
                   <Input
-                    id="event-address-number"
+                    id="event-addressNumber"
                     placeholder="Número"
                     className="mt-2"
                     {...field}
