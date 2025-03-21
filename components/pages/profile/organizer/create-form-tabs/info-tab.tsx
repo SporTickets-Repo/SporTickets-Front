@@ -98,7 +98,7 @@ export function InfoTab() {
       <div className="flex flex-col sm:flex-row gap-0 sm:gap-6 h-auto sm:h-40">
         <div className="w-full sm:w-1/3">
           <FormLabel htmlFor="event-cover" className="text-muted-foreground">
-            Imagem do evento
+            Imagem do evento (card)
           </FormLabel>
           <div
             className="mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
@@ -113,12 +113,12 @@ export function InfoTab() {
                 className="w-full h-full rounded-lg object-cover"
               />
             ) : (
-              <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full">
+              <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full text-center">
                 <ImageIcon className="w-4 h-4" />
-                <div className="flex flex-col items-center gap-1">
-                  <p className="text-sm">Menor</p>
-                  <p className="text-xs text-muted-foreground">600x400 px</p>
-                </div>
+                <p className="text-sm">Menor</p>
+                <p className="text-xs text-muted-foreground">
+                  Sugerido: 1200x600 px
+                </p>
               </div>
             )}
           </div>
@@ -132,7 +132,9 @@ export function InfoTab() {
         </div>
 
         <div className="w-full sm:w-2/3">
-          <FormLabel className="invisible">Spacer</FormLabel>
+          <FormLabel className="text-muted-foreground">
+            Imagem maior (banner do topo)
+          </FormLabel>
           <div
             className="sm:mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
             onClick={() => mainImageRef.current?.click()}
@@ -143,13 +145,15 @@ export function InfoTab() {
                 alt="Imagem maior"
                 width={1920}
                 height={1080}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-lg "
               />
             ) : (
-              <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full">
+              <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full text-center">
                 <Upload className="w-4 h-4" />
                 <p className="text-sm">Imagem maior</p>
-                <p className="text-xs text-muted-foreground">1920x1080 px</p>
+                <p className="text-xs text-muted-foreground">
+                  Sugerido: 1920x480 px
+                </p>
               </div>
             )}
           </div>
