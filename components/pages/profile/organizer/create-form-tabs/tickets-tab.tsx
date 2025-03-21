@@ -1,0 +1,575 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  MinusIcon,
+  PlusIcon,
+  Ticket,
+  Trash2Icon,
+  UserCheck,
+} from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+
+interface TicketItemProps {
+  index: number;
+  removeTicket: (index: number) => void;
+}
+
+function TicketItem({ index, removeTicket }: TicketItemProps) {
+  const { control, watch } = useFormContext();
+
+  const currentUserType = watch(`ticketTypes.${index}.userType`);
+
+  const lotsArray = useFieldArray({
+    control,
+    name: `ticketTypes.${index}.ticketLots`,
+  });
+
+  const customFieldsArray = useFieldArray({
+    control,
+    name: `ticketTypes.${index}.personalizedFields`,
+  });
+
+  return (
+    <Accordion type="multiple" defaultValue={[`ticket-${index}`]}>
+      <AccordionItem value={`ticket-${index}`}>
+        <AccordionTrigger className="text-sporticket-purple">
+          <div className="flex items-center justify-between w-full px-2">
+            <h3 className="text-lg font-semibold">
+              {watch(`ticketTypes.${index}.name`) || "Novo Ingresso"}
+            </h3>
+            <div className="gap-2 flex items-center">
+              <FormField
+                control={control}
+                name={`ticketTypes.${index}.isActive`}
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <Label>Ativo</Label>
+                  </FormItem>
+                )}
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeTicket(index);
+                }}
+              >
+                <Trash2Icon className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Informações básicas</h3>
+              <FormField
+                control={control}
+                name={`ticketTypes.${index}.name`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Título do ingresso</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Masculino Dupla" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name={`ticketTypes.${index}.description`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Pequena Descrição</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Ex: Inclui short e camiseta"
+                        className="resize-none"
+                        rows={6}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name={`ticketTypes.${index}.userType`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo de usuário</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ATHLETE">Atleta</SelectItem>
+                        <SelectItem value="VIEWER">Espectador</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {currentUserType !== "VIEWER" && (
+                <FormField
+                  control={control}
+                  name={`ticketTypes.${index}.categories`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Categoria</FormLabel>
+                      <Select
+                        value={
+                          field.value && field.value[0] ? field.value[0] : ""
+                        }
+                        onValueChange={(value) => field.onChange([value])}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione a categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="iniciante">Iniciante</SelectItem>
+                          <SelectItem value="amador">Amador</SelectItem>
+                          <SelectItem value="profissional">
+                            Profissional
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              <div className="flex flex-col gap-4">
+                <FormField
+                  control={control}
+                  name={`ticketTypes.${index}.teamSize`}
+                  render={({ field }) => (
+                    <FormItem className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <UserCheck className="h-4 w-4" />
+                        <FormLabel>Quantidade de atletas</FormLabel>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-8 h-8 p-0"
+                          onClick={() =>
+                            field.onChange(Math.max(1, field.value - 1))
+                          }
+                        >
+                          <MinusIcon className="h-4 w-4" />
+                        </Button>
+                        <Input
+                          type="number"
+                          className="w-20 text-center"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-8 h-8 p-0"
+                          onClick={() => field.onChange(field.value + 1)}
+                        >
+                          <PlusIcon className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={control}
+                  name={`ticketTypes.${index}.quantity`}
+                  render={({ field }) => (
+                    <FormItem className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Ticket className="h-4 w-4" />
+                        <FormLabel>
+                          Quantidade de ingressos disponíveis
+                        </FormLabel>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-8 h-8 p-0"
+                          onClick={() =>
+                            field.onChange(Math.max(0, field.value - 1))
+                          }
+                        >
+                          <MinusIcon className="h-4 w-4" />
+                        </Button>
+                        <Input
+                          type="number"
+                          className="w-20 text-center"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-8 h-8 p-0"
+                          onClick={() => field.onChange(field.value + 1)}
+                        >
+                          <PlusIcon className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Ticket Lots Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium">Lotes</h3>
+                <Button
+                  variant="ghost"
+                  className="gap-2 text-sporticket-orange text-sm"
+                  onClick={() =>
+                    lotsArray.append({
+                      title: "",
+                      price: 0,
+                      startDateTime: "",
+                      endDateTime: "",
+                      quantity: 0,
+                      isActive: true,
+                    })
+                  }
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  Adicionar novo lote
+                </Button>
+              </div>
+              <Accordion type="multiple">
+                {lotsArray.fields.map((lot, lotIndex) => (
+                  <AccordionItem key={lot.id} value={`lot-${lot.id}`}>
+                    <AccordionTrigger>
+                      <div className="flex items-center justify-between w-full px-2">
+                        <h3 className="text-lg font-semibold">
+                          {watch(
+                            `ticketTypes.${index}.ticketLots.${lotIndex}.name`
+                          ) || `Lote ${lotIndex + 1}`}
+                        </h3>
+                        <div className="gap-2 flex items-center">
+                          <FormField
+                            control={control}
+                            name={`ticketTypes.${index}.ticketLots.${lotIndex}.isActive`}
+                            render={({ field }) => (
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <Label>Ativo</Label>
+                              </FormItem>
+                            )}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              lotsArray.remove(lotIndex);
+                            }}
+                          >
+                            <Trash2Icon className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-4 p-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={control}
+                            name={`ticketTypes.${index}.ticketLots.${lotIndex}.name`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Nome do lote</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Lote Inicial"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={control}
+                            name={`ticketTypes.${index}.ticketLots.${lotIndex}.price`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Preço do lote</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder="R$ 50,00"
+                                    {...field}
+                                    onChange={(e) =>
+                                      field.onChange(Number(e.target.value))
+                                    }
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={control}
+                            name={`ticketTypes.${index}.ticketLots.${lotIndex}.startDateTime`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Data e hora de início</FormLabel>
+                                <FormControl>
+                                  <Input type="datetime-local" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={control}
+                            name={`ticketTypes.${index}.ticketLots.${lotIndex}.endDateTime`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Data e hora de término</FormLabel>
+                                <FormControl>
+                                  <Input type="datetime-local" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <FormField
+                          control={control}
+                          name={`ticketTypes.${index}.ticketLots.${lotIndex}.quantity`}
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Ticket className="h-4 w-4" />
+                                <FormLabel>Quantidade disponível</FormLabel>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  className="w-8 h-8 p-0"
+                                  onClick={() =>
+                                    field.onChange(Math.max(0, field.value - 1))
+                                  }
+                                >
+                                  <MinusIcon className="h-4 w-4" />
+                                </Button>
+                                <Input
+                                  type="number"
+                                  className="w-20 text-center"
+                                  {...field}
+                                  onChange={(e) =>
+                                    field.onChange(Number(e.target.value))
+                                  }
+                                />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  className="w-8 h-8 p-0"
+                                  onClick={() =>
+                                    field.onChange(field.value + 1)
+                                  }
+                                >
+                                  <PlusIcon className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+
+            <Separator />
+
+            {/* Personalized Fields Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium">Campos personalizados</h3>
+                <Button
+                  variant="ghost"
+                  className="gap-2 text-sporticket-orange text-sm"
+                  onClick={() =>
+                    customFieldsArray.append({
+                      question: "",
+                      type: "text",
+                    })
+                  }
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  Adicionar campo
+                </Button>
+              </div>
+              {customFieldsArray.fields.map((field, fieldIndex) => (
+                <div
+                  key={field.id}
+                  className="flex items-center justify-between"
+                >
+                  <div className="flex gap-4 w-full">
+                    <FormField
+                      control={control}
+                      name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.question`}
+                      render={({ field }) => (
+                        <FormItem className="w-1/2">
+                          <FormLabel>Pergunta</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Ex: Qual clube você treina?"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.type`}
+                      render={({ field }) => (
+                        <FormItem className="w-1/2">
+                          <FormLabel>Tipo de resposta</FormLabel>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o tipo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="text">Texto</SelectItem>
+                              <SelectItem value="checkbox">Opções</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-sporticket-purple"
+                    onClick={() => customFieldsArray.remove(fieldIndex)}
+                  >
+                    <Trash2Icon className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  );
+}
+
+export function TicketsTab() {
+  const { control } = useFormContext();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "ticketTypes", // Now using "ticketTypes"
+  });
+
+  const addNewTicket = () => {
+    append({
+      name: "", // Title of the ticket
+      description: "",
+      restriction: "",
+      userType: "ATHLETE", // default value
+      teamSize: 1,
+      category: [], // Set as an empty array (since schema expects an array)
+      personalizedFields: [],
+      ticketLots: [],
+      isActive: true,
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">Ingressos</h2>
+          <p className="text-sm text-muted-foreground">
+            Quantidade total: {fields.length}
+          </p>
+        </div>
+        <Button
+          onClick={addNewTicket}
+          variant="outline"
+          className="gap-2 text-sporticket-purple"
+        >
+          <PlusIcon className="h-4 w-4" />
+          Novo Ingresso
+        </Button>
+      </div>
+      {fields.map((item, index) => (
+        <TicketItem key={item.id} index={index} removeTicket={remove} />
+      ))}
+      {fields.length === 0 && (
+        <div className="text-center py-8 text-muted-foreground">
+          Nenhum ingresso cadastrado. Clique em "Novo Ingresso" para começar.
+        </div>
+      )}
+    </div>
+  );
+}
