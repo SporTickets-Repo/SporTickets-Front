@@ -19,7 +19,7 @@ import {
   CreateEventFormValues,
   createEventFormValuesSchema,
 } from "@/schemas/createEventSchema";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
 import { InfoTab } from "./create-form-tabs/info-tab";
@@ -51,8 +51,10 @@ export function CreateEventForm() {
     },
   });
 
+  const router = useRouter();
+
   const handleGoBack = () => {
-    router.back();
+    router.push("/perfil");
   };
 
   const [activeTab, setActiveTab] = useState<TabType>("info");

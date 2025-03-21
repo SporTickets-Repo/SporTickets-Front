@@ -58,8 +58,12 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
     name: `ticketTypes.${index}.categories`,
   });
   return (
-    <Accordion type="multiple" defaultValue={[`ticket-${index}`]}>
-      <AccordionItem value={`ticket-${index}`}>
+    <Accordion
+      type="multiple"
+      defaultValue={[`ticket-${index}`]}
+      className="space-y-4 p-2"
+    >
+      <AccordionItem value={`ticket-${index}`} className="border rounded-md">
         <AccordionTrigger className="text-sporticket-purple">
           <div className="flex items-center justify-between w-full px-2">
             <h3 className="text-lg font-semibold">
@@ -94,7 +98,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
             </div>
           </div>
         </AccordionTrigger>
-        <AccordionContent>
+        <AccordionContent className="bg-white py-4">
           <div className="space-y-6">
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Informações básicas</h3>
@@ -353,9 +357,13 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   Adicionar novo lote
                 </Button>
               </div>
-              <Accordion type="multiple">
+              <Accordion type="multiple" className="space-y-4 p-2">
                 {lotsArray.fields.map((lot, lotIndex) => (
-                  <AccordionItem key={lot.id} value={`lot-${lot.id}`}>
+                  <AccordionItem
+                    key={lot.id}
+                    value={`lot-${lot.id}`}
+                    className="border rounded-md"
+                  >
                     <AccordionTrigger>
                       <div className="flex items-center justify-between w-full px-2">
                         <h3 className="text-lg font-semibold">
@@ -392,7 +400,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                         </div>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent className="bg-white">
                       <div className="space-y-4 p-4">
                         <div className="grid grid-cols-2 gap-4">
                           <FormField
@@ -597,17 +605,17 @@ export function TicketsTab() {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "ticketTypes", // Now using "ticketTypes"
+    name: "ticketTypes",
   });
 
   const addNewTicket = () => {
     append({
-      name: "", // Title of the ticket
+      name: "",
       description: "",
       restriction: "",
-      userType: "ATHLETE", // default value
+      userType: "ATHLETE",
       teamSize: 1,
-      category: [], // Set as an empty array (since schema expects an array)
+      category: [],
       personalizedFields: [],
       ticketLots: [],
       isActive: true,
