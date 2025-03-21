@@ -69,6 +69,7 @@ export interface Player {
   photoUrl: string;
   sex: UserSex;
   personalizedField: PersonalizedFieldResponse[];
+  category: Category;
 }
 
 export interface PersonalizedFieldResponse {
@@ -78,7 +79,6 @@ export interface PersonalizedFieldResponse {
 
 //Objetos de envio de API
 export interface TicketCheckout {
-  category: Category;
   ticketType: TicketType;
   coupon: Coupon;
   tickets: TicketUser[];
@@ -87,6 +87,7 @@ export interface TicketCheckout {
 export interface TicketUser {
   userid: string;
   personalFields: PersonalizedFieldResponse[];
+  category: Category;
 }
 
 export interface PaymentData {

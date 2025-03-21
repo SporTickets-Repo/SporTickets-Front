@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ProfileEventCard } from "./profile-event-card";
 
 interface Event {
-  title: string;
+  name: string;
   location: string;
   type: string;
 }
@@ -31,7 +31,7 @@ export function ProfileEventList({ events }: ProfileEventListProps) {
         {events.map((event, index) => (
           <ProfileEventCard
             key={index}
-            title={event.title}
+            title={event.name}
             location={event.location}
             type={event.type}
           />

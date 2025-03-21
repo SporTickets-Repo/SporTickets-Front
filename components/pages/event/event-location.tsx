@@ -7,7 +7,7 @@ interface EventLocationProps {
   address: Address;
   place: string;
 }
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_GOOGLE_MAPS_API_KEY;
 
 export default function EventLocation({ address, place }: EventLocationProps) {
   const mapsQuery = `${address.logradouro}, ${address.bairro}, ${address.localidade}, ${address.uf}, Brasil`;
