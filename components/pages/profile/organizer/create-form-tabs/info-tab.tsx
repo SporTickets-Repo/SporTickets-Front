@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Tiptap } from "@/components/ui/tiptap";
 import { cn } from "@/lib/utils";
 import {
   Circle,
@@ -57,7 +58,6 @@ export function InfoTab() {
         </h1>
       </div>
 
-      {/* Image Upload Section */}
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 h-auto sm:h-40">
         <div className="w-full sm:w-1/3">
           <FormLabel htmlFor="event-cover" className="text-muted-foreground">
@@ -132,13 +132,13 @@ export function InfoTab() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={control}
-            name="event.title"
+            name="event.name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="event-title">Título do evento</FormLabel>
+                <FormLabel htmlFor="event-name">Nome do evento</FormLabel>
                 <FormControl>
                   <Input
-                    id="event-title"
+                    id="event-name"
                     placeholder="Copa dos Craques"
                     className="mt-2"
                     {...field}
@@ -226,7 +226,7 @@ export function InfoTab() {
                 <FormLabel htmlFor="event-start-date">Data de início</FormLabel>
                 <FormControl>
                   <Input
-                    type="date"
+                    type="datetime-local"
                     id="event-start-date"
                     className="mt-2"
                     {...field}
@@ -236,27 +236,7 @@ export function InfoTab() {
               </FormItem>
             )}
           />
-          <FormField
-            control={control}
-            name="event.startTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="event-start-time">Hora de início</FormLabel>
-                <FormControl>
-                  <Input
-                    type="time"
-                    id="event-start-time"
-                    className="mt-2"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={control}
             name="event.endDate"
@@ -267,28 +247,8 @@ export function InfoTab() {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    type="date"
+                    type="datetime-local"
                     id="event-end-date"
-                    className="mt-2"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name="event.endTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="event-end-time">
-                  Hora de encerramento
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="time"
-                    id="event-end-time"
                     className="mt-2"
                     {...field}
                   />
@@ -314,6 +274,27 @@ export function InfoTab() {
                   className="mt-2 resize-none"
                   rows={6}
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="event.regulation"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="event-regulation">Regulamento</FormLabel>
+              <FormControl>
+                <Tiptap
+                  onChange={(value: string) => {
+                    setValue("event.regulation", value, {
+                      shouldValidate: true,
+                    });
+                  }}
+                  initialContent={field.value}
                 />
               </FormControl>
               <FormMessage />

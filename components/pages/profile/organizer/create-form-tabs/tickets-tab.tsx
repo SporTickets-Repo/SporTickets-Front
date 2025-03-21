@@ -53,6 +53,10 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
     name: `ticketTypes.${index}.personalizedFields`,
   });
 
+  const categoriesArray = useFieldArray({
+    control,
+    name: `ticketTypes.${index}.categories`,
+  });
   return (
     <Accordion type="multiple" defaultValue={[`ticket-${index}`]}>
       <AccordionItem value={`ticket-${index}`}>
@@ -145,34 +149,100 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                 )}
               />
               {currentUserType !== "VIEWER" && (
-                <FormField
-                  control={control}
-                  name={`ticketTypes.${index}.categories`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Categoria</FormLabel>
-                      <Select
-                        value={
-                          field.value && field.value[0] ? field.value[0] : ""
-                        }
-                        onValueChange={(value) => field.onChange([value])}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">Categorias</h3>
+                  {categoriesArray.fields.map((cat, catIndex) => (
+                    <div
+                      key={cat.id}
+                      className="flex flex-col sm:flex-row items-center gap-4"
+                    >
+                      <FormField
+                        control={control}
+                        name={`ticketTypes.${index}.categories.${catIndex}.title`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel>Título</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Título da categoria"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={control}
+                        name={`ticketTypes.${index}.categories.${catIndex}.quantity`}
+                        render={({ field }) => (
+                          <FormItem className="w-24">
+                            <FormLabel>Quantidade</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="0"
+                                value={field.value ?? ""}
+                                onChange={(e) =>
+                                  field.onChange(Number(e.target.value))
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={control}
+                        name={`ticketTypes.${index}.categories.${catIndex}.restriction`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel>Restrição</FormLabel>
+                            <FormControl>
+                              <Select
+                                value={field.value}
+                                onValueChange={field.onChange}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione a restrição" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="SAMECATEGORY">
+                                    Mesma Categoria
+                                  </SelectItem>
+                                  <SelectItem value="NONE">Nenhuma</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => categoriesArray.remove(catIndex)}
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione a categoria" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="iniciante">Iniciante</SelectItem>
-                          <SelectItem value="amador">Amador</SelectItem>
-                          <SelectItem value="profissional">
-                            Profissional
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <Trash2Icon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      categoriesArray.append({
+                        title: "",
+                        quantity: 0,
+                        restriction: "NONE",
+                      })
+                    }
+                  >
+                    Adicionar Categoria
+                  </Button>
+                </div>
               )}
+
               <div className="flex flex-col gap-4">
                 <FormField
                   control={control}
@@ -365,7 +435,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                         <div className="grid grid-cols-2 gap-4">
                           <FormField
                             control={control}
-                            name={`ticketTypes.${index}.ticketLots.${lotIndex}.startDateTime`}
+                            name={`ticketTypes.${index}.ticketLots.${lotIndex}.startDate`}
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel>Data e hora de início</FormLabel>
@@ -378,7 +448,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           />
                           <FormField
                             control={control}
-                            name={`ticketTypes.${index}.ticketLots.${lotIndex}.endDateTime`}
+                            name={`ticketTypes.${index}.ticketLots.${lotIndex}.endDate`}
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel>Data e hora de término</FormLabel>
