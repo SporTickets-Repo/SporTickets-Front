@@ -89,7 +89,7 @@ export function CreateEventForm() {
   };
 
   return (
-    <div className="container max-w-7xl mx-auto py-10">
+    <div className="container max-w-7xl pb-10">
       <div className="flex items-center space-x-4 mt-2 mb-4">
         <Button
           variant="tertiary"
