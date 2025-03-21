@@ -62,10 +62,14 @@ export function CouponsTab() {
         </Button>
       </div>
 
-      <Accordion type="multiple" className="space-y-2">
+      <Accordion type="multiple" className="space-y-4 p-4">
         {fields.map((item, index) => (
-          <AccordionItem key={item.id} value={`coupon-${index}`}>
-            <AccordionTrigger className="flex items-center justify-between p-4">
+          <AccordionItem
+            key={item.id}
+            value={`coupon-${index}`}
+            className="border rounded-md"
+          >
+            <AccordionTrigger className="flex items-center justify-between">
               <div className="flex items-center justify-between w-full px-2">
                 <div>
                   <h3 className="font-medium">
@@ -104,7 +108,7 @@ export function CouponsTab() {
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="p-4 sm:p-6 space-y-4">
+            <AccordionContent className="p-4 sm:p-6 space-y-4 bg-white">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={control}
