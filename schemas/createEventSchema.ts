@@ -97,6 +97,10 @@ const ticketTypeSchema = z.object({
     .number()
     .int()
     .min(1, { message: "O tamanho do time deve ser no mínimo 1" }),
+  quantity: z
+    .number()
+    .int()
+    .min(1, { message: "A quantidade deve ser no mínimo 1" }),
   categories: z.array(categorySchema).optional(),
   personalizedFields: z.array(personalizedFieldSchema).optional(),
   ticketLots: z.array(ticketLotSchema).optional(),

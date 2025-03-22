@@ -169,7 +169,9 @@ export function InfoTab() {
 
       {/* Sobre o evento */}
       <div className="space-y-4">
-        <FormLabel className="text-muted-foreground">Sobre o evento</FormLabel>
+        <FormLabel className="text-muted-foreground text-lg">
+          Sobre o evento
+        </FormLabel>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Nome do evento */}
@@ -412,7 +414,9 @@ export function InfoTab() {
         />
 
         {/* Endereço */}
-        <FormLabel className="text-muted-foreground">Endereço</FormLabel>
+        <FormLabel className="text-muted-foreground text-lg">
+          Endereço
+        </FormLabel>
         <FormField
           control={control}
           name="event.place"

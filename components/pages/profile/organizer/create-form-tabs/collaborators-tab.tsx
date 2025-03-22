@@ -101,6 +101,7 @@ export function CollaboratorsTab() {
           <DialogTrigger asChild>
             <Button
               variant="ghost"
+              type="button"
               className="text-sporticket-purple w-full sm:w-auto"
             >
               Novo Colaborador
@@ -133,12 +134,14 @@ export function CollaboratorsTab() {
                 <>
                   <Button
                     variant="ghost"
+                    type="button"
                     onClick={handleBackToSearch}
                     className="w-full sm:w-auto"
                   >
                     Voltar
                   </Button>
                   <Button
+                    type="button"
                     onClick={handleConfirmCollaborator}
                     className="w-full sm:w-auto"
                   >
@@ -147,6 +150,7 @@ export function CollaboratorsTab() {
                 </>
               ) : (
                 <Button
+                  type="button"
                   onClick={handleSearchCollaborator}
                   className="w-full sm:w-auto"
                 >
@@ -190,6 +194,7 @@ export function CollaboratorsTab() {
                 </TableCell>
                 <TableCell>
                   <Button
+                    type="button"
                     variant="destructive"
                     size="sm"
                     onClick={() => remove(index)}

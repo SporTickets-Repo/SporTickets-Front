@@ -77,6 +77,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
                       <Switch
+                        onClick={(e) => e.stopPropagation()}
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
@@ -87,6 +88,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
               />
               <Button
                 variant="ghost"
+                type="button"
                 size="icon"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -184,12 +186,15 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                             <FormLabel>Quantidade</FormLabel>
                             <FormControl>
                               <Input
-                                type="number"
                                 placeholder="0"
                                 value={field.value ?? ""}
-                                onChange={(e) =>
-                                  field.onChange(Number(e.target.value))
-                                }
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(
+                                    /\D/g,
+                                    ""
+                                  );
+                                  field.onChange(Number(value));
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -224,6 +229,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       />
                       <Button
                         variant="ghost"
+                        type="button"
                         size="icon"
                         onClick={() => categoriesArray.remove(catIndex)}
                       >
@@ -231,21 +237,27 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       </Button>
                     </div>
                   ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      categoriesArray.append({
-                        title: "",
-                        quantity: 0,
-                        restriction: "NONE",
-                      })
-                    }
-                  >
-                    Adicionar Categoria
-                  </Button>
                 </div>
               )}
+
+              <div className="flex flex-1 justify-end">
+                <Button
+                  variant="outline"
+                  type="button"
+                  size="sm"
+                  className="gap-2 text-sporticket-orange text-sm"
+                  onClick={() =>
+                    categoriesArray.append({
+                      title: "",
+                      quantity: 0,
+                      restriction: "NONE",
+                    })
+                  }
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  Adicionar Categoria
+                </Button>
+              </div>
 
               <div className="flex flex-col gap-4">
                 <FormField
@@ -269,12 +281,12 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           <MinusIcon className="h-4 w-4" />
                         </Button>
                         <Input
-                          type="number"
                           className="w-20 text-center"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(Number(value));
+                          }}
                         />
                         <Button
                           type="button"
@@ -311,12 +323,12 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           <MinusIcon className="h-4 w-4" />
                         </Button>
                         <Input
-                          type="number"
                           className="w-20 text-center"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(Number(value));
+                          }}
                         />
                         <Button
                           type="button"
@@ -341,6 +353,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                 <h3 className="text-lg font-medium">Lotes</h3>
                 <Button
                   variant="ghost"
+                  type="button"
                   className="gap-2 text-sporticket-orange text-sm"
                   onClick={() =>
                     lotsArray.append({
@@ -379,6 +392,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                               <FormItem className="flex items-center space-x-2">
                                 <FormControl>
                                   <Switch
+                                    onClick={(e) => e.stopPropagation()}
                                     checked={field.value}
                                     onCheckedChange={field.onChange}
                                   />
@@ -389,6 +403,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           />
                           <Button
                             variant="ghost"
+                            type="button"
                             size="icon"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -489,12 +504,15 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                   <MinusIcon className="h-4 w-4" />
                                 </Button>
                                 <Input
-                                  type="number"
                                   className="w-20 text-center"
                                   {...field}
-                                  onChange={(e) =>
-                                    field.onChange(Number(e.target.value))
-                                  }
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(
+                                      /\D/g,
+                                      ""
+                                    );
+                                    field.onChange(Number(value));
+                                  }}
                                 />
                                 <Button
                                   type="button"
@@ -525,6 +543,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                 <h3 className="text-lg font-medium">Campos personalizados</h3>
                 <Button
                   variant="ghost"
+                  type="button"
                   className="gap-2 text-sporticket-orange text-sm"
                   onClick={() =>
                     customFieldsArray.append({
@@ -584,6 +603,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   </div>
                   <Button
                     variant="ghost"
+                    type="button"
                     size="icon"
                     className="text-sporticket-purple"
                     onClick={() => customFieldsArray.remove(fieldIndex)}
@@ -615,6 +635,7 @@ export function TicketsTab() {
       restriction: "",
       userType: "ATHLETE",
       teamSize: 1,
+      quantity: 1,
       category: [],
       personalizedFields: [],
       ticketLots: [],
@@ -633,6 +654,7 @@ export function TicketsTab() {
         </div>
         <Button
           onClick={addNewTicket}
+          type="button"
           variant="outline"
           className="gap-2 text-sporticket-purple"
         >

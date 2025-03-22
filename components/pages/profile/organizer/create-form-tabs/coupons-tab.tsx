@@ -48,6 +48,7 @@ export function CouponsTab() {
         </div>
         <Button
           size="sm"
+          type="button"
           onClick={() =>
             append({
               couponName: "",
@@ -87,6 +88,7 @@ export function CouponsTab() {
                       <FormItem className="flex items-center space-x-2">
                         <FormControl>
                           <Switch
+                            onClick={(e) => e.stopPropagation()}
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />
@@ -97,6 +99,7 @@ export function CouponsTab() {
                   />
                   <Button
                     variant="ghost"
+                    type="button"
                     size="icon"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -132,12 +135,15 @@ export function CouponsTab() {
                         <FormLabel>Percentual de Desconto</FormLabel>
                         <FormControl>
                           <Input
-                            type="number"
                             placeholder="10"
                             value={field.value ?? ""}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
+                            onChange={(e) => {
+                              const value = Math.min(
+                                100,
+                                Number(e.target.value.replace(/\D/g, ""))
+                              );
+                              field.onChange(value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -152,12 +158,12 @@ export function CouponsTab() {
                         <FormLabel>Quantidade</FormLabel>
                         <FormControl>
                           <Input
-                            type="number"
                             placeholder="Quantidade"
                             value={field.value ?? ""}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, "");
+                              field.onChange(Number(value));
+                            }}
                           />
                         </FormControl>
                         <FormMessage />

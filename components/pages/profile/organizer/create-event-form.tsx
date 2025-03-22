@@ -97,6 +97,14 @@ export function CreateEventForm() {
     }
   };
 
+  const handlePreviousTab = () => {
+    const currentIndex = tabOrder.indexOf(activeTab);
+    const previousIndex = currentIndex - 1;
+    if (previousIndex >= 0) {
+      setActiveTab(tabOrder[previousIndex]);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeTab]);
@@ -184,7 +192,16 @@ export function CreateEventForm() {
                 className="space-y-6"
               >
                 {renderActiveTab()}
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-4">
+                  {activeTab !== "info" && (
+                    <Button
+                      variant="default-inverse"
+                      type="button"
+                      onClick={handlePreviousTab}
+                    >
+                      Anterior
+                    </Button>
+                  )}
                   {activeTab !== "collaborators" && (
                     <Button type="button" onClick={handleNextTab}>
                       Próximo
