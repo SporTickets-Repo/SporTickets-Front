@@ -83,13 +83,6 @@ export function PlayerForm({
         </DialogHeader>
 
         <Tabs value={step} className="space-y-4">
-          {/* <TabsList className="grid grid-cols-2">
-            <TabsTrigger value="search">Buscar</TabsTrigger>
-            {hasPersonalizedFields && (
-              <TabsTrigger value="fields">Personalizados</TabsTrigger>
-            )}
-          </TabsList> */}
-
           <TabsContent value="search">
             <SearchStep
               onClose={onClose}
@@ -106,6 +99,7 @@ export function PlayerForm({
                 setStep("register");
               }}
               initialEmail={player?.email}
+              currentTicket={currentTicket}
             />
           </TabsContent>
 

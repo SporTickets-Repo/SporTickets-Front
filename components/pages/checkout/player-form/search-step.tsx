@@ -10,9 +10,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Player } from "@/interface/tickets";
+import { useAuth } from "@/context/auth";
+import { Player, TicketProps } from "@/interface/tickets";
 import { userService } from "@/service/user";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -25,6 +27,7 @@ interface Props {
   onNotFound: (email: string) => void;
   onClose: () => void;
   initialEmail?: string;
+  currentTicket: TicketProps;
 }
 
 export function SearchStep({
@@ -32,24 +35,47 @@ export function SearchStep({
   onNotFound,
   onClose,
   initialEmail = "",
+  currentTicket,
 }: Props) {
+  const { user } = useAuth();
+  const [customError, setCustomError] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof emailFormSchema>>({
     resolver: zodResolver(emailFormSchema),
     defaultValues: { email: initialEmail },
   });
 
   const handleSubmit = async (data: z.infer<typeof emailFormSchema>) => {
+    handleFound(data.email);
+  };
+
+  const handleAddMe = () => {
+    if (!user) return;
+    handleFound(user.email);
+  };
+
+  const handleFound = async (email: string) => {
     try {
-      const response = await userService.getUserByEmail(data.email);
+      const response = await userService.getUserByEmail(email);
+      const isDuplicated = currentTicket.players.some(
+        (p) => p.Userid === response.Userid
+      );
+      if (isDuplicated) {
+        setCustomError("Já existe um jogador com este CPF neste ingresso.");
+        return;
+      }
       onFound(response);
     } catch {
-      onNotFound(data.email);
+      onNotFound(email);
     }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <Button onClick={handleAddMe} className="w-full">
+          Adicionar meu usuário
+        </Button>
         <FormField
           control={form.control}
           name="email"
@@ -60,6 +86,11 @@ export function SearchStep({
                 <Input {...field} placeholder="Digite o e-mail" />
               </FormControl>
               <FormMessage />
+              {customError && (
+                <p className="text-sm font-medium text-red-500 mt-1">
+                  {customError}
+                </p>
+              )}
             </FormItem>
           )}
         />
