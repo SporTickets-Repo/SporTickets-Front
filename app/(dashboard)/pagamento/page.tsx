@@ -104,10 +104,7 @@ export default function Home() {
               players={currentTicket.players}
               onSelectPlayer={(player) => handleSelectPlayer(player)}
               onAddPlayer={() => setPlayerFormOpen(true)}
-              maxPlayers={currentTicket.ticketType.teamSize}
-              numberPersonalizedFields={
-                currentTicket.ticketType.personalizedFields?.length
-              }
+              currentTicket={currentTicket}
             />
           )}
         </div>
