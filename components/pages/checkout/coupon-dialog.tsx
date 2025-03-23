@@ -58,7 +58,10 @@ export function CouponDialog({ open, onClose, eventId }: CouponDialogProps) {
   const onSubmit = async (data: z.infer<typeof couponSchema>) => {
     setLoading(true);
     try {
-      const response = await couponService.useCoupon(data.code, eventId);
+      const response = await couponService.useCoupon(
+        data.code.toUpperCase(),
+        eventId
+      );
       aplyCoupon(response);
       onClose();
     } finally {

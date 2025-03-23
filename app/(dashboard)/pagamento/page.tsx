@@ -18,20 +18,24 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { selectedTickets, setSelectedTickets } = useEvent();
+  const { selectedTickets } = useEvent();
   const router = useRouter();
 
-  if (selectedTickets.length === 0) {
+  const handleGoBack = () => {
     router.back();
+  };
+
+  if (selectedTickets.length === 0) {
+    handleGoBack();
   }
 
   const [currentTicket, setCurrentTicket] = useState<TicketProps>(
     selectedTickets[0]
   );
-
-  const handleGoBack = () => {
-    router.back();
-  };
+  const [playerFormOpen, setPlayerFormOpen] = useState(false);
+  const [couponDialogOpen, setCouponDialogOpen] = useState(false);
+  const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
 
   const handleSelectTicket = (ticket: TicketProps) => {
     setCurrentTicket(ticket);
@@ -41,12 +45,18 @@ export default function Home() {
     return acc + parseFloat(ticket.ticketLot.price);
   }, 0);
 
-  console.log(selectedTickets);
+  const totalDiscount = selectedTickets.reduce((acc, ticket) => {
+    if (ticket.coupon.id) {
+      return (
+        acc +
+        parseFloat(ticket.ticketLot.price) -
+        ticket.coupon.percentage * parseFloat(ticket.ticketLot.price)
+      );
+    }
+    return acc;
+  }, 0);
 
-  const [playerFormOpen, setPlayerFormOpen] = useState(false);
-  const [couponDialogOpen, setCouponDialogOpen] = useState(false);
-  const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = useState(false);
-  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  console.log(selectedTickets);
 
   const handleSelectPlayer = (player: Player) => {
     setEditingPlayer(player);
@@ -86,7 +96,7 @@ export default function Home() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="w-full">
-          {currentTicket.players.length === 0 ? (
+          {currentTicket.players?.length === 0 ? (
             <PlayersEmptyList onAddPlayer={() => setPlayerFormOpen(true)} />
           ) : (
             <PlayersList
@@ -124,7 +134,17 @@ export default function Home() {
                 size="outline"
                 onClick={() => setCouponDialogOpen(true)}
               >
-                {"Adicionar Cupom"}
+                {currentTicket.coupon.id ? (
+                  <div>
+                    <span className="text-sporticket-green-700">
+                      -{currentTicket.coupon.percentage * 100}%
+                    </span>
+                    {"  "}
+                    {currentTicket.coupon.name.toUpperCase()}
+                  </div>
+                ) : (
+                  "Adicionar Cupom"
+                )}
                 <ChevronRight size={16} className="text-zinc-800/80" />
               </Button>
             </div>
@@ -143,8 +163,20 @@ export default function Home() {
             <hr className="border-zinc-300" />
             <div className="flex justify-between items-center">
               <p className="text-zinc-800/80">Total</p>
-              <p className="text-zinc-800 font-semibold">
-                {formatMoneyBR(total)}
+              <p className={`text-zinc-800 font-semibold`}>
+                {currentTicket.coupon.id ? (
+                  <div className="flex items-center gap-3">
+                    <div className="text-zinc-400 text-xs line-through">
+                      {formatMoneyBR(total)}
+                    </div>
+
+                    <div className="text-sporticket-green-700">
+                      {formatMoneyBR(totalDiscount)}
+                    </div>
+                  </div>
+                ) : (
+                  formatMoneyBR(total)
+                )}
               </p>
             </div>
             <div className="">

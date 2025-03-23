@@ -20,7 +20,6 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
   const maxPlayers = ticket.ticketType.teamSize;
 
   const completedTicket = () => {
-    console.log(ticket, maxPlayers);
     if (
       ticket.players.length === maxPlayers &&
       ticket.players.every(
@@ -47,11 +46,11 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
           <div>
             <h3 className="">{ticket.ticketType.name}</h3>
             <p className="text-sm text-muted-foreground mb-3">
-              {ticket.category.title} {ticket.ticketType.description}
+              {ticket.ticketType.description}
             </p>
             <div className="space-y-2">
               {Array.from({ length: maxPlayers }, (_, index) => {
-                const player = ticket.players[index];
+                const player = ticket?.players[index];
                 return (
                   <div key={index} className="flex items-center">
                     <p className="text-sm text-muted-foreground">
