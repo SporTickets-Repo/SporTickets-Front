@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { CouponDialog } from "@/components/pages/checkout/coupon-dialog";
 import { EventHeader } from "@/components/pages/checkout/event-header";
 import { PaymentMethodDialog } from "@/components/pages/checkout/payment-method-dialog";
-import { PlayerForm } from "@/components/pages/checkout/player-form";
+
+import { PlayerForm } from "@/components/pages/checkout/player-form/index";
 import { PlayersEmptyList } from "@/components/pages/checkout/players-empty-list";
 import { PlayersList } from "@/components/pages/checkout/players-list";
 import { TicketCard } from "@/components/pages/checkout/ticket-card";
@@ -169,7 +170,6 @@ export default function Home() {
                     <div className="text-zinc-400 text-xs line-through">
                       {formatMoneyBR(total)}
                     </div>
-
                     <div className="text-sporticket-green-700">
                       {formatMoneyBR(totalDiscount)}
                     </div>

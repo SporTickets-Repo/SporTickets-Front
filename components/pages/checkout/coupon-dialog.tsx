@@ -64,6 +64,8 @@ export function CouponDialog({ open, onClose, eventId }: CouponDialogProps) {
       );
       aplyCoupon(response);
       onClose();
+    } catch (error: any) {
+      form.setError("code", { message: "Cupom inválido ou indisponível" });
     } finally {
       setLoading(false);
     }

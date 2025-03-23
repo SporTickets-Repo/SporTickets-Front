@@ -1,0 +1,151 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Player, TicketProps } from "@/interface/tickets";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { PlayerCard } from "../player-card";
+
+const fieldSchema = z
+  .object({
+    categoryId: z.string().min(1, "Categoria obrigatória"),
+  })
+  .catchall(z.string().min(1));
+
+interface Props {
+  player: Player;
+  currentTicket: TicketProps;
+  onSave: (updated: Player) => void;
+  onClose: () => void;
+}
+
+export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
+  const form = useForm<Record<string, string> & { categoryId: string }>({
+    resolver: zodResolver(fieldSchema),
+    defaultValues: {
+      ...(player.personalizedField?.reduce(
+        (acc, f) => ({ ...acc, [f.personalizedFieldId]: f.answer }),
+        {}
+      ) || {}),
+      categoryId: player.category?.id || "",
+    },
+  });
+
+  const onSubmit = (data: Record<string, string> & { categoryId: string }) => {
+    const updated: Player = {
+      ...player,
+      personalizedField: Object.entries(data)
+        .filter(([key]) => key !== "categoryId")
+        .map(([id, answer]) => ({
+          personalizedFieldId: id,
+          answer,
+        })),
+      category:
+        currentTicket.ticketType.categories.find(
+          (c) => c.id === data.categoryId
+        ) || player.category,
+    };
+
+    onSave(updated);
+    onClose();
+  };
+
+  return (
+    <>
+      <PlayerCard player={player} />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+          <FormField
+            control={form.control}
+            name="categoryId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Categoria</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione uma categoria" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {currentTicket.ticketType.categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {currentTicket.ticketType.personalizedFields.map((field) => (
+            <FormField
+              key={field.id}
+              control={form.control}
+              name={field.id}
+              render={({ field: formField }) => (
+                <FormItem>
+                  <FormLabel>{field.requestTitle}</FormLabel>
+                  <FormControl>
+                    {field.type === "text" ? (
+                      <Input {...formField} />
+                    ) : (
+                      <Select
+                        onValueChange={formField.onChange}
+                        defaultValue={formField.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.entries(field.optionsList).map(
+                            ([key, value]) => (
+                              <SelectItem key={key} value={value}>
+                                {value}
+                              </SelectItem>
+                            )
+                          )}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button type="submit">Salvar</Button>
+          </div>
+        </form>
+      </Form>
+    </>
+  );
+}
