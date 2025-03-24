@@ -18,7 +18,7 @@ import { Tiptap } from "@/components/ui/tiptap";
 import { cn } from "@/lib/utils";
 import { Circle, CircleCheck, ImageIcon, Upload } from "lucide-react";
 import Image from "next/image";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { FaCreditCard, FaPix } from "react-icons/fa6";
 import { toast } from "sonner";
@@ -39,15 +39,41 @@ export function InfoTab() {
   const eventName = watch("event.name");
   const eventSlug = watch("event.slug");
 
-  const eventImagePreview = watch("smallImageFile") || null;
-  const mainImagePreview = watch("bannerImageFile") || null;
+  const smallImageFile = watch("event.smallImageFile");
+  const bannerImageFile = watch("event.bannerImageFile");
+
+  const [smallImagePreview, setSmallImagePreview] = useState<string | null>(
+    null
+  );
+  const [bannerImagePreview, setBannerImagePreview] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (smallImageFile instanceof File) {
+      const objectUrl = URL.createObjectURL(smallImageFile);
+      setSmallImagePreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else {
+      setSmallImagePreview(null);
+    }
+  }, [smallImageFile]);
+
+  useEffect(() => {
+    if (bannerImageFile instanceof File) {
+      const objectUrl = URL.createObjectURL(bannerImageFile);
+      setBannerImagePreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else {
+      setBannerImagePreview(null);
+    }
+  }, [bannerImageFile]);
 
   const eventImageRef = useRef<HTMLInputElement | null>(null);
   const mainImageRef = useRef<HTMLInputElement | null>(null);
 
   const handleCepBlur = async (rawCep: string) => {
     const cepLimpo = rawCep.replace(/\D/g, "");
-
     if (cepLimpo.length !== 8) return;
 
     try {
@@ -59,13 +85,11 @@ export function InfoTab() {
         return;
       }
       const data = await response.json();
-
       if (data.erro) {
         console.error("CEP não encontrado na base da ViaCEP");
         toast.error("CEP não encontrado na base da ViaCEP");
         return;
       }
-
       setValue("event.street", data.logradouro || "");
       setValue("event.city", data.localidade || "");
       setValue("event.state", data.uf || "");
@@ -81,8 +105,7 @@ export function InfoTab() {
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setValue(fieldName, previewUrl);
+      setValue(`event.${fieldName}`, file, { shouldValidate: true });
     }
   };
 
@@ -94,7 +117,6 @@ export function InfoTab() {
         </h1>
       </div>
 
-      {/* Imagens (pequena e maior) */}
       <div className="flex flex-col sm:flex-row gap-0 sm:gap-6 h-auto sm:h-40">
         <div className="w-full sm:w-1/3">
           <FormLabel htmlFor="event-cover" className="text-muted-foreground">
@@ -104,9 +126,9 @@ export function InfoTab() {
             className="mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
             onClick={() => eventImageRef.current?.click()}
           >
-            {eventImagePreview ? (
+            {smallImagePreview ? (
               <Image
-                src={eventImagePreview}
+                src={smallImagePreview}
                 alt="Imagem do evento"
                 width={600}
                 height={400}
@@ -139,13 +161,13 @@ export function InfoTab() {
             className="sm:mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
             onClick={() => mainImageRef.current?.click()}
           >
-            {mainImagePreview ? (
+            {bannerImagePreview ? (
               <Image
-                src={mainImagePreview}
+                src={bannerImagePreview}
                 alt="Imagem maior"
                 width={1920}
                 height={1080}
-                className="w-full h-full object-cover rounded-lg "
+                className="w-full h-full object-cover rounded-lg"
               />
             ) : (
               <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full text-center">
@@ -167,14 +189,12 @@ export function InfoTab() {
         </div>
       </div>
 
-      {/* Sobre o evento */}
       <div className="space-y-4">
         <FormLabel className="text-muted-foreground text-lg">
           Sobre o evento
         </FormLabel>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Nome do evento */}
           <FormField
             control={control}
             name="event.name"
@@ -194,7 +214,6 @@ export function InfoTab() {
             )}
           />
 
-          {/* URL do evento (com sugestão e input "domain" desabilitado) */}
           <FormField
             control={control}
             name="event.slug"
@@ -221,16 +240,12 @@ export function InfoTab() {
                       </span>
                     )}
                 </FormLabel>
-
                 <div className="flex items-center mt-2">
-                  {/* Input desabilitado com domínio fixo */}
                   <Input
                     className="rounded-r-none"
                     disabled
                     value="sportickets.com.br/"
                   />
-
-                  {/* Input para o slug propriamente dito */}
                   <FormControl>
                     <Input
                       id="event-slug"
@@ -238,7 +253,7 @@ export function InfoTab() {
                       className="rounded-l-none"
                       value={field.value || ""}
                       onChange={(e) => {
-                        let value = e.target.value
+                        const value = e.target.value
                           .normalize("NFD")
                           .replace(/[\u0300-\u036f]/g, "")
                           .toLowerCase()
@@ -356,11 +371,11 @@ export function InfoTab() {
               </FormLabel>
               <FormControl>
                 <Tiptap
-                  onChange={(value: string) => {
+                  onChange={(value: string) =>
                     setValue("event.description", value, {
                       shouldValidate: true,
-                    });
-                  }}
+                    })
+                  }
                   initialContent={field.value}
                 />
               </FormControl>
@@ -377,11 +392,11 @@ export function InfoTab() {
               <FormLabel htmlFor="event-regulation">Regulamento</FormLabel>
               <FormControl>
                 <Tiptap
-                  onChange={(value: string) => {
+                  onChange={(value: string) =>
                     setValue("event.regulation", value, {
                       shouldValidate: true,
-                    });
-                  }}
+                    })
+                  }
                   initialContent={field.value}
                 />
               </FormControl>
@@ -400,11 +415,11 @@ export function InfoTab() {
               </FormLabel>
               <FormControl>
                 <Tiptap
-                  onChange={(value: string) => {
+                  onChange={(value: string) =>
                     setValue("event.additionalInfo", value, {
                       shouldValidate: true,
-                    });
-                  }}
+                    })
+                  }
                   initialContent={field.value}
                 />
               </FormControl>
@@ -412,8 +427,9 @@ export function InfoTab() {
             </FormItem>
           )}
         />
+      </div>
 
-        {/* Endereço */}
+      <div>
         <FormLabel className="text-muted-foreground text-lg">
           Endereço
         </FormLabel>
@@ -462,10 +478,10 @@ export function InfoTab() {
             name="event.city"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="event.city">Cidade</FormLabel>
+                <FormLabel htmlFor="event-city">Cidade</FormLabel>
                 <FormControl>
                   <Input
-                    id="event.city"
+                    id="event-city"
                     placeholder="Cidade"
                     className="mt-2"
                     {...field}
@@ -475,6 +491,7 @@ export function InfoTab() {
               </FormItem>
             )}
           />
+
           <FormField
             control={control}
             name="event.state"
@@ -514,6 +531,7 @@ export function InfoTab() {
               </FormItem>
             )}
           />
+
           <FormField
             control={control}
             name="event.street"
@@ -553,6 +571,7 @@ export function InfoTab() {
               </FormItem>
             )}
           />
+
           <FormField
             control={control}
             name="event.complement"
@@ -574,7 +593,6 @@ export function InfoTab() {
         </div>
       </div>
 
-      {/* Pagamento */}
       <div className="space-y-4">
         <FormField
           control={control}

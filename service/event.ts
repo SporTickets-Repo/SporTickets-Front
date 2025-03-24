@@ -64,4 +64,17 @@ export const eventService = {
       throw error;
     }
   },
+
+  createFullEvent: async (formData: FormData): Promise<any> => {
+    try {
+      console.log("formData", formData);
+
+      const response = await api.post(`/events/full-event`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

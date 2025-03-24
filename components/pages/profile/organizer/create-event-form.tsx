@@ -19,6 +19,7 @@ import {
   CreateEventFormValues,
   createEventFormValuesSchema,
 } from "@/schemas/createEventSchema";
+import { eventService } from "@/service/event";
 import { useRouter } from "next/navigation";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
@@ -72,6 +73,7 @@ export function CreateEventForm() {
 
   const [activeTab, setActiveTab] = useState<TabType>("info");
   const [tabErrors, setTabErrors] = useState<TabType[]>([]);
+  console.log("tabErrors", tabErrors);
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -110,8 +112,37 @@ export function CreateEventForm() {
   }, [activeTab]);
 
   function onSubmit(data: CreateEventFormValues) {
-    setTabErrors([]);
-    console.log("Event Data:", data);
+    const formData = new FormData();
+
+    const { bannerImageFile, smallImageFile, ...restEvent } = data.event;
+
+    formData.append("event", JSON.stringify(restEvent));
+
+    if (bannerImageFile) {
+      formData.append("bannerImageFile", bannerImageFile);
+    }
+    if (smallImageFile) {
+      formData.append("smallImageFile", smallImageFile);
+    }
+
+    if (data.coupons?.length) {
+      formData.append("coupons", JSON.stringify(data.coupons));
+    }
+    if (data.collaborators?.length) {
+      formData.append("collaborators", JSON.stringify(data.collaborators));
+    }
+    if (data.ticketTypes?.length) {
+      formData.append("ticketTypes", JSON.stringify(data.ticketTypes));
+    }
+
+    eventService
+      .createFullEvent(formData)
+      .then((result) => {
+        console.log("Evento criado com sucesso", result);
+      })
+      .catch((error) => {
+        console.error("Erro ao criar evento", error);
+      });
   }
 
   const getTabErrors = (errors: any): TabType[] => {
