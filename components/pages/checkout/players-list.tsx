@@ -90,7 +90,7 @@ export function PlayersList({
               <Button
                 onClick={() => handleRemovePlayer(player.Userid)}
                 variant={"destructive"}
-                className="[&_svg]:size-5 h-[80px] px-4 rounded-md bg-zinc-50 hover:bg-zinc-100"
+                className="[&_svg]:size-5 h-[80px] px-4 rounded-md bg-zinc-50 hover:bg-zinc-100 shadow-sm"
               >
                 <FaTrash className="text-sporticket-orange" />
               </Button>
