@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useEvent } from "@/context/event";
 import { TicketType } from "@/interface/tickets";
 import { ArrowRight, Minus, Plus } from "lucide-react";
+import Link from "next/link";
 
 interface RegistrationSummaryProps {
   ticketTypes: TicketType[];
@@ -12,17 +13,15 @@ interface RegistrationSummaryProps {
 export default function RegistrationSummary({
   ticketTypes,
 }: RegistrationSummaryProps) {
-  const { updateTicketQuantity, selectedTickets } = useEvent();
+  const { addTicket, removeTicket, selectedTickets } = useEvent();
 
   const getQuantity = (ticketTypeId: string) => {
-    return (
-      selectedTickets.find((t) => t.ticketType.id === ticketTypeId)?.quantity ||
-      0
-    );
+    return selectedTickets.filter((t) => t.ticketType.id === ticketTypeId)
+      .length;
   };
 
   const total = selectedTickets.reduce((acc, ticket) => {
-    return acc + parseFloat(ticket.ticketLot.price) * ticket.quantity;
+    return acc + parseFloat(ticket.ticketLot.price);
   }, 0);
 
   return (
@@ -56,12 +55,7 @@ export default function RegistrationSummary({
                       variant="select"
                       size="icon"
                       className="h-6 w-6 "
-                      onClick={() =>
-                        updateTicketQuantity(
-                          ticket.id,
-                          Math.max(0, getQuantity(ticket.id) - 1)
-                        )
-                      }
+                      onClick={() => removeTicket(ticket.id)}
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
@@ -72,15 +66,7 @@ export default function RegistrationSummary({
                       variant="select"
                       size="icon"
                       className="h-6 w-6 "
-                      onClick={() =>
-                        updateTicketQuantity(
-                          ticket.id,
-                          Math.min(
-                            activeLot.quantity,
-                            getQuantity(ticket.id) + 1
-                          )
-                        )
-                      }
+                      onClick={() => addTicket(ticket.id)}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
@@ -101,11 +87,16 @@ export default function RegistrationSummary({
           <span className="font-light">Total</span>
           <span className="text-lg font-bold">R$ {total.toFixed(2)}</span>
         </div>
-
-        <Button className="w-full" variant="destructive">
-          Realizar Inscrição
-          <ArrowRight className="h-4 w-4" />
-        </Button>
+        <Link href={`/pagamento`}>
+          <Button
+            className="w-full"
+            variant="destructive"
+            disabled={total === 0}
+          >
+            Realizar Inscrição
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </Link>
       </div>
     </div>
   );

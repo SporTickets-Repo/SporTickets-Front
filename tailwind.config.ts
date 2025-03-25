@@ -28,9 +28,6 @@ export default {
           "green-700": "#1D823E",
           "purple-50": "#f6f3ff",
         },
-        "blue-secondary": "#1AD4F6",
-        "purple-primary": "#3C1672",
-        "orange-tertiary": "#FE4F11",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

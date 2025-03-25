@@ -6,22 +6,22 @@ import { ProfileEventList } from "./organizer/profile-event-list";
 export function OrganizerProfile() {
   const events = [
     {
-      title: "Copa dos Craques",
+      name: "Copa dos Craques",
       location: "Arena Paulista",
       type: "Futebol 5x5",
     },
     {
-      title: "Desafio dos Campeões",
+      name: "Desafio dos Campeões",
       location: "Quadra Central",
       type: "Futebol 11",
     },
     {
-      title: "Copa dos Craques",
+      name: "Copa dos Craques",
       location: "Estádio Municipal",
       type: "Futebol 5x5",
     },
     {
-      title: "Amistoso Elite",
+      name: "Amistoso Elite",
       location: "Arena Neymar",
       type: "Futebol 11",
     },

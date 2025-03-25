@@ -15,12 +15,11 @@ function App() {
 
   return (
     <div className="min-h-screen">
-      <div className="flex flex-col min-h-[70vh] relative z-40 text-white bg-black pb-5 mb-5">
+      <div className="flex flex-col min-h-[70vh] relative z-40 text-white bg-black mb-5">
         <Image
           src="/assets/backgrounds/home-header.png"
           alt="Logo"
-          width={2560}
-          height={852}
+          fill
           className="object-cover w-screen h-auto min-h-[70vh] absolute -z-10"
           unoptimized
         />
@@ -40,17 +39,19 @@ function App() {
             ))}
           </div>
         </div>
-        <div className="container mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold">Tendências da semana</h2>
-            <Button variant="tertiary" size="icon">
-              <ArrowRight size={16} />
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            {eventsMock.map((eventsMock, index) => (
-              <EventCard key={index} event={eventsMock} dark />
-            ))}
+        <div className="bg-black py-4">
+          <div className="container">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold">Tendências da semana</h2>
+              <Button variant="tertiary" size="icon">
+                <ArrowRight size={16} />
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+              {eventsMock.map((eventsMock, index) => (
+                <EventCard key={index} event={eventsMock} dark />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -85,19 +86,21 @@ function App() {
         </div>
       </div>
 
-      <div className="container mb-6 h-[50vh] relative">
-        <Image
-          src="/assets/images/banner1.png"
-          alt="Logo"
-          layout="fill"
-          objectFit="cover"
-          className="absolute inset-0 w-full h-full -z-10"
-          unoptimized
-        />
-        <div className="flex flex-col justify-end items-start w-full h-full px-8 py-6">
-          <h2 className="text-2xl font-bold text-white mb-4 italic">
-            Pronto para jogar? Descubra eventos e garanta seu ingresso!
-          </h2>
+      <div className="container">
+        <div className="mb-6 h-[50vh] relative">
+          <Image
+            src="/assets/images/banner1.png"
+            alt="Logo"
+            layout="fill"
+            objectFit="cover"
+            className="absolute inset-0 w-full h-full -z-10 rounded-xl"
+            unoptimized
+          />
+          <div className="flex flex-col justify-end items-start w-full h-full px-8 py-6">
+            <h2 className="text-2xl font-bold text-white mb-4 italic">
+              Pronto para jogar? Descubra eventos e garanta seu ingresso!
+            </h2>
+          </div>
         </div>
       </div>
 

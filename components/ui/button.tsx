@@ -15,8 +15,7 @@ const buttonVariants = cva(
           "bg-sporticket-purple-50 text-purple-primary shadow hover:bg-sporticket-purple-50/80",
         destructive:
           "bg-sporticket-orange text-white hover:bg-sporticket-orange/90",
-        outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+        outline: "text-zinc-800 hover:text-zinc-600 text-sm",
         secondary:
           "bg-sporticket-blue text-md font-bold text-sporticket-purple shadow-sm hover:bg-sporticket-blue/80",
         tertiary:
@@ -30,7 +29,9 @@ const buttonVariants = cva(
         sm: "h-8 rounded-xl px-3 text-xs",
         lg: "h-10 rounded-xl px-8",
         xl: "h-10 rounded-xl px-40",
-        icon: "h-9 w-9 rounded",
+        icon: "h-5 w-5 rounded",
+        outline: "h-12 px-1 py-4",
+        trash: "h-[80px] px-4 rounded-md",
       },
     },
     defaultVariants: {

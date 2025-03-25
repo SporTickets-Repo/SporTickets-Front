@@ -1,4 +1,5 @@
-import { UserProfile } from "@/interface/user";
+import { Player } from "@/interface/tickets";
+import { registerWithoutPassword, UserProfile } from "@/interface/user";
 import { api } from "@/service/api";
 
 export const userService = {
@@ -18,6 +19,26 @@ export const userService = {
           "Content-Type": "multipart/form-data",
         },
       });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getUserByEmail: async (email: string): Promise<Player> => {
+    try {
+      const response = await api.get<Player>(`/user/by-email/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  registerWithoutPassword: async (
+    user: registerWithoutPassword
+  ): Promise<Player> => {
+    try {
+      const response = await api.post<Player>("/user/register", user);
       return response.data;
     } catch (error) {
       throw error;

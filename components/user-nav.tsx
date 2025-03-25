@@ -31,9 +31,9 @@ export function UserNav() {
                   user?.profileImageUrl ?? "/assets/icons/default-profile.png"
                 }
                 alt="Foto de perfil"
-                width={48}
-                height={48}
-                className="w-16 h-16 rounded-full object-cover"
+                width={24}
+                height={24}
+                className="w-12 h-12 rounded-full object-cover"
                 unoptimized
               />
             </Link>

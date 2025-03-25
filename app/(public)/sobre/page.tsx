@@ -124,7 +124,7 @@ export default function About() {
               {stats.map((stat, index) => (
                 <div
                   key={index}
-                  className="border-l-4 pl-4 border-orange-tertiary flex flex-col justify-center"
+                  className="border-l-4 pl-4 border-sporticket-orange flex flex-col justify-center"
                 >
                   <div className="text-2xl font-bold text-gray-900">
                     {stat.number}

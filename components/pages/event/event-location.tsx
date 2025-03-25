@@ -7,10 +7,11 @@ interface EventLocationProps {
   address: Address;
   place: string;
 }
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_GOOGLE_MAPS_API_KEY;
 
 export default function EventLocation({ address, place }: EventLocationProps) {
   const mapsQuery = `${address.logradouro}, ${address.bairro}, ${address.localidade}, ${address.uf}, Brasil`;
-  const mapsURL = `https://www.google.com/maps/embed/v1/place?key=AIzaSyD-lOTxZ25VmmSCL1TJrhkA3LE7zonBKB4&q=${encodeURIComponent(
+  const mapsURL = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(
     mapsQuery
   )}`;
 
