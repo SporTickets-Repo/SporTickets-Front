@@ -5,11 +5,12 @@ import Image from "next/image";
 export function EventHeader() {
   const { event } = useEvent();
   if (!event) return null;
+
   return (
     <div className="bg-zinc-50 p-3 rounded-lg flex items-center gap-4">
       <Image
         src={event.bannerUrl || ""}
-        alt={event.name}
+        alt={event.name || "Event banner"}
         unoptimized
         width={100}
         height={100}
@@ -18,11 +19,14 @@ export function EventHeader() {
       <div>
         <h2 className="font-semibold text-sm">{event.name}</h2>
         <p className="text-sm text-sporticket-green-500 font-bold">
-          {formatDateWithoutYear(event.startDate)} •{" "}
-          {formatHour(event.startDate)}
+          {event.startDate
+            ? formatDateWithoutYear(event.startDate)
+            : "Data indisponível"}{" "}
+          •{" "}
+          {event.startDate ? formatHour(event.startDate) : "Hora indisponível"}
         </p>
         <p className="text-sm text-muted-foreground">
-          {event.place}, {event.address.bairro}
+          {event.place}, {event.address?.neighborhood}
         </p>
         <p className="text-sm text-sporticket-green-500">7 vagas restantes</p>
       </div>

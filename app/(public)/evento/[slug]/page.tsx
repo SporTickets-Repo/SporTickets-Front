@@ -8,6 +8,7 @@ import EventRanking from "@/components/pages/event/event-rank";
 import RegistrationSummary from "@/components/pages/event/registration-summary";
 import { Badge } from "@/components/ui/badge";
 import { useEvent } from "@/context/event";
+import { Address } from "@/interface/address";
 import { formatDateWithoutYear, formatHour } from "@/utils/dateTime";
 import { getEventIcon } from "@/utils/eventIcons";
 import {
@@ -38,7 +39,10 @@ export default function EventPage() {
     <div className="container">
       <div className="flex-1 p-4 md:p-6">
         <div className="mx-auto max-w-6xl">
-          <EventHeader alt={event.name} image={event.bannerUrl || ""} />
+          <EventHeader
+            alt={event.name as string}
+            image={event.bannerUrl || ""}
+          />
 
           <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
@@ -47,8 +51,8 @@ export default function EventPage() {
                   variant="secondary"
                   className="mb-2 w-full align-center justify-center text-sm font-light"
                 >
-                  {formatDateWithoutYear(event.startDate)} •{" "}
-                  {formatHour(event.startDate)}
+                  {formatDateWithoutYear(event.startDate as string)} •{" "}
+                  {formatHour(event.startDate as string)}
                 </Badge>
                 <h1 className="text-2xl font-bold italic">{event.name}</h1>
                 <div className="flex items-center text-xs my-1 ">
@@ -72,7 +76,7 @@ export default function EventPage() {
                   <div className="flex items-center gap-1">
                     <IoPin size={14} className="text-gray-400" />
                     <span className="text-gray-600">
-                      {event.address?.localidade}, {event.address?.uf}
+                      {event.address?.street}, {event.address?.state}
                     </span>
                   </div>
                 </div>
@@ -85,15 +89,18 @@ export default function EventPage() {
                 </div>
               </div>
 
-              <EventLocation address={event.address} place={event.place} />
+              <EventLocation
+                address={event.address as Address}
+                place={event.place as string}
+              />
 
               <div className="block lg:hidden order-last">
                 <RegistrationSummary ticketTypes={event.ticketTypes} />
               </div>
 
-              <EventDescription description={event.description} />
+              <EventDescription description={event.description as string} />
 
-              <EventPolicy regulation={event.regulation} />
+              <EventPolicy regulation={event.regulation as string} />
 
               <EventRanking />
             </div>

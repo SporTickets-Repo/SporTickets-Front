@@ -27,6 +27,8 @@ export default {
           "green-600": "#006326",
           "green-700": "#1D823E",
           "purple-50": "#f6f3ff",
+          "orange-700": "#C62308",
+          "orange-50": "#FFF4ED",
         },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

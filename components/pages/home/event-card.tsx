@@ -28,7 +28,7 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
           {event.bannerUrl ? (
             <Image
               src={event.bannerUrl}
-              alt={event.name}
+              alt={event.name || "Evento sem nome"}
               width={600}
               height={400}
               className="w-full h-44 object-cover rounded-lg bg-gray-500"
@@ -40,8 +40,13 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
             variant="secondary"
             className="absolute bottom-0 left-0 text-md rounded-br-none rounded-tl-none rounded-tr-sm"
           >
-            {formatDateWithoutYear(event.startDate)} •{" "}
-            {formatHour(event.startDate)}
+            {event.startDate
+              ? formatDateWithoutYear(event.startDate)
+              : "Data não informada"}{" "}
+            •{" "}
+            {event.startDate
+              ? formatHour(event.startDate)
+              : "Hora não informada"}
           </Badge>
         </div>
 
