@@ -22,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { userService } from "@/service/user";
 import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
@@ -30,6 +31,11 @@ interface Collaborator {
   name?: string;
   email?: string;
   role?: string;
+}
+
+interface UserByIdentifierResponse {
+  exist: boolean;
+  user: Collaborator;
 }
 
 export function CollaboratorsTab() {
@@ -47,25 +53,19 @@ export function CollaboratorsTab() {
 
   const handleSearchCollaborator = async () => {
     setError("");
+    try {
+      const data: UserByIdentifierResponse = await userService.userByIdentifier(
+        query
+      );
+      if (data.exist) {
+        console.log(data.user);
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    const mockCPF = "12345678900";
-    const mockEmail = "test@example.com";
-
-    if (query.trim() === mockCPF || query.trim() === mockEmail) {
-      const data = {
-        exists: true,
-        collaborator: {
-          userId: "user-123",
-          name: "João da Silva",
-          email: query.trim(),
-          role: "Administrador",
-        },
-      };
-      setFoundCollaborator(data.collaborator);
-    } else {
-      setError("Colaborador não encontrado.");
+        setFoundCollaborator(data.user);
+      } else {
+        setError("Colaborador não encontrado.");
+      }
+    } catch (err) {
+      setError("Erro ao buscar colaborador.");
     }
   };
 
@@ -103,6 +103,10 @@ export function CollaboratorsTab() {
               variant="ghost"
               type="button"
               className="text-sporticket-purple w-full sm:w-auto"
+              onClick={() => {
+                setDialogOpen(true);
+                setQuery("");
+              }}
             >
               Novo Colaborador
             </Button>
