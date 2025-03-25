@@ -1,4 +1,4 @@
-import { EventStatus, EventType } from "@/interface/event";
+import { EventLevel, EventStatus, EventType } from "@/interface/event";
 
 export const translateEventStatus = (status: EventStatus): string => {
   const translations: Record<EventStatus, string> = {
@@ -21,8 +21,20 @@ export const translateEventType = (type: EventType): string => {
     [EventType.FUTEBOL_ARREIA]: "Futebol de Areia",
     [EventType.FUTSAL]: "Futsal",
     [EventType.VOLEI]: "Vôlei",
-    [EventType.GERAL]: "Geral",
+    [EventType.GENERAL]: "Geral",
   };
 
   return translations[type] || "Desconhecido";
+};
+
+export const translateEventLevel = (level: EventLevel): string => {
+  const translations: Record<EventLevel, string> = {
+    [EventLevel.BEGINNER]: "Iniciante",
+    [EventLevel.AMATEUR]: "Amador",
+    [EventLevel.SEMIPROFESSIONAL]: "Semiprofissional",
+    [EventLevel.PROFESSIONAL]: "Profissional",
+    [EventLevel.GENERAL]: "Geral",
+  };
+
+  return translations[level] || "Desconhecido";
 };

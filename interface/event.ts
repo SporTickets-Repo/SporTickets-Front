@@ -5,40 +5,43 @@ import { TicketType } from "./tickets";
 export interface Event {
   id: string;
   createdBy: string;
-  slug: string;
+  slug: string | null;
   status: EventStatus;
   type: EventType;
-  name: string;
-  place: string;
-  title: string;
-  description: string;
-  regulation: string;
-  additionalInfo: string;
+  level: EventLevel;
+  name: string | null;
+  place: string | null;
+  description: string | null;
+  regulation: string | null;
+  additionalInfo: string | null;
   bannerUrl: string | null;
-  endDate: string;
-  startDate: string;
+  smallImageUrl: string | null;
+  endDate: string | null;
+  startDate: string | null;
   createdAt: string;
   updatedAt: string;
   ticketTypes: TicketType[];
   bracket: Bracket[];
-  address: Address;
+  address: Address | null;
+  paymentMethods: PaymentMethod[];
 }
 
 export interface EventSummary {
   id: string;
   createdBy: string;
-  slug: string;
+  slug: string | null;
   status: EventStatus;
   type: EventType;
-  name: string;
-  place: string;
-  title: string;
-  description: string;
-  regulation: string;
-  additionalInfo: string;
+  level: EventLevel;
+  name: string | null;
+  place: string | null;
+  description: string | null;
+  regulation: string | null;
+  additionalInfo: string | null;
   bannerUrl: string | null;
-  endDate: string;
-  startDate: string;
+  smallImageUrl: string | null;
+  endDate: string | null;
+  startDate: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -59,5 +62,19 @@ export enum EventType {
   FUTEBOL_ARREIA = "FUTEBOL_ARREIA",
   FUTSAL = "FUTSAL",
   VOLEI = "VOLEI",
-  GERAL = "GERAL",
+  GENERAL = "GENERAL",
+}
+
+export enum EventLevel {
+  BEGINNER = "BEGINNER",
+  AMATEUR = "AMATEUR",
+  SEMIPROFESSIONAL = "SEMIPROFESSIONAL",
+  PROFESSIONAL = "PROFESSIONAL",
+  GENERAL = "GENERAL",
+}
+
+export enum PaymentMethod {
+  PIX = "PIX",
+  CREDIT_CARD = "CREDIT_CARD",
+  BOLETO = "BOLETO",
 }

@@ -15,11 +15,12 @@ import {
   Users2,
 } from "lucide-react";
 
+import { useCreateEventContext } from "@/context/create-event";
+import { EventLevel, EventType } from "@/interface/event";
 import {
   CreateEventFormValues,
   createEventFormValuesSchema,
 } from "@/schemas/createEventSchema";
-import { eventService } from "@/service/event";
 import { useRouter } from "next/navigation";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
@@ -35,7 +36,20 @@ const tabLabels = {
   collaborators: "Colaboradores",
 };
 
-export function CreateEventForm() {
+interface CreateEventFormProps {
+  eventId: string;
+}
+
+export function CreateEventForm({ eventId }: CreateEventFormProps) {
+  const {
+    event: eventData,
+    eventTypes,
+    eventLevels,
+    setEventId,
+    setSmallImagePreview,
+    setBannerImagePreview,
+  } = useCreateEventContext();
+
   const methods = useForm<CreateEventFormValues>({
     resolver: zodResolver(createEventFormValuesSchema),
     mode: "onChange",
@@ -44,6 +58,7 @@ export function CreateEventForm() {
         name: "",
         slug: "",
         type: "",
+        level: "",
         startDate: "",
         endDate: "",
         description: "",
@@ -65,15 +80,66 @@ export function CreateEventForm() {
     },
   });
 
+  useEffect(() => {
+    if (eventData && eventTypes && eventLevels) {
+      const formatDateTimeLocal = (dateString: string) => {
+        const date = new Date(dateString);
+        const tzOffset = date.getTimezoneOffset() * 60000;
+        return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+      };
+
+      methods.reset({
+        event: {
+          name: eventData.name ?? "",
+          slug: eventData.slug ?? "",
+          type: eventData.type ?? EventType.GENERAL,
+          level: eventData.level ?? EventLevel.GENERAL,
+          startDate: eventData.startDate
+            ? formatDateTimeLocal(eventData.startDate)
+            : "",
+          endDate: eventData.endDate
+            ? formatDateTimeLocal(eventData.endDate)
+            : "",
+          description: eventData.description ?? "",
+          additionalInfo: eventData.additionalInfo ?? "",
+          cep: eventData.address?.zipCode ?? "",
+          city: eventData.address?.city ?? "",
+          state: eventData.address?.state ?? "",
+          street: eventData.address?.street ?? "",
+          addressNumber: eventData.address?.number ?? "",
+          complement: eventData.address?.complement ?? "",
+          neighborhood: eventData.address?.neighborhood ?? "",
+          place: eventData.place ?? "",
+          regulation: eventData.regulation ?? "",
+          paymentMethods: eventData.paymentMethods || [],
+
+          bannerImageFile: undefined,
+          smallImageFile: undefined,
+        },
+        ticketTypes: eventData.ticketTypes || [],
+        collaborators: [],
+      });
+
+      if (eventData.bannerUrl) {
+        setBannerImagePreview(eventData.bannerUrl);
+      }
+      if (eventData.smallImageUrl) {
+        setSmallImagePreview(eventData.smallImageUrl);
+      }
+    }
+  }, [eventData, eventTypes, eventLevels, methods]);
+
+  useEffect(() => {
+    if (eventId) {
+      setEventId(eventId);
+    }
+  }, [eventId]);
+
   const router = useRouter();
-
-  const handleGoBack = () => {
-    router.push("/perfil");
-  };
-
   const [activeTab, setActiveTab] = useState<TabType>("info");
   const [tabErrors, setTabErrors] = useState<TabType[]>([]);
-  console.log("tabErrors", tabErrors);
+
+  const tabOrder: TabType[] = ["info", "tickets", "coupons", "collaborators"];
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -90,20 +156,17 @@ export function CreateEventForm() {
     }
   };
 
-  const tabOrder: TabType[] = ["info", "tickets", "coupons", "collaborators"];
+  const handleGoBack = () => router.push("/perfil");
   const handleNextTab = () => {
     const currentIndex = tabOrder.indexOf(activeTab);
-    const nextIndex = currentIndex + 1;
-    if (nextIndex < tabOrder.length) {
-      setActiveTab(tabOrder[nextIndex]);
+    if (currentIndex + 1 < tabOrder.length) {
+      setActiveTab(tabOrder[currentIndex + 1]);
     }
   };
-
   const handlePreviousTab = () => {
     const currentIndex = tabOrder.indexOf(activeTab);
-    const previousIndex = currentIndex - 1;
-    if (previousIndex >= 0) {
-      setActiveTab(tabOrder[previousIndex]);
+    if (currentIndex - 1 >= 0) {
+      setActiveTab(tabOrder[currentIndex - 1]);
     }
   };
 
@@ -112,37 +175,7 @@ export function CreateEventForm() {
   }, [activeTab]);
 
   function onSubmit(data: CreateEventFormValues) {
-    const formData = new FormData();
-
-    const { bannerImageFile, smallImageFile, ...restEvent } = data.event;
-
-    formData.append("event", JSON.stringify(restEvent));
-
-    if (bannerImageFile) {
-      formData.append("bannerImageFile", bannerImageFile);
-    }
-    if (smallImageFile) {
-      formData.append("smallImageFile", smallImageFile);
-    }
-
-    if (data.coupons?.length) {
-      formData.append("coupons", JSON.stringify(data.coupons));
-    }
-    if (data.collaborators?.length) {
-      formData.append("collaborators", JSON.stringify(data.collaborators));
-    }
-    if (data.ticketTypes?.length) {
-      formData.append("ticketTypes", JSON.stringify(data.ticketTypes));
-    }
-
-    eventService
-      .createFullEvent(formData)
-      .then((result) => {
-        console.log("Evento criado com sucesso", result);
-      })
-      .catch((error) => {
-        console.error("Erro ao criar evento", error);
-      });
+    console.log("Form submit data:", data);
   }
 
   const getTabErrors = (errors: any): TabType[] => {
@@ -176,7 +209,7 @@ export function CreateEventForm() {
           <h1 className="text-2xl font-bold">Configuração do evento</h1>
         </div>
       </div>
-      <Card className="p-6 space-y-6 h-full ">
+      <Card className="p-6 space-y-6 h-full">
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-1/4 space-y-2 ">
             <nav className="space-y-2">
@@ -223,10 +256,13 @@ export function CreateEventForm() {
                 className="space-y-6"
               >
                 {renderActiveTab()}
-                <div className="flex justify-end gap-4">
+
+                <div className="flex justify-end gap-4 px-4 sm:px-6">
                   {activeTab !== "info" && (
                     <Button
                       variant="default-inverse"
+                      size={"sm"}
+                      className="text-sm p-5"
                       type="button"
                       onClick={handlePreviousTab}
                     >
@@ -234,7 +270,13 @@ export function CreateEventForm() {
                     </Button>
                   )}
                   {activeTab !== "collaborators" && (
-                    <Button type="button" onClick={handleNextTab}>
+                    <Button
+                      type="button"
+                      size={"sm"}
+                      variant={"default-inverse"}
+                      className="text-sm p-5"
+                      onClick={handleNextTab}
+                    >
                       Próximo
                     </Button>
                   )}

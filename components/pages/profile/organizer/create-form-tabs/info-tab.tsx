@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -15,10 +16,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tiptap } from "@/components/ui/tiptap";
+import { useCreateEventContext } from "@/context/create-event";
+import { EventLevel, EventType, PaymentMethod } from "@/interface/event";
 import { cn } from "@/lib/utils";
+import { eventService } from "@/service/event";
+import {
+  translateEventLevel,
+  translateEventType,
+} from "@/utils/eventTranslations";
 import { Circle, CircleCheck, ImageIcon, Upload } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { FaCreditCard, FaPix } from "react-icons/fa6";
 import { toast } from "sonner";
@@ -34,28 +42,29 @@ const slugSugestion = (name: string): string => {
 };
 
 export function InfoTab() {
-  const { control, watch, setValue } = useFormContext();
-
+  const { control, watch, setValue, getValues, trigger } = useFormContext();
   const eventName = watch("event.name");
   const eventSlug = watch("event.slug");
-
   const smallImageFile = watch("event.smallImageFile");
   const bannerImageFile = watch("event.bannerImageFile");
 
-  const [smallImagePreview, setSmallImagePreview] = useState<string | null>(
-    null
-  );
-  const [bannerImagePreview, setBannerImagePreview] = useState<string | null>(
-    null
-  );
+  const {
+    eventTypes,
+    eventLevels,
+    eventTypesLoading,
+    eventLevelsLoading,
+    eventId,
+    smallImagePreview,
+    setSmallImagePreview,
+    bannerImagePreview,
+    setBannerImagePreview,
+  } = useCreateEventContext();
 
   useEffect(() => {
     if (smallImageFile instanceof File) {
       const objectUrl = URL.createObjectURL(smallImageFile);
       setSmallImagePreview(objectUrl);
       return () => URL.revokeObjectURL(objectUrl);
-    } else {
-      setSmallImagePreview(null);
     }
   }, [smallImageFile]);
 
@@ -64,8 +73,6 @@ export function InfoTab() {
       const objectUrl = URL.createObjectURL(bannerImageFile);
       setBannerImagePreview(objectUrl);
       return () => URL.revokeObjectURL(objectUrl);
-    } else {
-      setBannerImagePreview(null);
     }
   }, [bannerImageFile]);
 
@@ -109,6 +116,69 @@ export function InfoTab() {
     }
   };
 
+  const handleSave = async () => {
+    const isValid = await trigger("event");
+    if (!isValid) {
+      toast.error("Por favor, corrija os erros antes de salvar.");
+      return;
+    }
+
+    const values = getValues();
+
+    const infoTabData = {
+      name: values.event.name,
+      slug: values.event.slug,
+      type: values.event.type,
+      level: values.event.level,
+      startDate: values.event.startDate,
+      endDate: values.event.endDate,
+      description: values.event.description,
+      regulation: values.event.regulation,
+      additionalInfo: values.event.additionalInfo,
+      place: values.event.place,
+      paymentMethods: values.event.paymentMethods,
+      address: {
+        zipCode: values.event.cep,
+        street: values.event.street,
+        number: values.event.addressNumber,
+        complement: values.event.complement,
+        neighborhood: values.event.neighborhood,
+        city: values.event.city,
+        state: values.event.state,
+      },
+      bannerImageFile: values.event.bannerImageFile,
+      smallImageFile: values.event.smallImageFile,
+    };
+
+    const formData = new FormData();
+
+    Object.entries(infoTabData).forEach(([key, value]) => {
+      if (key === "address" && value) {
+        Object.entries(value).forEach(([addrKey, addrValue]) => {
+          if (addrValue) {
+            formData.append(`address[${addrKey}]`, String(addrValue));
+          }
+        });
+      } else if (key === "bannerImageFile" && value) {
+        formData.append("banner", value);
+      } else if (key === "smallImageFile" && value) {
+        formData.append("small", value);
+      } else if (key === "paymentMethods" && Array.isArray(value)) {
+        value.forEach((method) => formData.append("paymentMethods", method));
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+
+    try {
+      await eventService.putEvent(eventId as string, formData);
+      toast.success("Alterações salvas com sucesso!");
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Erro ao salvar alterações.");
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-full px-4 sm:px-6">
       <div>
@@ -118,78 +188,103 @@ export function InfoTab() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-0 sm:gap-6 h-auto sm:h-40">
-        <div className="w-full sm:w-1/3">
-          <FormLabel htmlFor="event-cover" className="text-muted-foreground">
-            Imagem do evento (card)
-          </FormLabel>
-          <div
-            className="mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
-            onClick={() => eventImageRef.current?.click()}
-          >
-            {smallImagePreview ? (
-              <Image
-                src={smallImagePreview}
-                alt="Imagem do evento"
-                width={600}
-                height={400}
-                className="w-full h-full rounded-lg object-cover"
-              />
-            ) : (
-              <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full text-center">
-                <ImageIcon className="w-4 h-4" />
-                <p className="text-sm">Menor</p>
-                <p className="text-xs text-muted-foreground">
-                  Sugerido: 1200x600 px
-                </p>
+        <FormField
+          control={control}
+          name="event.smallImageFile"
+          render={({ field, fieldState }) => (
+            <FormItem className="w-full sm:w-1/3">
+              <FormLabel
+                htmlFor="event-cover"
+                className="text-muted-foreground"
+              >
+                Imagem do evento (card)
+              </FormLabel>
+              <div
+                className="mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
+                onClick={() => eventImageRef.current?.click()}
+              >
+                {smallImagePreview ? (
+                  <Image
+                    src={smallImagePreview}
+                    alt="Imagem do evento"
+                    width={600}
+                    height={400}
+                    className="w-full h-full rounded-lg object-cover"
+                  />
+                ) : (
+                  <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full text-center">
+                    <ImageIcon className="w-4 h-4" />
+                    <p className="text-sm">Menor</p>
+                    <p className="text-xs text-muted-foreground">
+                      Sugerido: 1200x600 px
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <input
-            ref={eventImageRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => handleImageChange(e, "smallImageFile")}
-          />
-        </div>
+              <FormControl>
+                <input
+                  ref={eventImageRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleImageChange(e, "smallImageFile")}
+                />
+              </FormControl>
+              {fieldState.error && (
+                <FormMessage>{fieldState.error.message}</FormMessage>
+              )}
+            </FormItem>
+          )}
+        />
 
-        <div className="w-full sm:w-2/3">
-          <FormLabel className="text-muted-foreground">
-            Imagem maior (banner do topo)
-          </FormLabel>
-          <div
-            className="sm:mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
-            onClick={() => mainImageRef.current?.click()}
-          >
-            {bannerImagePreview ? (
-              <Image
-                src={bannerImagePreview}
-                alt="Imagem maior"
-                width={1920}
-                height={1080}
-                className="w-full h-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full text-center">
-                <Upload className="w-4 h-4" />
-                <p className="text-sm">Imagem maior</p>
-                <p className="text-xs text-muted-foreground">
-                  Sugerido: 1920x480 px
-                </p>
+        <FormField
+          control={control}
+          name="event.bannerImageFile"
+          render={({ field, fieldState }) => (
+            <FormItem className="w-full sm:w-2/3">
+              <FormLabel className="text-muted-foreground">
+                Imagem maior (banner do topo)
+              </FormLabel>
+              <div
+                className="sm:mt-2 border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
+                onClick={() => mainImageRef.current?.click()}
+              >
+                {bannerImagePreview ? (
+                  <Image
+                    src={bannerImagePreview}
+                    alt="Imagem maior"
+                    width={1920}
+                    height={1080}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full text-center">
+                    <Upload className="w-4 h-4" />
+                    <p className="text-sm">Imagem maior</p>
+                    <p className="text-xs text-muted-foreground">
+                      Sugerido: 1920x480 px
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <input
-            ref={mainImageRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => handleImageChange(e, "bannerImageFile")}
-          />
-        </div>
+              <FormControl>
+                <input
+                  ref={mainImageRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleImageChange(e, "bannerImageFile")}
+                />
+              </FormControl>
+              {fieldState.error && (
+                <FormMessage>{fieldState.error.message}</FormMessage>
+              )}
+            </FormItem>
+          )}
+        />
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 !mt-[4rem]">
         <FormLabel className="text-muted-foreground text-lg">
           Sobre o evento
         </FormLabel>
@@ -270,6 +365,8 @@ export function InfoTab() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Campo para tipo de evento integrado com os dados do endpoint */}
+          {/* Campo para tipo de evento */}
           <FormField
             control={control}
             name="event.type"
@@ -277,14 +374,34 @@ export function InfoTab() {
               <FormItem>
                 <FormLabel>Esporte</FormLabel>
                 <FormControl>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="mt-2">
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={eventTypesLoading}
+                  >
+                    <SelectTrigger className="mt-2 bg-muted">
                       <SelectValue placeholder="Selecione o esporte" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="football">Futebol</SelectItem>
-                      <SelectItem value="futsal">Futsal</SelectItem>
-                      <SelectItem value="society">Society</SelectItem>
+                      {!eventTypesLoading ? (
+                        (eventTypes as EventType[])
+                          ?.sort((a, b) =>
+                            a === EventType.GENERAL
+                              ? -1
+                              : b === EventType.GENERAL
+                              ? 1
+                              : a.localeCompare(b)
+                          )
+                          .map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {translateEventType(type)}
+                            </SelectItem>
+                          ))
+                      ) : (
+                        <SelectItem value="loading" disabled>
+                          Carregando...
+                        </SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -293,23 +410,42 @@ export function InfoTab() {
             )}
           />
 
+          {/* Campo para nível da competição */}
           <FormField
             control={control}
-            name="event.competitionLevel"
+            name="event.level"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nível da competição</FormLabel>
                 <FormControl>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="mt-2">
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={eventLevelsLoading}
+                  >
+                    <SelectTrigger className="mt-2 bg-muted">
                       <SelectValue placeholder="Selecione o nível" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="amateur">Amador</SelectItem>
-                      <SelectItem value="semi-pro">
-                        Semi-profissional
-                      </SelectItem>
-                      <SelectItem value="pro">Profissional</SelectItem>
+                      {!eventLevelsLoading ? (
+                        (eventLevels as EventLevel[])
+                          ?.sort((a, b) =>
+                            a === EventLevel.GENERAL
+                              ? -1
+                              : b === EventLevel.GENERAL
+                              ? 1
+                              : a.localeCompare(b)
+                          )
+                          .map((level) => (
+                            <SelectItem key={level} value={level}>
+                              {translateEventLevel(level)}
+                            </SelectItem>
+                          ))
+                      ) : (
+                        <SelectItem value="loading" disabled>
+                          Carregando...
+                        </SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -611,23 +747,25 @@ export function InfoTab() {
                       "justify-start gap-2 text-sm w-fit text-wrap h-fit text-start",
                       {
                         "text-primary border-primary border":
-                          field.value?.includes("credit"),
+                          field.value?.includes(PaymentMethod.CREDIT_CARD),
                       }
                     )}
                     onClick={() => {
                       const current = field.value || [];
-                      if (current.includes("credit")) {
+                      if (current.includes(PaymentMethod.CREDIT_CARD)) {
                         field.onChange(
-                          current.filter((item: string) => item !== "credit")
+                          current.filter(
+                            (item: string) => item !== PaymentMethod.CREDIT_CARD
+                          )
                         );
                       } else {
-                        field.onChange([...current, "credit"]);
+                        field.onChange([...current, PaymentMethod.CREDIT_CARD]);
                       }
                     }}
                   >
                     <FaCreditCard className="w-4 h-4" />
                     Cartão de Crédito
-                    {field.value?.includes("credit") ? (
+                    {field.value?.includes(PaymentMethod.CREDIT_CARD) ? (
                       <CircleCheck className="w-4 h-4" />
                     ) : (
                       <Circle className="w-4 h-4" />
@@ -641,23 +779,25 @@ export function InfoTab() {
                       "justify-start gap-2 w-fit text-wrap h-fit text-start",
                       {
                         "text-primary border-primary border":
-                          field.value?.includes("pix"),
+                          field.value?.includes(PaymentMethod.PIX),
                       }
                     )}
                     onClick={() => {
                       const current = field.value || [];
-                      if (current.includes("pix")) {
+                      if (current.includes(PaymentMethod.PIX)) {
                         field.onChange(
-                          current.filter((item: string) => item !== "pix")
+                          current.filter(
+                            (item: string) => item !== PaymentMethod.PIX
+                          )
                         );
                       } else {
-                        field.onChange([...current, "pix"]);
+                        field.onChange([...current, PaymentMethod.PIX]);
                       }
                     }}
                   >
                     <FaPix className="w-4 h-4" />
                     Pix
-                    {field.value?.includes("pix") ? (
+                    {field.value?.includes(PaymentMethod.PIX) ? (
                       <CircleCheck className="w-4 h-4" />
                     ) : (
                       <Circle className="w-4 h-4" />
@@ -669,6 +809,12 @@ export function InfoTab() {
             </FormItem>
           )}
         />
+      </div>
+
+      <div className="flex flex-1 justify-end py-4">
+        <Button type="button" onClick={handleSave}>
+          Salvar alterações
+        </Button>
       </div>
     </div>
   );

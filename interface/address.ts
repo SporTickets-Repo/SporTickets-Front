@@ -1,17 +1,11 @@
 export interface Address {
   id: string;
   eventId: string;
-  cep: string;
-  logradouro: string;
-  complemento: string;
-  unidade: string;
-  bairro: string;
-  localidade: string;
-  uf: string;
-  estado: string;
-  regiao: string;
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
+  zipCode: string | null;
+  street: string | null;
+  complement: string | null;
+  neighborhood: string | null;
+  number: string | null;
+  city: string | null;
+  state: string | null;
 }

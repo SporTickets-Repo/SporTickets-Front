@@ -556,62 +556,113 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   Adicionar campo
                 </Button>
               </div>
-              {customFieldsArray.fields.map((field, fieldIndex) => (
-                <div
-                  key={field.id}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex gap-4 w-full">
-                    <FormField
-                      control={control}
-                      name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.question`}
-                      render={({ field }) => (
-                        <FormItem className="w-1/2">
-                          <FormLabel>Pergunta</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Ex: Qual clube você treina?"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={control}
-                      name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.type`}
-                      render={({ field }) => (
-                        <FormItem className="w-1/2">
-                          <FormLabel>Tipo de resposta</FormLabel>
-                          <Select
-                            value={field.value}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o tipo" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="text">Texto</SelectItem>
-                              <SelectItem value="checkbox">Opções</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    size="icon"
-                    className="text-sporticket-purple"
-                    onClick={() => customFieldsArray.remove(fieldIndex)}
+              {customFieldsArray.fields.map((field, fieldIndex) => {
+                const responseType = watch(
+                  `ticketTypes.${index}.personalizedFields.${fieldIndex}.type`
+                );
+                const inputCount = responseType === "checkbox" ? 3 : 2;
+
+                return (
+                  <div
+                    key={field.id}
+                    className="flex items-center justify-between"
                   >
-                    <Trash2Icon className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
+                    <div className="flex gap-4 w-full">
+                      <div className={inputCount === 3 ? "w-1/3" : "w-1/2"}>
+                        <FormField
+                          control={control}
+                          name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.question`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Pergunta</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Ex: Qual clube você treina?"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className={inputCount === 3 ? "w-1/3" : "w-1/2"}>
+                        <FormField
+                          control={control}
+                          name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.type`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Tipo de resposta</FormLabel>
+                              <Select
+                                value={field.value}
+                                onValueChange={field.onChange}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione o tipo" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="text">Texto</SelectItem>
+                                  <SelectItem value="checkbox">
+                                    Opções
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      {responseType === "checkbox" && (
+                        <div className="w-1/3">
+                          <FormField
+                            control={control}
+                            name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.options`}
+                            render={({
+                              field: { onChange, onBlur, value, ref },
+                            }) => (
+                              <FormItem>
+                                <FormLabel>Opções</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Ex: sim, não, talvez"
+                                    ref={ref}
+                                    value={
+                                      Array.isArray(value)
+                                        ? value.join(", ")
+                                        : value
+                                    }
+                                    onChange={(e) => {
+                                      onChange(e.target.value);
+                                    }}
+                                    onBlur={(e) => {
+                                      const optionsArray = e.target.value
+                                        .split(",")
+                                        .map((option) => option.trim())
+                                        .filter((option) => option);
+                                      onChange(optionsArray);
+                                      onBlur();
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      size="icon"
+                      className="text-sporticket-purple"
+                      onClick={() => customFieldsArray.remove(fieldIndex)}
+                    >
+                      <Trash2Icon className="h-4 w-4" />
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </AccordionContent>

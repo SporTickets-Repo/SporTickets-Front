@@ -6,14 +6,15 @@ import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { useEffect } from "react";
 
 const CustomDocument = Document.extend({
   content: "heading block*",
 });
 
 interface TiptapProps {
-  onChange: (content: string) => void; // Aceita a função onChange como prop
-  initialContent?: string; // Opcional: conteúdo inicial
+  onChange: (content: string) => void; // Função chamada quando o conteúdo muda
+  initialContent?: string; // Conteúdo inicial (padrão vazio)
 }
 
 export const Tiptap = ({ onChange, initialContent = "" }: TiptapProps) => {
@@ -32,18 +33,24 @@ export const Tiptap = ({ onChange, initialContent = "" }: TiptapProps) => {
           if (node.type.name === "heading") {
             return "Insira um título";
           }
-
           return "Pode adicionar um contexto aqui";
         },
       }),
     ],
-    content: initialContent, // Define o conteúdo inicial
+    content: initialContent,
     onUpdate: ({ editor }) => {
-      // Chama o onChange sempre que o conteúdo for atualizado
       onChange(editor.getHTML());
     },
-    immediatelyRender: false,
+    // Permite que o editor inicie sem renderizar imediatamente se necessário.
+    // immediatelyRender: false,
   });
+
+  // Atualiza o conteúdo do editor se o initialContent mudar (por exemplo, após um reset)
+  useEffect(() => {
+    if (editor && initialContent !== editor.getHTML()) {
+      editor.commands.setContent(initialContent);
+    }
+  }, [initialContent, editor]);
 
   return (
     <div className="tiptap-container">
@@ -54,10 +61,7 @@ export const Tiptap = ({ onChange, initialContent = "" }: TiptapProps) => {
 };
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
-  if (!editor) {
-    return null;
-  }
-
+  if (!editor) return null;
   return (
     <div className="button-group">
       <button

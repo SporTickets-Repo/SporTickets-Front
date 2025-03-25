@@ -1,5 +1,6 @@
-import { Event, EventSummary, EventType } from "@/interface/event";
+import { Event, EventLevel, EventSummary, EventType } from "@/interface/event";
 import { api } from "@/service/api";
+import { InitResponseDto } from "./dto/init.response.dto";
 
 export const eventService = {
   getEventBySlug: async (slug: string): Promise<Event> => {
@@ -56,6 +57,24 @@ export const eventService = {
     }
   },
 
+  init: async (): Promise<InitResponseDto> => {
+    try {
+      const response = await api.post(`/events/init`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getEventById: async (eventId: string): Promise<Event> => {
+    try {
+      const response = await api.get<Event>(`/events/${eventId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   getEventTypes: async (): Promise<EventType[]> => {
     try {
       const response = await api.get<EventType[]>(`/events/types`);
@@ -65,12 +84,21 @@ export const eventService = {
     }
   },
 
-  createFullEvent: async (formData: FormData): Promise<any> => {
+  getEventLevels: async (): Promise<EventLevel[]> => {
     try {
-      console.log("formData", formData);
+      const response = await api.get<EventLevel[]>(`/events/levels`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 
-      const response = await api.post(`/events/full-event`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+  putEvent: async (eventId: string, formData: FormData): Promise<Event> => {
+    try {
+      const response = await api.put<Event>(`/events/${eventId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       return response.data;
     } catch (error) {

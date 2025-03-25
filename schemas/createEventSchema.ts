@@ -1,14 +1,18 @@
 import * as z from "zod";
 
-const eventFormValuesSchema = z.object({
-  name: z.string().nonempty({ message: "O nome é obrigatório" }),
+export const eventFormValuesSchema = z.object({
+  name: z
+    .string()
+    .min(3, { message: "O nome deve ter no mínimo 3 caracteres" }),
   slug: z
     .string()
+    .min(3, { message: "O slug deve ter no mínimo 3 caracteres" })
     .regex(/^[a-z0-9-]+$/, {
       message: "O slug deve conter apenas letras minúsculas, números e hífens",
     })
     .nonempty({ message: "O slug é obrigatório" }),
   type: z.string().nonempty({ message: "O tipo do evento é obrigatório" }),
+  level: z.string().nonempty({ message: "O nível do evento é obrigatório" }),
   startDate: z.string().nonempty({ message: "A data de início é obrigatória" }),
   endDate: z
     .string()
@@ -35,12 +39,16 @@ const eventFormValuesSchema = z.object({
   complement: z.string().optional(),
   neighborhood: z.string().nonempty({ message: "O bairro é obrigatório" }),
   place: z.string().nonempty({ message: "O local é obrigatório" }),
-  bannerImageFile: z.instanceof(File, {
-    message: "O arquivo da imagem do banner é obrigatório",
-  }),
-  smallImageFile: z.instanceof(File, {
-    message: "O arquivo da imagem pequena é obrigatório",
-  }),
+  bannerImageFile: z
+    .instanceof(File, {
+      message: "O arquivo da imagem do banner é obrigatório",
+    })
+    .optional(),
+  smallImageFile: z
+    .instanceof(File, {
+      message: "O arquivo da imagem pequena é obrigatório",
+    })
+    .optional(),
   paymentMethods: z.array(z.string()).optional(),
 });
 
@@ -126,3 +134,5 @@ export const createEventFormValuesSchema = z.object({
 
 export type CreateEventFormValues = z.infer<typeof createEventFormValuesSchema>;
 export type EventFormValues = z.infer<typeof eventFormValuesSchema>;
+
+export type InfoTabFormValues = z.infer<typeof eventFormValuesSchema>;
