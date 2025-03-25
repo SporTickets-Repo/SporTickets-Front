@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -24,9 +25,9 @@ import {
   translateEventLevel,
   translateEventType,
 } from "@/utils/eventTranslations";
-import { Circle, CircleCheck, ImageIcon, Upload } from "lucide-react";
+import { Circle, CircleCheck, ImageIcon, Loader2, Upload } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { FaCreditCard, FaPix } from "react-icons/fa6";
 import { toast } from "sonner";
@@ -48,7 +49,10 @@ export function InfoTab() {
   const smallImageFile = watch("event.smallImageFile");
   const bannerImageFile = watch("event.bannerImageFile");
 
+  // Obtem os dados do contexto de criação/atualização de evento
   const {
+    event: eventData,
+    eventLoading,
     eventTypes,
     eventLevels,
     eventTypesLoading,
@@ -60,21 +64,26 @@ export function InfoTab() {
     setBannerImagePreview,
   } = useCreateEventContext();
 
+  // Estado local para controlar o loading do botão salvar
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Atualiza preview para imagem pequena
   useEffect(() => {
     if (smallImageFile instanceof File) {
       const objectUrl = URL.createObjectURL(smallImageFile);
       setSmallImagePreview(objectUrl);
       return () => URL.revokeObjectURL(objectUrl);
     }
-  }, [smallImageFile]);
+  }, [smallImageFile, setSmallImagePreview]);
 
+  // Atualiza preview para imagem do banner
   useEffect(() => {
     if (bannerImageFile instanceof File) {
       const objectUrl = URL.createObjectURL(bannerImageFile);
       setBannerImagePreview(objectUrl);
       return () => URL.revokeObjectURL(objectUrl);
     }
-  }, [bannerImageFile]);
+  }, [bannerImageFile, setBannerImagePreview]);
 
   const eventImageRef = useRef<HTMLInputElement | null>(null);
   const mainImageRef = useRef<HTMLInputElement | null>(null);
@@ -116,13 +125,32 @@ export function InfoTab() {
     }
   };
 
+  if (eventTypesLoading || eventLevelsLoading || eventLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="animate-spin self-center w-8 h-8 text-primary" />
+      </div>
+    );
+  }
+
   const handleSave = async () => {
     const isValid = await trigger("event");
     if (!isValid) {
       toast.error("Por favor, corrija os erros antes de salvar.");
+
+      const firstErrorElement = document.querySelector(
+        "[id$='-form-item-message']"
+      );
+      if (firstErrorElement) {
+        firstErrorElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
       return;
     }
 
+    setIsSaving(true);
     const values = getValues();
 
     const infoTabData = {
@@ -151,7 +179,6 @@ export function InfoTab() {
     };
 
     const formData = new FormData();
-
     Object.entries(infoTabData).forEach(([key, value]) => {
       if (key === "address" && value) {
         Object.entries(value).forEach(([addrKey, addrValue]) => {
@@ -176,6 +203,8 @@ export function InfoTab() {
     } catch (error: any) {
       console.error(error);
       toast.error("Erro ao salvar alterações.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -284,8 +313,8 @@ export function InfoTab() {
         />
       </div>
 
-      <div className="space-y-4 !mt-[4rem]">
-        <FormLabel className="text-muted-foreground text-lg">
+      <div className="space-y-4">
+        <FormLabel className="text-muted-foreground text-xl">
           Sobre o evento
         </FormLabel>
 
@@ -365,8 +394,6 @@ export function InfoTab() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Campo para tipo de evento integrado com os dados do endpoint */}
-          {/* Campo para tipo de evento */}
           <FormField
             control={control}
             name="event.type"
@@ -375,6 +402,7 @@ export function InfoTab() {
                 <FormLabel>Esporte</FormLabel>
                 <FormControl>
                   <Select
+                    key={field.value}
                     value={field.value}
                     onValueChange={field.onChange}
                     disabled={eventTypesLoading}
@@ -410,7 +438,6 @@ export function InfoTab() {
             )}
           />
 
-          {/* Campo para nível da competição */}
           <FormField
             control={control}
             name="event.level"
@@ -419,6 +446,7 @@ export function InfoTab() {
                 <FormLabel>Nível da competição</FormLabel>
                 <FormControl>
                   <Select
+                    key={field.value}
                     value={field.value}
                     onValueChange={field.onChange}
                     disabled={eventLevelsLoading}
@@ -566,7 +594,7 @@ export function InfoTab() {
       </div>
 
       <div>
-        <FormLabel className="text-muted-foreground text-lg">
+        <FormLabel className="text-muted-foreground text-xl">
           Endereço
         </FormLabel>
         <FormField
@@ -735,7 +763,7 @@ export function InfoTab() {
           name="event.paymentMethods"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-muted-foreground text-lg">
+              <FormLabel className="text-muted-foreground text-xl">
                 Pagamento
               </FormLabel>
               <FormControl>
@@ -812,8 +840,12 @@ export function InfoTab() {
       </div>
 
       <div className="flex flex-1 justify-end py-4">
-        <Button type="button" onClick={handleSave}>
-          Salvar alterações
+        <Button type="button" onClick={handleSave} disabled={isSaving}>
+          {isSaving ? (
+            <Loader2 className="animate-spin self-center w-8 h-8 text-primary" />
+          ) : (
+            "Salvar alterações"
+          )}
         </Button>
       </div>
     </div>
