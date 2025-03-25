@@ -6,6 +6,7 @@ import { Event } from "@/interface/event";
 import { eventService } from "@/service/event";
 import { Loader2 } from "lucide-react";
 import useSWR from "swr";
+import { MetricDashboard } from "./metrics/metrics-dashboard";
 import { ProfileEventList } from "./organizer/profile-event-list";
 
 export function OrganizerProfile() {

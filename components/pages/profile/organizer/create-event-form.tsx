@@ -116,7 +116,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           bannerImageFile: undefined,
           smallImageFile: undefined,
         },
-        ticketTypes: eventData.ticketTypes || [],
+        // ticketTypes: eventData.ticketTypes || [],
         collaborators: [],
       });
 

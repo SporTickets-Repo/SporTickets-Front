@@ -76,7 +76,7 @@ export default function EventPage() {
                   <div className="flex items-center gap-1">
                     <IoPin size={14} className="text-gray-400" />
                     <span className="text-gray-600">
-                      {event.address?.localidade}, {event.address?.uf}
+                      {event.address?.street}, {event.address?.state}
                     </span>
                   </div>
                 </div>

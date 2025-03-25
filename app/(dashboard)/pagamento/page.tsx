@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -16,48 +17,33 @@ import { useEvent } from "@/context/event";
 import { Player, TicketProps } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-export default function Home() {
+export default function PaymentPage() {
   const { selectedTickets } = useEvent();
   const router = useRouter();
 
-  const handleGoBack = () => {
-    router.back();
-  };
-
-  if (selectedTickets.length === 0) {
-    handleGoBack();
-  }
-
-  const [currentTicket, setCurrentTicket] = useState<TicketProps>(
-    selectedTickets[0]
-  );
+  const [currentTicket, setCurrentTicket] = useState<TicketProps | null>(null);
   const [playerFormOpen, setPlayerFormOpen] = useState(false);
   const [couponDialogOpen, setCouponDialogOpen] = useState(false);
   const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
 
+  useEffect(() => {
+    if (!selectedTickets || selectedTickets.length === 0) {
+      router.push("/");
+    } else {
+      setCurrentTicket((prev) => {
+        return (
+          selectedTickets.find((ticket) => ticket.id === prev?.id) ||
+          selectedTickets[0]
+        );
+      });
+    }
+  }, [selectedTickets]);
+
   const handleSelectTicket = (ticket: TicketProps) => {
     setCurrentTicket(ticket);
   };
-
-  const total = selectedTickets.reduce((acc, ticket) => {
-    return acc + parseFloat(ticket.ticketLot.price);
-  }, 0);
-
-  const totalDiscount = selectedTickets.reduce((acc, ticket) => {
-    if (ticket.coupon.id) {
-      return (
-        acc +
-        parseFloat(ticket.ticketLot.price) -
-        ticket.coupon.percentage * parseFloat(ticket.ticketLot.price)
-      );
-    }
-    return acc;
-  }, 0);
-
-  console.log(selectedTickets);
 
   const handleSelectPlayer = (player: Player) => {
     setEditingPlayer(player);
@@ -69,12 +55,26 @@ export default function Home() {
     }
   }, [editingPlayer]);
 
-  useEffect(() => {
-    setCurrentTicket(
-      selectedTickets.find((ticket) => ticket.id === currentTicket.id) ||
-        selectedTickets[0]
-    );
-  }, [selectedTickets]);
+  const total =
+    selectedTickets?.reduce((acc, ticket) => {
+      return acc + parseFloat(ticket.ticketLot.price);
+    }, 0) || 0;
+
+  const totalDiscount =
+    selectedTickets?.reduce((acc, ticket) => {
+      if (ticket.coupon?.id) {
+        return (
+          acc +
+          parseFloat(ticket.ticketLot.price) -
+          ticket.coupon.percentage * parseFloat(ticket.ticketLot.price)
+        );
+      }
+      return acc;
+    }, 0) || 0;
+
+  if (!selectedTickets || selectedTickets.length === 0 || !currentTicket) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen container px-24">
@@ -83,7 +83,7 @@ export default function Home() {
           variant="tertiary"
           className="rounded-full"
           size="icon"
-          onClick={handleGoBack}
+          onClick={() => router.push("/")}
         >
           <ChevronLeft size={16} className="text-zinc-500" />
         </Button>
@@ -97,12 +97,12 @@ export default function Home() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="w-full">
-          {currentTicket.players?.length === 0 ? (
+          {currentTicket?.players?.length === 0 ? (
             <PlayersEmptyList onAddPlayer={() => setPlayerFormOpen(true)} />
           ) : (
             <PlayersList
-              players={currentTicket.players}
-              onSelectPlayer={(player) => handleSelectPlayer(player)}
+              players={currentTicket?.players}
+              onSelectPlayer={handleSelectPlayer}
               onAddPlayer={() => setPlayerFormOpen(true)}
               currentTicket={currentTicket}
             />
@@ -114,11 +114,11 @@ export default function Home() {
 
           <div className="p-3 bg-zinc-50 rounded-lg">
             <h2 className="text-lg font-semibold">Resumo do Pedido</h2>
-            {selectedTickets.map((ticket, key) => (
+            {selectedTickets?.map((ticket, key) => (
               <TicketCard
                 key={key}
                 ticket={ticket}
-                isSelected={currentTicket.id === ticket.id}
+                isSelected={currentTicket?.id === ticket.id}
                 onSelect={handleSelectTicket}
               />
             ))}
@@ -132,13 +132,12 @@ export default function Home() {
                 size="outline"
                 onClick={() => setCouponDialogOpen(true)}
               >
-                {currentTicket.coupon.id ? (
+                {currentTicket?.coupon?.id ? (
                   <div>
                     <span className="text-sporticket-green-700">
-                      -{currentTicket.coupon.percentage * 100}%
-                    </span>
-                    {"  "}
-                    {currentTicket.coupon.name.toUpperCase()}
+                      -{currentTicket?.coupon.percentage * 100}%
+                    </span>{" "}
+                    {currentTicket?.coupon.name.toUpperCase()}
                   </div>
                 ) : (
                   "Adicionar Cupom"
@@ -161,25 +160,25 @@ export default function Home() {
             <hr className="border-zinc-300" />
             <div className="flex justify-between items-center">
               <p className="text-zinc-800/80">Total</p>
-              <p className={`text-zinc-800 font-semibold`}>
-                {currentTicket.coupon.id ? (
-                  <div className="flex items-center gap-3">
-                    <div className="text-zinc-400 text-xs line-through">
-                      {formatMoneyBR(total)}
-                    </div>
-                    <div className="text-sporticket-green-700">
-                      {formatMoneyBR(totalDiscount)}
-                    </div>
+              {currentTicket?.coupon?.id ? (
+                <div className="flex items-center gap-3">
+                  <div className="text-zinc-400 text-xs line-through">
+                    {formatMoneyBR(total)}
                   </div>
-                ) : (
-                  formatMoneyBR(total)
-                )}
-              </p>
+                  <div className="text-sporticket-green-700 font-semibold">
+                    {formatMoneyBR(totalDiscount)}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-zinc-800 font-semibold">
+                  {formatMoneyBR(total)}
+                </p>
+              )}
             </div>
-            <div className="">
+            <div>
               <Button variant="destructive" className="w-full mt-10">
                 Realizar inscrição
-                <ArrowRight size={16} className="text-white" />
+                <ArrowRight size={16} className="text-white ml-2" />
               </Button>
               <p className="text-sm text-center text-muted-foreground mt-4">
                 Ao comprar você concorda com nossos{" "}
@@ -214,7 +213,7 @@ export default function Home() {
       <CouponDialog
         open={couponDialogOpen}
         onClose={() => setCouponDialogOpen(false)}
-        eventId={currentTicket.ticketType.eventId}
+        eventId={currentTicket?.ticketType?.eventId}
       />
 
       <PaymentMethodDialog
