@@ -842,7 +842,7 @@ export function InfoTab() {
       <div className="flex flex-1 justify-end py-4">
         <Button type="button" onClick={handleSave} disabled={isSaving}>
           {isSaving ? (
-            <Loader2 className="animate-spin self-center w-8 h-8 text-primary" />
+            <Loader2 className="animate-spin self-center w-8 h-8 text-white" />
           ) : (
             "Salvar alterações"
           )}

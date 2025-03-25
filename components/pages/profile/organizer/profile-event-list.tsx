@@ -1,16 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Event } from "@/interface/event";
 import { eventService } from "@/service/event";
 import { PlusIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ProfileEventCard } from "./profile-event-card";
-
-interface Event {
-  title: string;
-  location: string;
-  type: string;
-}
 
 interface ProfileEventListProps {
   events: Event[];
@@ -53,12 +49,9 @@ export function ProfileEventList({ events }: ProfileEventListProps) {
       </div>
       <div className="space-y-3 max-h-[50vh] overflow-y-auto">
         {events.map((event, index) => (
-          <ProfileEventCard
-            key={index}
-            title={event.title}
-            location={event.location}
-            type={event.type}
-          />
+          <Link href={`/evento/criar/${event.id}`} passHref key={index}>
+            <ProfileEventCard key={event.id} event={event} />
+          </Link>
         ))}
       </div>
     </div>

@@ -105,4 +105,13 @@ export const eventService = {
       throw error;
     }
   },
+
+  getMyEvents: async (): Promise<Event[]> => {
+    try {
+      const response = await api.get<Event[]>(`/events/my-events`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
