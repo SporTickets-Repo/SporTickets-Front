@@ -230,20 +230,17 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             </nav>
             <Separator orientation="horizontal" className="w-full" />
 
-            <div className="my-5 flex flex-col items-center gap-4">
-              {tabErrors.length > 0 && (
-                <div className="text-red-500 text-sm text-center">
-                  {tabErrors.map((tab) => (
-                    <p key={tab}>Aba de {tabLabels[tab]} incompleta.</p>
-                  ))}
-                </div>
-              )}
-              <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(onSubmit, onError)}>
-                  <Button type="submit">Criar evento</Button>
-                </form>
-              </FormProvider>
-            </div>
+            <Button disabled type="button" className="w-full">
+              Publicar evento
+            </Button>
+            <Button
+              disabled
+              type="button"
+              variant="destructive"
+              className="w-full"
+            >
+              Apagar evento
+            </Button>
           </div>
 
           <Separator orientation="vertical" className="hidden md:block px-6" />
