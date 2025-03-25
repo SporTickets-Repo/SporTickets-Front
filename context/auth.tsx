@@ -76,13 +76,7 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const registration = async (userData: RegisterBody) => {
     try {
-      const response = await authService.register(userData);
-
-      Cookies.set("user", JSON.stringify(response), {
-        expires: cookiesExpirationDays,
-        secure: true,
-      });
-      setUser(response);
+      await authService.register(userData);
     } catch (error: any) {
       throw error;
     }
