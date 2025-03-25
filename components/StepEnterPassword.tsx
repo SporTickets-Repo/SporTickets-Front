@@ -55,7 +55,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
           <Button
             type="button"
             variant="outline"
-            className={cn("p-4 mb-4")}
+            className={cn("py-4 mb-4 px-0")}
             onClick={() => nextStep(AuthStep.ENTER_EMAIL)}
           >
             <ArrowLeft className="" />

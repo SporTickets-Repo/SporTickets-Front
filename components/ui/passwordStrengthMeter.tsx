@@ -10,20 +10,19 @@ interface PasswordStrengthProps {
 const PasswordStrengthMeter: React.FC<PasswordStrengthProps> = ({
   password,
 }) => {
-  const hasNumber = /\d/.test(password);
-  const hasSymbol = /[@#$%^&*()_+!]/.test(password);
-  const hasUppercase = /[A-Z]/.test(password);
-  const hasLowercase = /[a-z]/.test(password);
-  const isLongEnough = password?.length >= 8;
+  const conditions = [
+    { test: /\d/.test(password), label: "Números" },
+    { test: /[@#$%^&*()_+!]/.test(password), label: "Símbolos (@#$%^&* etc.)" },
+    { test: /[A-Z]/.test(password), label: "Letras maiúsculas" },
+    {
+      test: password?.length > 0 && /[a-z]/.test(password),
+      label: "Letras minúsculas",
+    },
+    { test: password?.length >= 8, label: "Mínimo de 8 caracteres" },
+  ];
 
   const strength = useMemo(() => {
-    let score = 0;
-    if (hasNumber) score += 1;
-    if (hasSymbol) score += 1;
-    if (hasUppercase) score += 1;
-    if (hasLowercase) score += 1;
-    if (isLongEnough) score += 1;
-    return score;
+    return conditions.filter((condition) => condition.test).length;
   }, [password]);
 
   return (
@@ -33,23 +32,17 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthProps> = ({
         <Progress value={strength > 3 ? 100 : 0} className="flex-1" />
         <Progress value={strength > 4 ? 100 : 0} className="flex-1" />
       </div>
-      <div
-        className={`flex items-center ${
-          hasNumber ? "text-green-600" : "text-red-500"
-        }`}
-      >
-        {hasNumber ? <CheckCircle size={16} /> : <XCircle size={16} />}
-        <span className="ml-2 text-sm">Números</span>
-      </div>
-
-      <div
-        className={`flex items-center ${
-          hasSymbol ? "text-green-600" : "text-red-500"
-        }`}
-      >
-        {hasSymbol ? <CheckCircle size={16} /> : <XCircle size={16} />}
-        <span className="ml-2 text-sm">Símbolos (@#$%^&* etc.)</span>
-      </div>
+      {conditions.map((condition, index) => (
+        <div
+          key={index}
+          className={`flex items-center ${
+            condition.test ? "text-green-600" : "text-red-500"
+          }`}
+        >
+          {condition.test ? <CheckCircle size={16} /> : <XCircle size={16} />}
+          <span className="ml-2 text-sm">{condition.label}</span>
+        </div>
+      ))}
     </div>
   );
 };

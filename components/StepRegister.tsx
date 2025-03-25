@@ -11,7 +11,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 import { useAuth } from "@/context/auth";
-import { RegisterBody } from "@/interface/auth";
+import { cn } from "@/lib/utils";
 import { DatePicker } from "./ui/datePicker";
 import PasswordStrengthMeter from "./ui/passwordStrengthMeter";
 import { SelectItem } from "./ui/select";
@@ -56,49 +56,74 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
 
   const onSubmit = async (data: FormData) => {
     console.log(data);
-    const body = {
-      name: data.name,
-      document: data.document,
-      email: data.email,
-      password: data.password,
-      confirmPassword: data.confirmPassword,
-      bornAt: data.bornAt.toISOString(),
-      cep: data.cep,
-      sex: data.sex,
-      phone: data.phone,
-    } as RegisterBody;
-    try {
-      await registration(body);
-      setSuccess(true);
-      setTimeout(() => {
-        router.push("/");
-      }, 4000);
-    } catch (error: any) {
-      console.error("Failed to register:", error.response.data.message);
-      if (error.response.data.message === "CPF already exists") {
-        setError("document", {
-          type: "manual",
-          message: "Documento já cadastrado",
-        });
-      }
-      if (error.response.data.message === "Email already exists") {
-        setError("email", {
-          type: "manual",
-          message: "E-mail já cadastrado",
-        });
-      }
-      if (error.response.data.message === "Phone already exists") {
-        setError("phone", {
-          type: "manual",
-          message: "Telefone já cadastrado",
-        });
-      }
-    }
+    return;
+    // const body = {
+    //   name: data.name,
+    //   document: data.document,
+    //   email: data.email,
+    //   password: data.password,
+    //   confirmPassword: data.confirmPassword,
+    //   bornAt: data.bornAt.toISOString(),
+    //   cep: data.cep,
+    //   sex: data.sex,
+    //   phone: data.phone,
+    // } as RegisterBody;
+    // try {
+    //   await registration(body);
+    //   setSuccess(true);
+    //   setTimeout(() => {
+    //     router.push("/");
+    //   }, 4000);
+    // } catch (error: any) {
+    //   console.error("Failed to register:", error.response.data.message);
+    //   if (error.response.data.message === "CPF already exists") {
+    //     setError("document", {
+    //       type: "manual",
+    //       message: "Documento já cadastrado",
+    //     });
+    //   }
+    //   if (error.response.data.message === "Email already exists") {
+    //     setError("email", {
+    //       type: "manual",
+    //       message: "E-mail já cadastrado",
+    //     });
+    //   }
+    //   if (error.response.data.message === "Phone already exists") {
+    //     setError("phone", {
+    //       type: "manual",
+    //       message: "Telefone já cadastrado",
+    //     });
+    //   }
+    // }
   };
 
   useEffect(() => {
     setValue("email", email);
   }, [email]);
+
+  function formatCPF(value: string) {
+    return value
+      .replace(/\D/g, "")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  }
+
+  function formatCEP(value: string) {
+    return value.replace(/\D/g, "").replace(/^(\d{5})(\d{1,3})/, "$1-$2");
+  }
+
+  function formatPhone(value: string) {
+    const cleaned = value.replace(/\D/g, "");
+    if (cleaned.length <= 10) {
+      return cleaned
+        .replace(/(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{4})(\d{4})$/, "$1-$2");
+    }
+    return cleaned
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d{4})$/, "$1-$2");
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
@@ -107,7 +132,7 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
           <Button
             type="button"
             variant="outline"
-            className="p-4 mb-4"
+            className={cn("py-4 mb-4 px-0")}
             onClick={() => nextStep(AuthStep.ENTER_EMAIL)}
           >
             <ArrowLeft />
@@ -145,27 +170,35 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
         />
         <Input
           type="text"
+          maxLength={14}
           placeholder="Documento (CPF)"
-          {...register("document")}
+          value={formatCPF(watch("document") || "")}
+          onChange={(e) =>
+            setValue("document", e.target.value.replace(/\D/g, ""))
+          }
           error={errors.document?.message}
         />
+
         <Input
           type="text"
+          maxLength={9}
           placeholder="CEP"
-          {...register("cep")}
+          value={formatCEP(watch("cep") || "")}
+          onChange={(e) => setValue("cep", e.target.value.replace(/\D/g, ""))}
           error={errors.cep?.message}
         />
 
-        {/* Campo de Telefone com Máscara */}
         <Input
           type="text"
           placeholder="Telefone"
-          {...register("phone")}
+          value={formatPhone(watch("phone") || "")}
+          onChange={(e) => setValue("phone", e.target.value.replace(/\D/g, ""))}
           error={errors.phone?.message}
         />
 
         {/* DatePicker */}
         <DatePicker
+          placeholder="Selecione a data de nascimento"
           date={watch("bornAt")}
           setDate={(date) => setValue("bornAt", date || new Date())}
         />
@@ -181,6 +214,7 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
           placeholder="Senha"
           {...register("password")}
           error={errors.password?.message}
+          password
         />
         <PasswordStrengthMeter password={watch("password")} />
 
@@ -189,6 +223,7 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
           placeholder="Confirme sua Senha"
           {...register("confirmPassword")}
           error={errors.confirmPassword?.message}
+          password
         />
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
