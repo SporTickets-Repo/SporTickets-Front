@@ -1,56 +1,74 @@
 import * as z from "zod";
 
-export const eventFormValuesSchema = z.object({
-  name: z
-    .string()
-    .min(3, { message: "O nome deve ter no mínimo 3 caracteres" }),
-  slug: z
-    .string()
-    .min(3, { message: "O slug deve ter no mínimo 3 caracteres" })
-    .regex(/^[a-z0-9-]+$/, {
-      message: "O slug deve conter apenas letras minúsculas, números e hífens",
-    })
-    .nonempty({ message: "O slug é obrigatório" }),
-  type: z.string().nonempty({ message: "O tipo do evento é obrigatório" }),
-  level: z.string().nonempty({ message: "O nível do evento é obrigatório" }),
-  startDate: z.string().nonempty({ message: "A data de início é obrigatória" }),
-  endDate: z
-    .string()
-    .nonempty({ message: "A data de encerramento é obrigatória" }),
-  description: z.string().min(15, {
-    message: "A descrição deve ter no mínimo 6 caracteres",
-  }),
-  regulation: z.string().min(15, {
-    message: "O regulamento deve ter no mínimo 6 caracteres",
-  }),
-  additionalInfo: z.string().min(15, {
-    message: "As informações adicionais devem ter no mínimo 6 caracteres",
-  }),
-  cep: z
-    .string()
-    .regex(/^\d{5}-\d{3}$/, {
-      message: "O CEP deve estar no formato 12345-678",
-    })
-    .nonempty({ message: "O CEP é obrigatório" }),
-  city: z.string().nonempty({ message: "A cidade é obrigatória" }),
-  state: z.string().nonempty({ message: "O estado é obrigatório" }),
-  street: z.string().nonempty({ message: "A rua é obrigatória" }),
-  addressNumber: z.string().optional(),
-  complement: z.string().optional(),
-  neighborhood: z.string().nonempty({ message: "O bairro é obrigatório" }),
-  place: z.string().nonempty({ message: "O local é obrigatório" }),
-  bannerImageFile: z
-    .instanceof(File, {
-      message: "O arquivo da imagem do banner é obrigatório",
-    })
-    .optional(),
-  smallImageFile: z
-    .instanceof(File, {
-      message: "O arquivo da imagem pequena é obrigatório",
-    })
-    .optional(),
-  paymentMethods: z.array(z.string()).optional(),
-});
+export const eventFormValuesSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, { message: "O nome deve ter no mínimo 3 caracteres" }),
+    slug: z
+      .string()
+      .min(3, { message: "O slug deve ter no mínimo 3 caracteres" })
+      .regex(/^[a-z0-9-]+$/, {
+        message:
+          "O slug deve conter apenas letras minúsculas, números e hífens",
+      })
+      .nonempty({ message: "O slug é obrigatório" }),
+    type: z.string().nonempty({ message: "O tipo do evento é obrigatório" }),
+    level: z.string().nonempty({ message: "O nível do evento é obrigatório" }),
+    startDate: z.preprocess((arg) => {
+      if (arg instanceof Date) return arg.toISOString();
+      return arg;
+    }, z.string().nonempty({ message: "A data de início é obrigatória" })),
+
+    endDate: z.preprocess((arg) => {
+      if (arg instanceof Date) return arg.toISOString();
+      return arg;
+    }, z.string().nonempty({ message: "A data de encerramento é obrigatória" })),
+    description: z.string().min(15, {
+      message: "A descrição deve ter no mínimo 6 caracteres",
+    }),
+    regulation: z.string().min(15, {
+      message: "O regulamento deve ter no mínimo 6 caracteres",
+    }),
+    additionalInfo: z.string().min(15, {
+      message: "As informações adicionais devem ter no mínimo 6 caracteres",
+    }),
+    cep: z
+      .string()
+      .regex(/^\d{5}-\d{3}$/, {
+        message: "O CEP deve estar no formato 12345-678",
+      })
+      .nonempty({ message: "O CEP é obrigatório" }),
+    city: z.string().nonempty({ message: "A cidade é obrigatória" }),
+    state: z.string().nonempty({ message: "O estado é obrigatório" }),
+    street: z.string().nonempty({ message: "A rua é obrigatória" }),
+    addressNumber: z.string().optional(),
+    complement: z.string().optional(),
+    neighborhood: z.string().nonempty({ message: "O bairro é obrigatório" }),
+    place: z.string().nonempty({ message: "O local é obrigatório" }),
+    bannerImageFile: z
+      .instanceof(File, {
+        message: "O arquivo da imagem do banner é obrigatório",
+      })
+      .optional(),
+    smallImageFile: z
+      .instanceof(File, {
+        message: "O arquivo da imagem pequena é obrigatório",
+      })
+      .optional(),
+    paymentMethods: z.array(z.string()).optional(),
+  })
+  .refine(
+    (data) => {
+      const start = new Date(data.startDate);
+      const end = new Date(data.endDate);
+      return start < end;
+    },
+    {
+      message: "A data de encerramento deve ser posterior à data de início",
+      path: ["endDate"],
+    }
+  );
 
 const userTypeEnum = z.enum(["ATHLETE", "VIEWER"]);
 const restrictionEnum = z.enum(["SAMECATEGORY", "NONE"]);

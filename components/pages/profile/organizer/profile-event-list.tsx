@@ -47,12 +47,14 @@ export function ProfileEventList({ events }: ProfileEventListProps) {
           {!isCreatingEvent && <PlusIcon className="w-2 h-2" />}
         </Button>
       </div>
-      <div className="space-y-3 max-h-[50vh] overflow-y-auto">
-        {events.map((event, index) => (
-          <Link href={`/evento/criar/${event.id}`} passHref key={index}>
-            <ProfileEventCard key={event.id} event={event} />
-          </Link>
-        ))}
+      <div className="flex flex-1 flex-col gap-3 max-h-[50vh] overflow-y-auto">
+        {events
+          .sort((a, b) => (a.name === null ? -1 : b.name === null ? 1 : 0))
+          .map((event, index) => (
+            <Link href={`/evento/criar/${event.id}`} passHref key={index}>
+              <ProfileEventCard key={event.id} event={event} />
+            </Link>
+          ))}
       </div>
     </div>
   );
