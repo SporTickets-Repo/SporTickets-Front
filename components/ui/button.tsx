@@ -13,6 +13,7 @@ const buttonVariants = cva(
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         "default-inverse":
           "bg-sporticket-purple-50 text-purple-primary shadow hover:bg-sporticket-purple-50/80",
+        "orange-inverse": "bg-sporticket-orange-50 text-orange-700",
         destructive:
           "bg-sporticket-orange text-white hover:bg-sporticket-orange/90",
         outline: "text-zinc-800 hover:text-zinc-600 text-sm",

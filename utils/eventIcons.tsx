@@ -14,7 +14,7 @@ export const getEventIcon = (type: EventType): IconType => {
     [EventType.FUTEBOL_ARREIA]: MdSportsSoccer,
     [EventType.FUTSAL]: MdSportsSoccer,
     [EventType.VOLEI]: MdSportsHandball,
-    [EventType.GERAL]: FaFutbol,
+    [EventType.GENERAL]: FaFutbol,
   };
 
   return icons[type] || FaFutbol;

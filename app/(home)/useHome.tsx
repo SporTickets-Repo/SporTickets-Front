@@ -1,5 +1,10 @@
 "use client";
-import { EventStatus, EventSummary, EventType } from "@/interface/event";
+import {
+  EventLevel,
+  EventStatus,
+  EventSummary,
+  EventType,
+} from "@/interface/event";
 import { eventService } from "@/service/event";
 import { useEffect, useMemo, useState } from "react";
 
@@ -11,14 +16,15 @@ export default function useHome() {
       slug: "event-name1",
       status: EventStatus.DRAFT,
       type: EventType.FUTVOLEI,
+      level: EventLevel.AMATEUR,
       name: "Sportickets event",
       place: "Event place",
-      title: "Volleyball event",
       description: "Event of the year",
       regulation: "Event regulation",
       additionalInfo: "Event additional info",
       bannerUrl:
         "https://t96kpt9nk5xvwlvg.public.blob.vercel-storage.com/62d99005-8c7a-4587-85ba-5a3a6d221cf2/1740011929860_sg-11134201-7rdy2-m08u54sz50371b-xHF7nHu2R6xlvHQbDVaDLcKP1Ir94Z.jpg",
+      smallImageUrl: null,
       endDate: "2025-12-01T18:00:00.000Z",
       startDate: "2025-12-01T10:00:00.000Z",
       createdAt: "2025-02-14T15:22:12.467Z",
@@ -30,13 +36,14 @@ export default function useHome() {
       slug: "event-name2",
       status: EventStatus.DRAFT,
       type: EventType.FUTVOLEI,
+      level: EventLevel.BEGINNER,
       name: "Sportickets event",
       place: "Event place",
-      title: "Volleyball event",
       description: "Event of the year",
       regulation: "Event regulation",
       additionalInfo: "Event additional info",
       bannerUrl: null,
+      smallImageUrl: null,
       endDate: "2025-12-01T18:00:00.000Z",
       startDate: "2025-12-01T10:00:00.000Z",
       createdAt: "2025-02-14T15:22:35.618Z",
@@ -48,14 +55,15 @@ export default function useHome() {
       slug: "event-name3",
       status: EventStatus.DRAFT,
       type: EventType.FUTVOLEI,
+      level: EventLevel.SEMIPROFESSIONAL,
       name: "Sportickets event",
       place: "Event place",
-      title: "Volleyball event",
       description: "Event of the year",
       regulation: "Event regulation",
       additionalInfo: "Event additional info",
       bannerUrl:
         "https://t96kpt9nk5xvwlvg.public.blob.vercel-storage.com/62d99005-8c7a-4587-85ba-5a3a6d221cf2/1740011929860_sg-11134201-7rdy2-m08u54sz50371b-xHF7nHu2R6xlvHQbDVaDLcKP1Ir94Z.jpg",
+      smallImageUrl: null,
       endDate: "2025-12-01T18:00:00.000Z",
       startDate: "2025-12-01T10:00:00.000Z",
       createdAt: "2025-02-14T16:04:44.169Z",
@@ -67,14 +75,15 @@ export default function useHome() {
       slug: "event-name",
       status: EventStatus.DRAFT,
       type: EventType.FUTVOLEI,
+      level: EventLevel.PROFESSIONAL,
       name: "Sportickets event",
       place: "Event place",
-      title: "Volleyball event",
       description: "Event of the year",
       regulation: "Event regulation",
       additionalInfo: "Event additional info",
       bannerUrl:
         "https://t96kpt9nk5xvwlvg.public.blob.vercel-storage.com/62d99005-8c7a-4587-85ba-5a3a6d221cf2/1740011929860_sg-11134201-7rdy2-m08u54sz50371b-xHF7nHu2R6xlvHQbDVaDLcKP1Ir94Z.jpg",
+      smallImageUrl: null,
       endDate: "2025-12-01T18:00:00.000Z",
       startDate: "2025-12-01T10:00:00.000Z",
       createdAt: "2025-02-13T21:20:18.666Z",
@@ -90,7 +99,10 @@ export default function useHome() {
       setLoading(true);
       try {
         const events = await eventService.getAllEvents(1, 10, "name");
-        setEvents(events);
+        const filtered = events.filter(
+          (event) => event.status !== EventStatus.DRAFT
+        );
+        setEvents(filtered);
       } catch (error) {
         console.error(error);
       } finally {
