@@ -26,7 +26,9 @@ export function Footer() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Links Column */}
             <div>
-              <h3 className="mb-4 text-md md:text-xl font-semibold">Links</h3>
+              <h3 className="md:mb-4 mb-2 text-md md:text-xl font-semibold">
+                Links
+              </h3>
               <ul className="space-y-1">
                 <li>
                   <Link
@@ -57,7 +59,9 @@ export function Footer() {
 
             {/* Social Column */}
             <div>
-              <h3 className="mb-4 text-md md:text-xl font-semibold">Social</h3>
+              <h3 className="md:mb-4 mb-2 text-md md:text-xl font-semibold">
+                Social
+              </h3>
               <ul className="space-y-1">
                 <li>
                   <Link
@@ -80,7 +84,9 @@ export function Footer() {
 
             {/* Legal Column */}
             <div className="">
-              <h3 className="mb-4 text-md md:text-xl font-semibold">Legal</h3>
+              <h3 className="md:mb-4 mb-2 text-md md:text-xl font-semibold">
+                Legal
+              </h3>
               <ul className="space-y-1">
                 <li>
                   <Link
