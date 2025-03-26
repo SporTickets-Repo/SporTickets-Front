@@ -76,7 +76,6 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         smallImageFile: undefined,
       },
       ticketTypes: [],
-      collaborators: [],
     },
   });
 
@@ -115,8 +114,6 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           bannerImageFile: undefined,
           smallImageFile: undefined,
         },
-
-        collaborators: [],
 
         coupons: eventData.coupons
           ? eventData.coupons.map((c) => ({
