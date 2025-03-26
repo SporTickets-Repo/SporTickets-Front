@@ -53,7 +53,9 @@ function App() {
         <div className="bg-black py-4">
           <div className="container">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Tendências da semana</h2>
+              <h2 className="text-md md:text-lg font-bold">
+                Tendências da semana
+              </h2>
               <Button variant="tertiary" size="icon">
                 <ArrowRight size={16} />
               </Button>
@@ -71,7 +73,7 @@ function App() {
 
       <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold">Eventos disponíveis</h2>
+          <h2 className="text-md md:text-lg font-bold">Eventos disponíveis</h2>
           <Button variant="tertiary" size="icon">
             <ArrowRight size={16} />
           </Button>
@@ -87,7 +89,7 @@ function App() {
 
       <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold">Inscrições abertas</h2>
+          <h2 className="text-md md:text-lg font-bold">Inscrições abertas</h2>
           <Button variant="tertiary" size="icon">
             <ArrowRight size={16} />
           </Button>
@@ -112,7 +114,7 @@ function App() {
             unoptimized
           />
           <div className="flex flex-col justify-end items-start w-full h-full px-8 py-6">
-            <h2 className="text-2xl font-bold text-white mb-4 italic">
+            <h2 className="text-xl md:text-2xl font-bold text-white mb-4 italic">
               Pronto para jogar? Descubra eventos e garanta seu ingresso!
             </h2>
           </div>
@@ -128,21 +130,25 @@ function App() {
           className="absolute inset-0 w-full h-full -z-10"
           unoptimized
         />
-        <div className="container flex justify-between items-center ">
+        <div className="container flex justify-between items-center gap-4">
           <div className="flex flex-col gap-1">
-            <h1 className="text-xl font-semibold">É um produtos de eventos?</h1>
-            <p className="text-zinc-400">
+            <h1 className="text-md md:text-xl font-semibold">
+              É um produtos de eventos?
+            </h1>
+            <p className="text-zinc-400 text-sm md:text-base">
               Veja todas as vantagens e venefícios de criar seu evento com a
               gente!
             </p>
           </div>
-          <Button variant="secondary">Sou produtor</Button>
+          <Button variant="secondary" className="text-sm md:text-sm">
+            Sou produtor
+          </Button>
         </div>
       </div>
 
       <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold">
+          <h2 className="text-md md:text-lg font-bold">
             Eventos acontecendo e finalizados
           </h2>
           <Button variant="tertiary" size="icon">

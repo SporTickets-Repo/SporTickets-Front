@@ -16,7 +16,7 @@ export function Footer() {
               alt="SporTickets"
               className="h-12 w-auto"
             />
-            <p className="text-md text-muted-foreground">
+            <p className="text-sm md:text-md text-muted-foreground">
               Lorem ipsum dolor sit amet. Non dolores suscipit est
               necessitatibus minima sed quis eligendi ut optio totam ut
               similique enim. Eos iure totam non repudiandae iure vel quis
@@ -26,12 +26,12 @@ export function Footer() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Links Column */}
             <div>
-              <h3 className="mb-4 text-xl font-semibold">Links</h3>
-              <ul className="space-y-2">
+              <h3 className="mb-4 text-md md:text-xl font-semibold">Links</h3>
+              <ul className="space-y-1">
                 <li>
                   <Link
                     href="/sobre"
-                    className="text-md text-muted-foreground hover:text-foreground"
+                    className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Sobre nós
                   </Link>
@@ -39,7 +39,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/contato"
-                    className="text-md text-muted-foreground hover:text-foreground"
+                    className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Contato
                   </Link>
@@ -47,7 +47,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/suporte"
-                    className="text-md text-muted-foreground hover:text-foreground"
+                    className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     FAQ
                   </Link>
@@ -57,38 +57,22 @@ export function Footer() {
 
             {/* Social Column */}
             <div>
-              <h3 className="mb-4 text-xl font-semibold">Social</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="https://twitter.com"
-                    className="text-md text-muted-foreground hover:text-foreground"
-                  >
-                    Twitter
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://facebook.com"
-                    className="text-md text-muted-foreground hover:text-foreground"
-                  >
-                    Facebook
-                  </Link>
-                </li>
+              <h3 className="mb-4 text-md md:text-xl font-semibold">Social</h3>
+              <ul className="space-y-1">
                 <li>
                   <Link
                     href="https://instagram.com"
-                    className="text-md text-muted-foreground hover:text-foreground"
+                    className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Instagram
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="https://tiktok.com"
-                    className="text-md text-muted-foreground hover:text-foreground"
+                    href="https://wa.me/5561998604155"
+                    className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
-                    Tiktok
+                    Telefone
                   </Link>
                 </li>
               </ul>
@@ -96,12 +80,12 @@ export function Footer() {
 
             {/* Legal Column */}
             <div className="">
-              <h3 className="mb-4 text-xl font-semibold">Legal</h3>
-              <ul className="space-y-2">
+              <h3 className="mb-4 text-md md:text-xl font-semibold">Legal</h3>
+              <ul className="space-y-1">
                 <li>
                   <Link
                     href="/termos"
-                    className="text-md text-muted-foreground hover:text-foreground"
+                    className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Termos de uso
                   </Link>
@@ -109,7 +93,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/privacidade"
-                    className="text-md text-muted-foreground hover:text-foreground"
+                    className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Política de Privacidade
                   </Link>
@@ -117,7 +101,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/cookies"
-                    className="text-md text-muted-foreground hover:text-foreground"
+                    className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Política de Cookies
                   </Link>
