@@ -21,12 +21,14 @@ import { useEffect, useMemo, useState } from "react";
 interface DateTimePickerProps {
   date: Date | undefined;
   setDate: (date: Date | undefined) => void;
+  placeholder?: string;
   showTime?: boolean;
 }
 
 export function DatePicker({
   date,
   setDate,
+  placeholder,
   showTime = false,
 }: DateTimePickerProps) {
   const [month, setMonth] = useState<number>(
@@ -155,7 +157,11 @@ export function DatePicker({
               locale: ptBR,
             })
           ) : (
-            <span>Selecione a data{showTime ? " e hora" : ""}</span>
+            <span>
+              {placeholder
+                ? placeholder
+                : `Selecione a data${showTime ? " e hora" : ""}`}
+            </span>
           )}
         </Button>
       </PopoverTrigger>
