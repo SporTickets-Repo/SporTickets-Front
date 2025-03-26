@@ -56,7 +56,7 @@ const testimonials = [
 export default function About() {
   return (
     <div className="min-h-screen">
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <section className="max-w-7xl mx-auto md:px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
             Lorem ipsum
@@ -67,7 +67,7 @@ export default function About() {
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="mt-8 grid grid-cols-2 gap-2">
           <div className="relative h-[498px] rounded-2xl overflow-hidden">
             <Image
               src="assets/images/quadra.png"
@@ -103,10 +103,10 @@ export default function About() {
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-start  mb-10">Nossa missão</h2>
-          <div className="grid grid-cols-2 gap-12">
+          <h2 className="text-3xl font-bold text-start  mb-5">Nossa missão</h2>
+          <div className="grid md:grid-cols-2 grid-cols-1 gap-12">
             <div className="flex flex-col gap-4 items-start">
               <p className="text-gray-800   ">
                 Lorem ipsum dolor sit amet. Non dolores suscipit est
@@ -135,14 +135,17 @@ export default function About() {
             </div>
           </div>
           <div className="text-center mt-12">
-            <Button size="xl" variant="secondary">
+            <Button
+              variant="secondary"
+              className="px-10 md:px-40 w-full md:w-auto"
+            >
               Começar agora
             </Button>
           </div>
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="py-4">
         <div className="flex flex-col max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-2">
           <h2 className="text-3xl font-bold mb-4">Para organizadores</h2>
           <p className="text-gray-800 text-md ">
