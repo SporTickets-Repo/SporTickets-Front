@@ -1,3 +1,4 @@
+import { stripHtml } from "@/utils/format";
 import * as z from "zod";
 
 export const eventFormValuesSchema = z
@@ -24,13 +25,13 @@ export const eventFormValuesSchema = z
       if (arg instanceof Date) return arg.toISOString();
       return arg;
     }, z.string().nonempty({ message: "A data de encerramento é obrigatória" })),
-    description: z.string().min(15, {
+    description: z.string().refine((val) => stripHtml(val).length >= 6, {
       message: "A descrição deve ter no mínimo 6 caracteres",
     }),
-    regulation: z.string().min(15, {
+    regulation: z.string().refine((val) => stripHtml(val).length >= 6, {
       message: "O regulamento deve ter no mínimo 6 caracteres",
     }),
-    additionalInfo: z.string().min(15, {
+    additionalInfo: z.string().refine((val) => stripHtml(val).length >= 6, {
       message: "As informações adicionais devem ter no mínimo 6 caracteres",
     }),
     cep: z

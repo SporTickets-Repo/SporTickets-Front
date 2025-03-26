@@ -95,19 +95,21 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
       });
       setUser(response);
     } catch (error) {
-      logout();
+      logout(false);
       throw error;
     }
   };
 
-  const logout = () => {
+  const logout = (returnHome: boolean = true) => {
     Cookies.remove("token");
     Cookies.remove("user");
 
     setToken(null);
     setUser(null);
 
-    router.push("/");
+    if (returnHome) {
+      router.push("/");
+    }
   };
 
   useEffect(() => {

@@ -6,51 +6,46 @@ import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useEffect } from "react";
-
-const CustomDocument = Document.extend({
-  content: "heading block*",
-});
+import { useDebounce } from "@uidotdev/usehooks";
+import { useEffect, useState } from "react";
 
 interface TiptapProps {
-  onChange: (content: string) => void; // Função chamada quando o conteúdo muda
-  initialContent?: string; // Conteúdo inicial (padrão vazio)
+  onChange: (content: string) => void;
+  initialContent?: string;
 }
 
 export const Tiptap = ({ onChange, initialContent = "" }: TiptapProps) => {
+  const [html, setHtml] = useState(initialContent);
+  const debouncedHtml = useDebounce(html, 150);
+
   const editor = useEditor({
     extensions: [
-      CustomDocument,
-      StarterKit.configure({
-        document: false,
-      }),
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
-      }),
+      Document,
+
+      StarterKit.configure({ document: false }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
       Highlight,
       Placeholder.configure({
-        placeholder: ({ node }) => {
-          if (node.type.name === "heading") {
-            return "Insira um título";
-          }
-          return "Pode adicionar um contexto aqui";
-        },
+        placeholder: "Digite aqui...",
       }),
     ],
     content: initialContent,
+    immediatelyRender: false,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      setHtml(editor.getHTML());
     },
-    // Permite que o editor inicie sem renderizar imediatamente se necessário.
-    // immediatelyRender: false,
   });
 
-  // Atualiza o conteúdo do editor se o initialContent mudar (por exemplo, após um reset)
   useEffect(() => {
-    if (editor && initialContent !== editor.getHTML()) {
-      editor.commands.setContent(initialContent);
+    onChange(debouncedHtml);
+  }, [debouncedHtml]);
+
+  useEffect(() => {
+    if (editor && initialContent && editor.getHTML() !== initialContent) {
+      editor.commands.setContent(initialContent, false);
+      setHtml(initialContent);
     }
-  }, [initialContent, editor]);
+  }, [initialContent]);
 
   return (
     <div className="tiptap-container">

@@ -29,7 +29,7 @@ export default function EventPolicy({ regulation }: EventPolicyProps) {
               }`}
             >
               <div
-                className="text-sm text-gray-700"
+                className="text-sm text-gray-700 tiptap whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: regulation }}
               />
               {!expanded && (

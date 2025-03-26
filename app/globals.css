@@ -111,6 +111,11 @@ body {
 .tiptap :first-child {
   margin-top: 0;
 }
+.tiptap p:empty::before {
+  content: " ";
+  display: inline-block;
+  height: 1em;
+}
 .tiptap ul,
 .tiptap ol {
   padding: 0 1rem;

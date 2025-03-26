@@ -8,7 +8,11 @@ export function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  if (privateRoutes.includes(pathname) && (!token || !user)) {
+  const isPrivateRoute = privateRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+
+  if (isPrivateRoute && (!token || !user)) {
     const loginUrl = new URL("/entrar", req.url);
 
     loginUrl.searchParams.set("redirect", pathname);

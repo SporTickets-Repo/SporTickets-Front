@@ -1,5 +1,6 @@
 "use client";
 
+import EventAditionalInfo from "@/components/pages/event/event-aditional-info";
 import EventDescription from "@/components/pages/event/event-description";
 import EventHeader from "@/components/pages/event/event-header";
 import EventLocation from "@/components/pages/event/event-location";
@@ -103,6 +104,10 @@ export default function EventPage() {
               <EventPolicy regulation={event.regulation as string} />
 
               <EventRanking />
+
+              <EventAditionalInfo
+                additionalInfo={event.additionalInfo as string}
+              />
             </div>
 
             <div className="hidden lg:block lg:col-span-1 order-none">
