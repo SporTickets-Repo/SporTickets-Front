@@ -60,4 +60,15 @@ export const couponService = {
       throw error;
     }
   },
+
+  updateCouponsList: async (eventId: string, coupons: CouponUpdate[]) => {
+    try {
+      const response = await api.put(`/coupons/list/${eventId}`, {
+        coupons,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

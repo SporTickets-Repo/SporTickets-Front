@@ -134,20 +134,28 @@ const ticketTypeSchema = z.object({
 });
 
 const couponSchema = z.object({
-  couponName: z.string().nonempty({ message: "O nome do cupom é obrigatório" }),
-  percentage: z.number().min(0, {
-    message: "O percentual deve ser não negativo",
-  }),
-  quantity: z.number().int().nonnegative({
-    message: "A quantidade deve ser um número inteiro não negativo",
-  }),
+  id: z.string().optional(),
+  name: z
+    .string()
+    .nonempty({ message: "O nome do cupom é obrigatório" })
+    .min(3, { message: "O nome do cupom deve ter no mínimo 3 caracteres" }),
+  percentage: z
+    .number()
+    .min(1, {
+      message: "O percentual de desconto deve ser no mínimo 1%",
+    })
+    .max(100, { message: "O percentual de desconto deve ser no máximo 100%" }),
+  quantity: z
+    .number()
+    .int()
+    .min(1, { message: "A quantidade deve ser no mínimo 1" }),
   isActive: z.boolean().optional(),
 });
 
 export const createEventFormValuesSchema = z.object({
   event: eventFormValuesSchema,
   ticketTypes: z.array(ticketTypeSchema),
-  coupons: z.array(couponSchema).optional(),
+  coupons: z.array(couponSchema),
   collaborators: z.array(collaboratorSchema).optional(),
 });
 

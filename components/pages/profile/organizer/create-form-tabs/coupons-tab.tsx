@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Accordion,
   AccordionContent,
@@ -15,27 +17,66 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { Loader2, PlusIcon, TrashIcon } from "lucide-react";
+import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import { toast } from "sonner";
 
-interface Coupon {
-  couponName: string;
-  percentage: number;
-  quantity: number;
-  isActive?: boolean;
-}
-
-interface FormValues {
-  coupons: Coupon[];
-}
+import { useCreateEventContext } from "@/context/create-event";
+import { CreateEventFormValues } from "@/schemas/createEventSchema";
+import { couponService } from "@/service/coupon";
+import { mutate } from "swr";
 
 export function CouponsTab() {
-  const { control } = useFormContext<FormValues>();
+  const [isSaving, setIsSaving] = useState(false);
 
-  const { fields, append, remove } = useFieldArray<FormValues>({
+  const { eventId } = useCreateEventContext();
+
+  const { control, getValues, trigger } =
+    useFormContext<CreateEventFormValues>();
+
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "coupons",
   });
+
+  async function handleSaveCoupons() {
+    const isValid = await trigger("coupons");
+    if (!isValid) {
+      toast.error("Corrija os erros nos cupons antes de salvar.");
+      const firstErrorElement = document.querySelector(
+        "[id$='-form-item-message']"
+      );
+      if (firstErrorElement) {
+        firstErrorElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      const formValues = getValues();
+      const { coupons } = formValues;
+      const response = await couponService.updateCouponsList(
+        eventId as string,
+        (coupons || []).map((coupon) => ({
+          ...coupon,
+          percentage: coupon.percentage / 100,
+        }))
+      );
+      console.log("Cupons salvos:", response);
+      toast.success("Cupons salvos com sucesso!");
+      await mutate(`/events/${eventId}`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao salvar cupons");
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -51,10 +92,10 @@ export function CouponsTab() {
           type="button"
           onClick={() =>
             append({
-              couponName: "",
+              name: "",
               percentage: 0,
               quantity: 0,
-              isActive: false,
+              isActive: true,
             })
           }
         >
@@ -63,7 +104,7 @@ export function CouponsTab() {
         </Button>
       </div>
 
-      <Accordion type="multiple" className="space-y-4 p-4">
+      <Accordion type="multiple" className="space-y-4 sm:p-4">
         {fields.map((item, index) => (
           <AccordionItem
             key={item.id}
@@ -74,7 +115,7 @@ export function CouponsTab() {
               <div className="flex items-center justify-between w-full px-2">
                 <div>
                   <h3 className="font-medium">
-                    {item.couponName || `Cupom ${index + 1}`}
+                    {item.name || `Cupom ${index + 1}`}
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     {item.percentage}% • Quantidade: {item.quantity}
@@ -97,6 +138,7 @@ export function CouponsTab() {
                       </FormItem>
                     )}
                   />
+
                   <Button
                     variant="ghost"
                     type="button"
@@ -115,17 +157,35 @@ export function CouponsTab() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={control}
-                  name={`coupons.${index}.couponName`}
+                  name={`coupons.${index}.id`}
+                  render={({ field }) => <input type="hidden" {...field} />}
+                />
+
+                <FormField
+                  control={control}
+                  name={`coupons.${index}.name`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nome do cupom</FormLabel>
                       <FormControl>
-                        <Input placeholder="Nome do cupom" {...field} />
+                        <Input
+                          placeholder="NOME DO CUPOM"
+                          value={field.value ?? ""}
+                          onChange={(e) => {
+                            const raw = e.target.value;
+                            const upper = raw.toUpperCase();
+                            const clean = upper
+                              .normalize("NFD")
+                              .replace(/[\u0300-\u036f]/g, "");
+                            field.onChange(clean);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-2">
                   <FormField
                     control={control}
@@ -176,6 +236,15 @@ export function CouponsTab() {
           </AccordionItem>
         ))}
       </Accordion>
+
+      <div className="flex justify-end pt-4">
+        <Button type="button" onClick={handleSaveCoupons} disabled={isSaving}>
+          {isSaving && (
+            <Loader2 className="animate-spin self-center w-4 h-4 mr-2" />
+          )}
+          Salvar cupons
+        </Button>
+      </div>
     </div>
   );
 }

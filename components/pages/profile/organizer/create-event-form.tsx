@@ -112,12 +112,21 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           place: eventData.place ?? "",
           regulation: eventData.regulation ?? "",
           paymentMethods: eventData.paymentMethods || [],
-
           bannerImageFile: undefined,
           smallImageFile: undefined,
         },
-        // ticketTypes: eventData.ticketTypes || [],
+
         collaborators: [],
+
+        coupons: eventData.coupons
+          ? eventData.coupons.map((c) => ({
+              id: c.id,
+              name: c.name,
+              percentage: Number(c.percentage) * 100,
+              quantity: c.quantity ?? 0,
+              isActive: true,
+            }))
+          : [],
       });
 
       if (eventData.bannerUrl) {
@@ -199,11 +208,11 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
       <div className="flex items-center space-x-4 mt-2 mb-4">
         <Button
           variant="tertiary"
-          className="rounded-full"
+          className="rounded-full p-4"
           size="icon"
           onClick={handleGoBack}
         >
-          <ChevronLeft size={16} className="text-zinc-500" />
+          <ChevronLeft size={20} className="text-zinc-500" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold">Configuração do evento</h1>
