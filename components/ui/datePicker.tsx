@@ -23,9 +23,10 @@ import * as React from "react";
 interface DatePickerProps {
   date: Date | undefined;
   setDate: (date: Date | undefined) => void;
+  placeholder?: string;
 }
 
-export function DatePicker({ date, setDate }: DatePickerProps) {
+export function DatePicker({ date, setDate, placeholder }: DatePickerProps) {
   const [month, setMonth] = React.useState<number>(
     date ? date.getMonth() : new Date().getMonth()
   );
@@ -94,7 +95,7 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
           {date ? (
             format(date, "dd/MM/yyyy", { locale: ptBR })
           ) : (
-            <span>Selecione a data</span>
+            <span>{placeholder ? placeholder : "Selecione a data"}</span>
           )}
         </Button>
       </PopoverTrigger>

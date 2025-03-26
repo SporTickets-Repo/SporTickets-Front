@@ -50,12 +50,12 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
           </Badge>
         </div>
 
-        <CardContent className="p-3">
+        <CardContent className="p-3 space-y-1">
           <h3 className={`font-bold mb-1 ${dark ? "text-white" : ""}`}>
             {event.name}
           </h3>
 
-          <div className="flex items-center text-xs my-1 ">
+          <div className="flex items-center text-xs ">
             {event.type && (
               <div className="flex items-center gap-1">
                 <EventIcon className="text-gray-400" />

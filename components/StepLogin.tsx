@@ -1,14 +1,13 @@
-import { useAuthSteps, AuthStep } from '@/hooks/useAuthSteps';
-import { Button } from './ui/button';
-import { Mail } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { AuthStep } from "@/hooks/useAuthSteps";
+import { cn } from "@/lib/utils";
+import { Mail } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface StepLoginProps {
   nextStep: (next: AuthStep) => void;
 }
 
 const StepLogin = ({ nextStep }: StepLoginProps) => {
-
   return (
     <div className="w-full max-w-md space-y-8">
       <div className="space-y-2">
@@ -16,13 +15,16 @@ const StepLogin = ({ nextStep }: StepLoginProps) => {
           Seja bem-vindo!
         </h1>
         <p className="text-sm text-muted-foreground">
-          Encontre, crie e participe de eventos esportivos com facilidade. Junte-se à comunidade!
+          Encontre, crie e participe de eventos esportivos com facilidade.
+          Junte-se à comunidade!
         </p>
       </div>
 
       <div className="space-y-4">
         <Button
-          className={cn("w-full h-12 text-base font-normal justify-between px-4")}
+          className={cn(
+            "w-full h-12 text-base font-normal justify-between px-4"
+          )}
           onClick={() => nextStep(AuthStep.ENTER_EMAIL)}
         >
           Continuar com Email
@@ -31,7 +33,7 @@ const StepLogin = ({ nextStep }: StepLoginProps) => {
       </div>
 
       <div className="flex flex-col items-center space-y-4 mt-6">
-        <div className="flex w-full space-x-4">
+        {/* <div className="flex w-full space-x-4">
           <Button
             variant="secondary"
             className={cn("w-full h-12 p-0")}
@@ -47,14 +49,13 @@ const StepLogin = ({ nextStep }: StepLoginProps) => {
           >
             <img src="/assets/icons/google.svg" alt="Google" className="w-6 h-6" />
           </Button>
-        </div>
+        </div> */}
 
         <p className="text-xs text-muted-foreground text-center">
           Ao continuar você aceita nossos{" "}
           <a href="#" className="text-orange-500 underline">
             Termos de Serviço
           </a>
-
           ,{" "}
           <a href="#" className="text-orange-500 underline">
             Política de Privacidade

@@ -14,9 +14,13 @@ export const passwordSchema = Yup.object().shape({
 export const registerSchema = Yup.object().shape({
   email: Yup.string().email("E-mail inválido").required("E-mail obrigatório"),
   name: Yup.string().required("Nome obrigatório"),
-  document: Yup.string().required("Documento obrigatório"),
+  document: Yup.string()
+    .required("Documento obrigatório")
+    .matches(/^\d{11}$/, "CPF inválido"),
   bornAt: Yup.date().required("Data de nascimento obrigatória"),
-  phone: Yup.string().required("Telefone obrigatório"),
+  phone: Yup.string()
+    .required("Telefone obrigatório")
+    .matches(/^\d{10,11}$/, "Telefone inválido"),
   sex: Yup.string()
     .oneOf(["MALE", "FEMALE"], "Sexo inválido")
     .required("Sexo obrigatório"),
@@ -31,5 +35,7 @@ export const registerSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Senhas não conferem")
     .required("Confirmação de senha obrigatória"),
-  cep: Yup.string().required("CEP obrigatório"),
+  cep: Yup.string()
+    .required("CEP obrigatório")
+    .matches(/^\d{8}$/, "CEP inválido"),
 });

@@ -82,7 +82,6 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
         expires: cookiesExpirationDays,
         secure: true,
       });
-      setUser(response);
     } catch (error: any) {
       throw error;
     }

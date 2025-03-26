@@ -205,6 +205,7 @@ export function ResetPasswordForm() {
                                 type="password"
                                 placeholder="••••••••"
                                 className="h-11"
+                                password
                                 {...field}
                               />
                             </FormControl>
@@ -225,6 +226,7 @@ export function ResetPasswordForm() {
                                 type="password"
                                 placeholder="••••••••"
                                 className="h-11"
+                                password
                                 {...field}
                               />
                             </FormControl>

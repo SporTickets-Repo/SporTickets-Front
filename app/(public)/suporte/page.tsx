@@ -57,8 +57,8 @@ export default function FAQPage() {
   );
 
   return (
-    <div className=" py-16">
-      <div className=" grid grid-cols-2 gap-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 md:gap-12 gap-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2">
           <div className="text-cyan-700 bg-cyan-500/10 rounded-full  px-3 py-1 w-16 flex items-center justify-center">
             <span className="uppercase text-md">FAQ</span>
@@ -68,7 +68,7 @@ export default function FAQPage() {
             Encontre as perguntas mais comuns dos nossos clientes.
           </p>
 
-          <div className="relative mb-8">
+          <div className="relative">
             <Input
               type="text"
               placeholder="Pesquisar perguntas..."
@@ -80,18 +80,24 @@ export default function FAQPage() {
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="md:p-6">
           <Accordion type="single" collapsible className="w-full space-y-4">
             {filteredFaqs.map((faq, index) => (
-              <AccordionItem
-                key={index}
-                value={`item-${index}`}
-                className="px-6"
-              >
-                <AccordionTrigger className="text-left ">
+              <AccordionItem key={index} value={`item-${index}`} className="">
+                <AccordionTrigger className="text-left font-semibold text-md">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent>{faq.answer}</AccordionContent>
+                <AccordionContent
+                  style={{
+                    padding: 16,
+                    backgroundColor: "#f3f4f6",
+                    borderBottomRightRadius: 8,
+                    borderBottomLeftRadius: 8,
+                  }}
+                  className="font-light text-gray-600"
+                >
+                  {faq.answer}
+                </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>

@@ -6,6 +6,7 @@ import EventLocation from "@/components/pages/event/event-location";
 import EventPolicy from "@/components/pages/event/event-policy";
 import EventRanking from "@/components/pages/event/event-rank";
 import RegistrationSummary from "@/components/pages/event/registration-summary";
+import { EventPageSkeleton } from "@/components/pages/event/skeleton-event";
 import { Badge } from "@/components/ui/badge";
 import { useEvent } from "@/context/event";
 import { Address } from "@/interface/address";
@@ -28,10 +29,8 @@ export default function EventPage() {
     setSlug(slug);
   }, [slug]);
 
-  if (loading) return <p className="text-center">Carregando evento...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (!event)
-    return <p className="text-center text-gray-500">Evento não encontrado.</p>;
+  if (!event || loading) return <EventPageSkeleton />;
 
   const EventIcon = getEventIcon(event.type);
 
