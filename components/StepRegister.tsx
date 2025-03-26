@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 import { useAuth } from "@/context/auth";
+import { RegisterBody } from "@/interface/auth";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "./ui/datePicker";
 import PasswordStrengthMeter from "./ui/passwordStrengthMeter";
@@ -55,46 +56,41 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
   }, [email, setValue]);
 
   const onSubmit = async (data: FormData) => {
-    console.log(data);
-    return;
-    // const body = {
-    //   name: data.name,
-    //   document: data.document,
-    //   email: data.email,
-    //   password: data.password,
-    //   confirmPassword: data.confirmPassword,
-    //   bornAt: data.bornAt.toISOString(),
-    //   cep: data.cep,
-    //   sex: data.sex,
-    //   phone: data.phone,
-    // } as RegisterBody;
-    // try {
-    //   await registration(body);
-    //   setSuccess(true);
-    //   setTimeout(() => {
-    //     router.push("/");
-    //   }, 4000);
-    // } catch (error: any) {
-    //   console.error("Failed to register:", error.response.data.message);
-    //   if (error.response.data.message === "CPF already exists") {
-    //     setError("document", {
-    //       type: "manual",
-    //       message: "Documento já cadastrado",
-    //     });
-    //   }
-    //   if (error.response.data.message === "Email already exists") {
-    //     setError("email", {
-    //       type: "manual",
-    //       message: "E-mail já cadastrado",
-    //     });
-    //   }
-    //   if (error.response.data.message === "Phone already exists") {
-    //     setError("phone", {
-    //       type: "manual",
-    //       message: "Telefone já cadastrado",
-    //     });
-    //   }
-    // }
+    const body = {
+      name: data.name,
+      document: data.document,
+      email: data.email,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+      bornAt: data.bornAt.toISOString(),
+      cep: data.cep,
+      sex: data.sex,
+      phone: data.phone,
+    } as RegisterBody;
+    try {
+      await registration(body);
+      setSuccess(true);
+    } catch (error: any) {
+      console.error("Failed to register:", error.response.data.message);
+      if (error.response.data.message === "CPF already exists") {
+        setError("document", {
+          type: "manual",
+          message: "Documento já cadastrado",
+        });
+      }
+      if (error.response.data.message === "Email already exists") {
+        setError("email", {
+          type: "manual",
+          message: "E-mail já cadastrado",
+        });
+      }
+      if (error.response.data.message === "Phone already exists") {
+        setError("phone", {
+          type: "manual",
+          message: "Telefone já cadastrado",
+        });
+      }
+    }
   };
 
   useEffect(() => {
@@ -227,7 +223,7 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
         />
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
-          Cadastrar
+          {isSubmitting ? "Cadastrando..." : "Cadastrar"}
           <ArrowRight className="ml-1" />
         </Button>
       </div>

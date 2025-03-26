@@ -86,6 +86,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
             className={cn("w-full", errors.password && "border-red-500")}
             {...register("password")}
             error={errors.password?.message}
+            password
           />
         </div>
         <div>
