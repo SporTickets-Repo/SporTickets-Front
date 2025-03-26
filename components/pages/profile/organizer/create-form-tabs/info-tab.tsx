@@ -811,7 +811,6 @@ export function InfoTab() {
         />
       </section>
 
-      {/* Save Button */}
       <div className="flex justify-end pt-4">
         <Button type="button" onClick={handleSave} disabled={isSaving}>
           {isSaving && (

@@ -1,3 +1,9 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { toast } from "sonner";
+
 import {
   Accordion,
   AccordionContent,
@@ -25,13 +31,17 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Loader2,
   MinusIcon,
   PlusIcon,
   Ticket,
   Trash2Icon,
   UserCheck,
 } from "lucide-react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+
+import { DatePicker } from "@/components/ui/datePicker";
+import { useCreateEventContext } from "@/context/create-event";
+import { ticketService } from "@/service/ticket";
 
 interface TicketItemProps {
   index: number;
@@ -40,23 +50,21 @@ interface TicketItemProps {
 
 function TicketItem({ index, removeTicket }: TicketItemProps) {
   const { control, watch } = useFormContext();
-
   const currentUserType = watch(`ticketTypes.${index}.userType`);
 
   const lotsArray = useFieldArray({
     control,
     name: `ticketTypes.${index}.ticketLots`,
   });
-
   const customFieldsArray = useFieldArray({
     control,
     name: `ticketTypes.${index}.personalizedFields`,
   });
-
   const categoriesArray = useFieldArray({
     control,
     name: `ticketTypes.${index}.categories`,
   });
+
   return (
     <Accordion
       type="multiple"
@@ -100,10 +108,12 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
             </div>
           </div>
         </AccordionTrigger>
+
         <AccordionContent className="bg-white py-4">
           <div className="space-y-6">
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Informações básicas</h3>
+
               <FormField
                 control={control}
                 name={`ticketTypes.${index}.name`}
@@ -117,6 +127,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={control}
                 name={`ticketTypes.${index}.description`}
@@ -135,6 +146,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={control}
                 name={`ticketTypes.${index}.userType`}
@@ -154,6 +166,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   </FormItem>
                 )}
               />
+
               {currentUserType !== "VIEWER" && (
                 <div className="space-y-4">
                   <h3 className="text-sm font-medium">Categorias</h3>
@@ -178,6 +191,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           </FormItem>
                         )}
                       />
+
                       <FormField
                         control={control}
                         name={`ticketTypes.${index}.categories.${catIndex}.quantity`}
@@ -189,11 +203,11 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                 placeholder="0"
                                 value={field.value ?? ""}
                                 onChange={(e) => {
-                                  const value = e.target.value.replace(
+                                  const numericVal = e.target.value.replace(
                                     /\D/g,
                                     ""
                                   );
-                                  field.onChange(Number(value));
+                                  field.onChange(Number(numericVal));
                                 }}
                               />
                             </FormControl>
@@ -201,6 +215,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           </FormItem>
                         )}
                       />
+
                       <FormField
                         control={control}
                         name={`ticketTypes.${index}.categories.${catIndex}.restriction`}
@@ -216,7 +231,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                   <SelectValue placeholder="Selecione a restrição" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="SAMECATEGORY">
+                                  <SelectItem value="SAME_CATEGORY">
                                     Mesma Categoria
                                   </SelectItem>
                                   <SelectItem value="NONE">Nenhuma</SelectItem>
@@ -227,6 +242,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           </FormItem>
                         )}
                       />
+
                       <Button
                         variant="ghost"
                         type="button"
@@ -237,27 +253,27 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       </Button>
                     </div>
                   ))}
+
+                  <div className="flex flex-1 justify-end">
+                    <Button
+                      variant="outline"
+                      type="button"
+                      size="sm"
+                      className="gap-2 text-sporticket-orange text-sm"
+                      onClick={() =>
+                        categoriesArray.append({
+                          title: "",
+                          quantity: 0,
+                          restriction: "NONE",
+                        })
+                      }
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                      Adicionar Categoria
+                    </Button>
+                  </div>
                 </div>
               )}
-
-              <div className="flex flex-1 justify-end">
-                <Button
-                  variant="outline"
-                  type="button"
-                  size="sm"
-                  className="gap-2 text-sporticket-orange text-sm"
-                  onClick={() =>
-                    categoriesArray.append({
-                      title: "",
-                      quantity: 0,
-                      restriction: "NONE",
-                    })
-                  }
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  Adicionar Categoria
-                </Button>
-              </div>
 
               <div className="flex flex-col gap-4">
                 <FormField
@@ -284,8 +300,11 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           className="w-20 text-center"
                           {...field}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, "");
-                            field.onChange(Number(value));
+                            const numericVal = e.target.value.replace(
+                              /\D/g,
+                              ""
+                            );
+                            field.onChange(Number(numericVal));
                           }}
                         />
                         <Button
@@ -300,6 +319,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={control}
                   name={`ticketTypes.${index}.quantity`}
@@ -326,8 +346,11 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           className="w-20 text-center"
                           {...field}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, "");
-                            field.onChange(Number(value));
+                            const numericVal = e.target.value.replace(
+                              /\D/g,
+                              ""
+                            );
+                            field.onChange(Number(numericVal));
                           }}
                         />
                         <Button
@@ -347,7 +370,6 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
 
             <Separator />
 
-            {/* Ticket Lots Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium">Lotes</h3>
@@ -357,10 +379,10 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   className="gap-2 text-sporticket-orange text-sm"
                   onClick={() =>
                     lotsArray.append({
-                      title: "",
+                      name: "",
                       price: 0,
-                      startDateTime: "",
-                      endDateTime: "",
+                      startDate: "",
+                      endDate: "",
                       quantity: 0,
                       isActive: true,
                     })
@@ -370,6 +392,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   Adicionar novo lote
                 </Button>
               </div>
+
               <Accordion type="multiple" className="space-y-4 p-2">
                 {lotsArray.fields.map((lot, lotIndex) => (
                   <AccordionItem
@@ -434,6 +457,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                               </FormItem>
                             )}
                           />
+
                           <FormField
                             control={control}
                             name={`ticketTypes.${index}.ticketLots.${lotIndex}.price`}
@@ -463,7 +487,15 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                               <FormItem>
                                 <FormLabel>Data e hora de início</FormLabel>
                                 <FormControl>
-                                  <Input type="datetime-local" {...field} />
+                                  <DatePicker
+                                    date={
+                                      field?.value
+                                        ? new Date(field.value)
+                                        : undefined
+                                    }
+                                    setDate={field.onChange}
+                                    showTime
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -476,13 +508,22 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                               <FormItem>
                                 <FormLabel>Data e hora de término</FormLabel>
                                 <FormControl>
-                                  <Input type="datetime-local" {...field} />
+                                  <DatePicker
+                                    date={
+                                      field?.value
+                                        ? new Date(field.value)
+                                        : undefined
+                                    }
+                                    setDate={field.onChange}
+                                    showTime
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                         </div>
+
                         <FormField
                           control={control}
                           name={`ticketTypes.${index}.ticketLots.${lotIndex}.quantity`}
@@ -507,11 +548,11 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                   className="w-20 text-center"
                                   {...field}
                                   onChange={(e) => {
-                                    const value = e.target.value.replace(
+                                    const val = e.target.value.replace(
                                       /\D/g,
                                       ""
                                     );
-                                    field.onChange(Number(value));
+                                    field.onChange(Number(val));
                                   }}
                                 />
                                 <Button
@@ -537,7 +578,6 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
 
             <Separator />
 
-            {/* Personalized Fields Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium">Campos personalizados</h3>
@@ -549,6 +589,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                     customFieldsArray.append({
                       question: "",
                       type: "text",
+                      optionsList: [],
                     })
                   }
                 >
@@ -556,11 +597,11 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   Adicionar campo
                 </Button>
               </div>
+
               {customFieldsArray.fields.map((field, fieldIndex) => {
                 const responseType = watch(
                   `ticketTypes.${index}.personalizedFields.${fieldIndex}.type`
                 );
-                const inputCount = responseType === "checkbox" ? 3 : 2;
 
                 return (
                   <div
@@ -568,7 +609,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                     className="flex items-center justify-between"
                   >
                     <div className="flex gap-4 w-full">
-                      <div className={inputCount === 3 ? "w-1/3" : "w-1/2"}>
+                      <div className="w-1/2">
                         <FormField
                           control={control}
                           name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.question`}
@@ -586,7 +627,8 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           )}
                         />
                       </div>
-                      <div className={inputCount === 3 ? "w-1/3" : "w-1/2"}>
+
+                      <div className="w-1/2">
                         <FormField
                           control={control}
                           name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.type`}
@@ -612,45 +654,8 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           )}
                         />
                       </div>
-                      {responseType === "checkbox" && (
-                        <div className="w-1/3">
-                          <FormField
-                            control={control}
-                            name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.options`}
-                            render={({
-                              field: { onChange, onBlur, value, ref },
-                            }) => (
-                              <FormItem>
-                                <FormLabel>Opções</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="Ex: sim, não, talvez"
-                                    ref={ref}
-                                    value={
-                                      Array.isArray(value)
-                                        ? value.join(", ")
-                                        : value
-                                    }
-                                    onChange={(e) => {
-                                      onChange(e.target.value);
-                                    }}
-                                    onBlur={(e) => {
-                                      const optionsArray = e.target.value
-                                        .split(",")
-                                        .map((option) => option.trim())
-                                        .filter((option) => option);
-                                      onChange(optionsArray);
-                                      onBlur();
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      )}
                     </div>
+
                     <Button
                       variant="ghost"
                       type="button"
@@ -672,26 +677,58 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
 }
 
 export function TicketsTab() {
-  const { control } = useFormContext();
+  const { control, setValue, getValues } = useFormContext();
+  const { eventId } = useCreateEventContext();
+  const [isSaving, setIsSaving] = useState(false);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "ticketTypes",
   });
 
+  useEffect(() => {
+    if (!eventId) return;
+    (async () => {
+      try {
+        const data = await ticketService.getTicketsByEventId(eventId);
+
+        setValue("ticketTypes", data, { shouldDirty: false });
+      } catch (err) {
+        toast.error("Falha ao carregar ingressos.");
+      }
+    })();
+  }, [eventId, setValue]);
+
   const addNewTicket = () => {
     append({
       name: "",
       description: "",
-      restriction: "",
       userType: "ATHLETE",
       teamSize: 1,
       quantity: 1,
-      category: [],
+      categories: [],
       personalizedFields: [],
       ticketLots: [],
       isActive: true,
     });
+  };
+
+  const handleSave = async () => {
+    if (!eventId) {
+      toast.error("Event ID is missing.");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const currentTickets = getValues("ticketTypes");
+      await ticketService.upsertTickets(currentTickets, eventId);
+      toast.success("Ingressos atualizados com sucesso!");
+    } catch (err: any) {
+      toast.error("Falha ao salvar as alterações.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -713,14 +750,25 @@ export function TicketsTab() {
           Novo Ingresso
         </Button>
       </div>
+
       {fields.map((item, index) => (
         <TicketItem key={item.id} index={index} removeTicket={remove} />
       ))}
+
       {fields.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
           Nenhum ingresso cadastrado. Clique em "Novo Ingresso" para começar.
         </div>
       )}
+
+      <div className="flex justify-end pt-4">
+        <Button type="button" onClick={handleSave} disabled={isSaving}>
+          {isSaving && (
+            <Loader2 className="animate-spin self-center w-4 h-4 mr-2" />
+          )}
+          Salvar alterações
+        </Button>
+      </div>
     </div>
   );
 }

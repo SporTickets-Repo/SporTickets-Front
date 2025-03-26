@@ -105,3 +105,48 @@ export interface Identification {
   type: string;
   number: string;
 }
+
+export type UserType = "ATHLETE" | "VIEWER";
+export type Restriction = "NONE" | "SAME_CATEGORY";
+
+export interface CategoryProps {
+  id: string;
+  ticketTypeId: string;
+  title: string;
+  restriction: Restriction;
+  quantity: number;
+}
+
+export interface PersonalizedFieldProps {
+  id: string;
+  ticketTypeId: string;
+  type: string;
+  requestTitle: string;
+  optionsList: string[];
+}
+
+export interface TicketLotProps {
+  id: string;
+  ticketTypeId: string;
+  name: string;
+  price: string;
+  quantity: number;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TicketProps {
+  id: string;
+  eventId: string;
+  name: string;
+  description: string;
+  userType: UserType;
+  teamSize: number;
+
+  categories: CategoryProps[];
+  personalizedFields: PersonalizedFieldProps[];
+  ticketLots: TicketLotProps[];
+}
