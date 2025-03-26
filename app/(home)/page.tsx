@@ -1,5 +1,6 @@
 "use client";
-import EventCard from "@/components/pages/home/event-card";
+import { CarouselEvents } from "@/components/pages/home/carrosel-events";
+import { EmptyEventCard } from "@/components/pages/home/empty-events";
 import { HomeSearchBar } from "@/components/pages/home/search-bar";
 import SportTypeCard from "@/components/pages/home/sport-type-card";
 import { Button } from "@/components/ui/button";
@@ -11,18 +12,27 @@ import Link from "next/link";
 import useHome from "./useHome";
 
 function App() {
-  const { events, eventsMock, eventTypes } = useHome();
+  const {
+    events,
+    eventsMock,
+    eventTypes,
+    recentEvents,
+    finishedEvents,
+    upcomingEvents,
+    registrationEvents,
+  } = useHome();
 
   return (
     <div className="min-h-screen">
-      <div className="flex flex-col min-h-[70vh] relative z-40 text-white bg-black mb-5">
+      <div className="flex flex-col min-h-[90vh] relative z-40 text-white bg-black mb-5">
         <Image
           src="/assets/backgrounds/home-header.png"
-          alt="Logo"
+          alt="Banner"
           fill
-          className="object-cover w-screen h-auto min-h-[70vh] absolute -z-10"
+          className="object-cover w-full h-full absolute -z-10"
           unoptimized
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/90 to-black -z-10" />
         <div className="flex flex-1 flex-col justify-center items-center md:max-w-4xl text-black gap-2 container mt-48 mb-24">
           <div className="relative w-full">
             <HomeSearchBar />
@@ -39,6 +49,7 @@ function App() {
             ))}
           </div>
         </div>
+
         <div className="bg-black py-4">
           <div className="container">
             <div className="flex justify-between items-center mb-4">
@@ -47,16 +58,17 @@ function App() {
                 <ArrowRight size={16} />
               </Button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-              {eventsMock.map((eventsMock, index) => (
-                <EventCard key={index} event={eventsMock} dark />
-              ))}
-            </div>
+            {upcomingEvents.length > 0 || true ? (
+              <CarouselEvents events={eventsMock} max={5} dark />
+            ) : (
+              <div className="container mb-10">
+                <EmptyEventCard dark />
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Available Events Section */}
       <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-bold">Eventos disponíveis</h2>
@@ -64,26 +76,29 @@ function App() {
             <ArrowRight size={16} />
           </Button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-          {events.map((event, index) => (
-            <EventCard key={index} event={event} />
-          ))}
-        </div>
+        {recentEvents.length > 0 ? (
+          <CarouselEvents events={events} max={8} />
+        ) : (
+          <div className="container mb-10">
+            <EmptyEventCard />
+          </div>
+        )}
       </div>
 
-      {/* Events Near You Section */}
       <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold">Eventos perto de você</h2>
+          <h2 className="text-lg font-bold">Inscrições abertas</h2>
           <Button variant="tertiary" size="icon">
             <ArrowRight size={16} />
           </Button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-          {eventsMock.map((event, index) => (
-            <EventCard key={index} event={event} />
-          ))}
-        </div>
+        {registrationEvents.length > 0 || true ? (
+          <CarouselEvents events={eventsMock} max={4} />
+        ) : (
+          <div className="container mb-10">
+            <EmptyEventCard />
+          </div>
+        )}
       </div>
 
       <div className="container">
@@ -127,16 +142,20 @@ function App() {
 
       <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold">Eventos perto de você</h2>
+          <h2 className="text-lg font-bold">
+            Eventos acontecendo e finalizados
+          </h2>
           <Button variant="tertiary" size="icon">
             <ArrowRight size={16} />
           </Button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-          {eventsMock.map((event, index) => (
-            <EventCard key={index} event={event} />
-          ))}
-        </div>
+        {finishedEvents.length > 0 || true ? (
+          <CarouselEvents events={eventsMock} max={10} />
+        ) : (
+          <div className="container mb-10">
+            <EmptyEventCard />
+          </div>
+        )}
       </div>
     </div>
   );
