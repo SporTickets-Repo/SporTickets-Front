@@ -100,12 +100,24 @@ const ticketLotSchema = z.object({
   quantity: z.number().int().nonnegative({
     message: "A quantidade deve ser um número inteiro não negativo",
   }),
-  startDate: z.string().nonempty({
-    message: "A data de início do lote de ingressos é obrigatória",
-  }),
-  endDate: z.string().nonempty({
-    message: "A data de término do lote de ingressos é obrigatória",
-  }),
+  startDate: z.preprocess(
+    (arg) => {
+      if (arg instanceof Date) return arg.toISOString();
+      return arg;
+    },
+    z.string().nonempty({
+      message: "A data de início do lote de ingressos é obrigatória",
+    })
+  ),
+  endDate: z.preprocess(
+    (arg) => {
+      if (arg instanceof Date) return arg.toISOString();
+      return arg;
+    },
+    z.string().nonempty({
+      message: "A data de término do lote de ingressos é obrigatória",
+    })
+  ),
   isActive: z.boolean(),
 });
 
