@@ -76,7 +76,6 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         smallImageFile: undefined,
       },
       ticketTypes: [],
-      collaborators: [],
     },
   });
 
@@ -117,7 +116,6 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           smallImageFile: undefined,
         },
         // ticketTypes: eventData.ticketTypes || [],
-        collaborators: [],
       });
 
       if (eventData.bannerUrl) {

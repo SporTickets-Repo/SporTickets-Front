@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  Form,
   FormControl,
   FormField,
   FormItem,
@@ -22,68 +25,141 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useCreateEventContext } from "@/context/create-event";
+import { dashboardService } from "@/service/dashboard";
 import { userService } from "@/service/user";
-import { useState } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 interface Collaborator {
-  userId: string;
+  id: string;
   name?: string;
   email?: string;
   role?: string;
 }
 
-interface UserByIdentifierResponse {
-  exist: boolean;
-  user: Collaborator;
-}
+const collaboratorSchema = z.object({
+  identifier: z
+    .string()
+    .nonempty({ message: "CPF ou Email é obrigatório" })
+    .refine(
+      (value) =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ||
+        /^\d{3}\d{3}\d{3}\d{2}$/.test(value),
+      { message: "CPF ou Email inválido" }
+    ),
+});
 
 export function CollaboratorsTab() {
-  const { control } = useFormContext();
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "collaborators",
-  });
+  const { eventId } = useCreateEventContext();
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [error, setError] = useState("");
+  const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
   const [foundCollaborator, setFoundCollaborator] =
     useState<Collaborator | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleSearchCollaborator = async () => {
-    setError("");
+  const form = useForm<z.infer<typeof collaboratorSchema>>({
+    resolver: zodResolver(collaboratorSchema),
+    defaultValues: { identifier: "" },
+  });
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+    reset,
+  } = form;
+
+  useEffect(() => {
+    if (eventId) {
+      (async () => {
+        try {
+          const data = await dashboardService.getUsersWithAccess(eventId);
+
+          setCollaborators(data);
+        } catch (err) {
+          toast.error("Não foi possível carregar os colaboradores.");
+        }
+      })();
+    }
+  }, [eventId]);
+
+  const onSearchSubmit = async (data: z.infer<typeof collaboratorSchema>) => {
     try {
-      const data: UserByIdentifierResponse = await userService.userByIdentifier(
-        query
-      );
-      if (data.exist) {
-        console.log(data.user);
+      const { identifier } = data;
+      const res = await userService.userByIdentifier(identifier);
 
-        setFoundCollaborator(data.user);
+      if (res.exist) {
+        setFoundCollaborator(res.user);
       } else {
-        setError("Colaborador não encontrado.");
+        setError("identifier", {
+          type: "manual",
+          message: "Usuário não encontrado ou não existe.",
+        });
+        toast.error("Nenhum usuário encontrado.");
       }
     } catch (err) {
-      setError("Erro ao buscar colaborador.");
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 409) {
+          setError("identifier", {
+            type: "manual",
+            message: "Você já é um colaborador deste evento.",
+          });
+          toast.error("Você já é um colaborador deste evento.");
+        } else {
+          setError("identifier", {
+            type: "manual",
+            message: "Ocorreu um erro ao buscar o usuário.",
+          });
+          toast.error("Erro ao buscar o usuário.");
+        }
+      } else {
+        toast.error("Erro desconhecido.");
+      }
     }
   };
 
   const handleConfirmCollaborator = () => {
     if (foundCollaborator) {
-      append({
-        userId: foundCollaborator.userId,
-        name: foundCollaborator.name,
-      });
+      setCollaborators((prev) => [...prev, foundCollaborator]);
       setFoundCollaborator(null);
-      setQuery("");
       setDialogOpen(false);
+      reset();
     }
   };
 
   const handleBackToSearch = () => {
     setFoundCollaborator(null);
-    setError("");
+  };
+
+  const handleSave = async () => {
+    if (!eventId) {
+      toast.error("Event ID is missing.");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await dashboardService.assignList({
+        userIds: collaborators.map((c) => c.id),
+        eventId,
+      });
+      toast.success("Colaboradores atualizados com sucesso!");
+    } catch (err: any) {
+      if (err.response?.status === 409) {
+        toast.error("Você não pode se adicionar como colaborador.");
+      } else {
+        toast.error("Falha ao salvar as alterações.");
+      }
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -97,6 +173,7 @@ export function CollaboratorsTab() {
             podem acessar as métricas do evento.
           </p>
         </div>
+
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button
@@ -105,18 +182,20 @@ export function CollaboratorsTab() {
               className="text-sporticket-purple w-full sm:w-auto"
               onClick={() => {
                 setDialogOpen(true);
-                setQuery("");
+                setFoundCollaborator(null);
+                reset();
               }}
             >
               Novo Colaborador
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md w-[calc(100%-2rem)] mx-auto">
+          <DialogContent className="sm:max-w-md w-[calc(100%-2rem)] mx-auto text-center">
             <DialogTitle>Adicionar Colaborador</DialogTitle>
             <DialogDescription>
               Informe o CPF ou Email do colaborador que deseja adicionar.
             </DialogDescription>
-            <div className="mt-4">
+
+            <Form {...form}>
               {foundCollaborator ? (
                 <Input
                   value={`${foundCollaborator.name} (${foundCollaborator.email})`}
@@ -124,44 +203,51 @@ export function CollaboratorsTab() {
                   className="w-full"
                 />
               ) : (
-                <Input
-                  placeholder="CPF ou Email"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="w-full"
-                />
+                <form onSubmit={handleSubmit(onSearchSubmit)}>
+                  <FormField
+                    control={control}
+                    name="identifier"
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormControl>
+                          <Input
+                            placeholder="CPF ou Email"
+                            className="w-full"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0 mt-4">
+                    <Button type="submit" className="w-full sm:w-auto">
+                      Buscar
+                    </Button>
+                  </DialogFooter>
+                </form>
               )}
-              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            </div>
-            <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
-              {foundCollaborator ? (
-                <>
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={handleBackToSearch}
-                    className="w-full sm:w-auto"
-                  >
-                    Voltar
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={handleConfirmCollaborator}
-                    className="w-full sm:w-auto"
-                  >
-                    Confirmar
-                  </Button>
-                </>
-              ) : (
+            </Form>
+
+            {foundCollaborator && (
+              <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0 mt-4">
                 <Button
+                  variant="ghost"
                   type="button"
-                  onClick={handleSearchCollaborator}
+                  onClick={handleBackToSearch}
                   className="w-full sm:w-auto"
                 >
-                  Buscar
+                  Voltar
                 </Button>
-              )}
-            </DialogFooter>
+                <Button
+                  type="button"
+                  onClick={handleConfirmCollaborator}
+                  className="w-full sm:w-auto"
+                >
+                  Confirmar
+                </Button>
+              </DialogFooter>
+            )}
           </DialogContent>
         </Dialog>
       </div>
@@ -175,33 +261,21 @@ export function CollaboratorsTab() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {fields.map((item, index) => (
-              <TableRow key={item.id}>
+            {collaborators.map((item, index) => (
+              <TableRow key={index}>
                 <TableCell className="break-all">
-                  <FormField
-                    control={control}
-                    name={`collaborators.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="User Id"
-                            {...field}
-                            readOnly
-                            className="w-full"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {item.name} ({item.email})
                 </TableCell>
                 <TableCell>
                   <Button
                     type="button"
                     variant="destructive"
                     size="sm"
-                    onClick={() => remove(index)}
+                    onClick={() =>
+                      setCollaborators((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      )
+                    }
                     className="w-full sm:w-auto"
                   >
                     Remover
@@ -211,6 +285,15 @@ export function CollaboratorsTab() {
             ))}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="flex justify-end pt-4">
+        <Button type="button" onClick={handleSave} disabled={isSaving}>
+          {isSaving && (
+            <Loader2 className="animate-spin self-center w-4 h-4 mr-2" />
+          )}
+          Salvar alterações
+        </Button>
       </div>
     </div>
   );

@@ -109,10 +109,6 @@ const ticketLotSchema = z.object({
   isActive: z.boolean(),
 });
 
-const collaboratorSchema = z.object({
-  userId: z.string().nonempty({ message: "O ID do usuário é obrigatório" }),
-});
-
 const ticketTypeSchema = z.object({
   name: z
     .string()
@@ -148,7 +144,6 @@ export const createEventFormValuesSchema = z.object({
   event: eventFormValuesSchema,
   ticketTypes: z.array(ticketTypeSchema),
   coupons: z.array(couponSchema).optional(),
-  collaborators: z.array(collaboratorSchema).optional(),
 });
 
 export type CreateEventFormValues = z.infer<typeof createEventFormValuesSchema>;
