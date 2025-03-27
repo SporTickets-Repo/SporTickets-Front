@@ -285,7 +285,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                     <FormItem className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <UserCheck className="h-4 w-4" />
-                        <FormLabel>Quantidade de atletas</FormLabel>
+                        <FormLabel>Quantidade de atletas por equipe</FormLabel>
                       </div>
                       <div className="flex items-center gap-2">
                         <Button
@@ -300,52 +300,6 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                         </Button>
                         <Input
                           className="w-20 text-center p-0"
-                          {...field}
-                          onChange={(e) => {
-                            const numericVal = e.target.value.replace(
-                              /\D/g,
-                              ""
-                            );
-                            field.onChange(Number(numericVal));
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="w-8 h-8 p-0"
-                          onClick={() => field.onChange(field.value + 1)}
-                        >
-                          <PlusIcon className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={control}
-                  name={`ticketTypes.${index}.quantity`}
-                  render={({ field }) => (
-                    <FormItem className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Ticket className="h-4 w-4" />
-                        <FormLabel>
-                          Quantidade de ingressos disponíveis
-                        </FormLabel>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="w-8 h-8 p-0"
-                          onClick={() =>
-                            field.onChange(Math.max(0, field.value - 1))
-                          }
-                        >
-                          <MinusIcon className="h-4 w-4" />
-                        </Button>
-                        <Input
-                          className="w-20 text-center"
                           {...field}
                           onChange={(e) => {
                             const numericVal = e.target.value.replace(
@@ -612,7 +566,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   className="gap-2 text-sporticket-orange text-sm"
                   onClick={() =>
                     customFieldsArray.append({
-                      question: "",
+                      requestTitle: "",
                       type: "text",
                     })
                   }
@@ -636,7 +590,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       <div className={inputCount === 3 ? "w-1/3" : "w-1/2"}>
                         <FormField
                           control={control}
-                          name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.question`}
+                          name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.requestTitle`}
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Pergunta</FormLabel>
@@ -681,7 +635,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                         <div className="w-1/3">
                           <FormField
                             control={control}
-                            name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.options`}
+                            name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.optionsList`}
                             render={({
                               field: { onChange, onBlur, value, ref },
                             }) => (
