@@ -1,6 +1,11 @@
 import { Coupon } from "./coupons";
 import { UserSex } from "./user";
 
+export interface EventDashboardAccess {
+  id: string;
+  userId: string;
+  eventId: string;
+}
 export interface TicketLot {
   id: string;
   ticketTypeId: string;
@@ -12,6 +17,7 @@ export interface TicketLot {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
 }
 
 export interface TicketType {
@@ -19,12 +25,12 @@ export interface TicketType {
   eventId: string;
   name: string;
   description: string;
-  restriction: string;
   userType: string;
   teamSize: number;
   ticketLots: TicketLot[];
   categories: Category[];
   personalizedFields: PersonalizedField[];
+  deletedAt?: string | null;
 }
 
 export interface PersonalizedField {
@@ -32,21 +38,23 @@ export interface PersonalizedField {
   ticketTypeId: string;
   type: string;
   requestTitle: string;
-  optionsList: {
-    [key: string]: string;
-  };
+  optionsList: string[];
+  deletedAt?: string | null;
 }
+
+export type Restriction = "NONE" | "SAME_CATEGORY";
 
 export interface Category {
   id: string;
   ticketTypeId: string;
   title: string;
-  description: string;
+  restriction: Restriction;
   quantity: number;
+  deletedAt?: string | null;
 }
 
-//Objeto de gerenciamento de respostas
-export interface TicketProps {
+// Objeto de gerenciamento de respostas
+export interface TicketResponse {
   id: string;
   ticketType: TicketType;
   ticketLot: TicketLot;
@@ -55,7 +63,7 @@ export interface TicketProps {
 }
 
 export interface Player {
-  Userid: string;
+  userId: string;
   name: string;
   email: string;
   phone: string;
@@ -70,15 +78,15 @@ export interface PersonalizedFieldResponse {
   answer: string;
 }
 
-//Objetos de envio de API
 export interface TicketCheckout {
   ticketType: TicketType;
   coupon: Coupon;
   tickets: TicketUser[];
   paymentData: PaymentData;
 }
+
 export interface TicketUser {
-  userid: string;
+  userId: string;
   personalFields: PersonalizedFieldResponse[];
   category: Category;
 }
@@ -107,7 +115,6 @@ export interface Identification {
 }
 
 export type UserType = "ATHLETE" | "VIEWER";
-export type Restriction = "NONE" | "SAME_CATEGORY";
 
 export interface CategoryProps {
   id: string;
@@ -145,7 +152,6 @@ export interface TicketProps {
   description: string;
   userType: UserType;
   teamSize: number;
-
   categories: CategoryProps[];
   personalizedFields: PersonalizedFieldProps[];
   ticketLots: TicketLotProps[];

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -43,6 +43,7 @@ import { Badge } from "@/components/ui/badge";
 import { DatePicker } from "@/components/ui/datePicker";
 import { useCreateEventContext } from "@/context/create-event";
 import { ticketService } from "@/service/ticket";
+import { mutate } from "swr";
 
 interface TicketItemProps {
   index: number;
@@ -808,7 +809,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
 }
 
 export function TicketsTab() {
-  const { control, setValue, getValues } = useFormContext();
+  const { control, getValues } = useFormContext();
   const { eventId } = useCreateEventContext();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -816,18 +817,6 @@ export function TicketsTab() {
     control,
     name: "ticketTypes",
   });
-
-  useEffect(() => {
-    if (!eventId) return;
-    (async () => {
-      try {
-        const data = await ticketService.getTicketsByEventId(eventId);
-        setValue("ticketTypes", data, { shouldDirty: false });
-      } catch (err) {
-        toast.error("Falha ao carregar ingressos.");
-      }
-    })();
-  }, [eventId, setValue]);
 
   const addNewTicket = () => {
     append({
@@ -839,7 +828,6 @@ export function TicketsTab() {
       categories: [],
       personalizedFields: [],
       ticketLots: [],
-      isActive: true,
     });
   };
 
@@ -855,8 +843,7 @@ export function TicketsTab() {
       await ticketService.upsertTickets(currentTickets, eventId);
       toast.success("Ingressos atualizados com sucesso!");
       try {
-        const data = await ticketService.getTicketsByEventId(eventId);
-        setValue("ticketTypes", data, { shouldDirty: false });
+        await mutate(`/events/${eventId}`);
       } catch (err) {
         toast.error("Falha ao carregar ingressos.");
       }
