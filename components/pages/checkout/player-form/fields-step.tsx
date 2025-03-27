@@ -67,6 +67,36 @@ export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
     onClose();
   };
 
+  const categories = () => {
+    if (currentTicket.players.length === 0) {
+      return currentTicket.ticketType.categories.map((cat) => ({
+        value: cat.id,
+        label: cat.title,
+      }));
+    } else {
+      if (
+        currentTicket.players.some(
+          (p) => p.category?.restriction === "SAME_CATEGORY"
+        )
+      ) {
+        const category = currentTicket.players.filter(
+          (p) => p.category?.restriction === "SAME_CATEGORY"
+        );
+        return currentTicket.ticketType.categories
+          .filter((cat) => cat.id === category[0].category.id)
+          .map((cat) => ({
+            value: cat.id,
+            label: cat.title,
+          }));
+      } else {
+        return currentTicket.ticketType.categories.map((cat) => ({
+          value: cat.id,
+          label: cat.title,
+        }));
+      }
+    }
+  };
+
   return (
     <>
       <PlayerCard player={player} />
@@ -88,9 +118,9 @@ export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {currentTicket.ticketType.categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.title}
+                    {categories().map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
