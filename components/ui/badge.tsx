@@ -18,7 +18,7 @@ const badgeVariants = cva(
         filter:
           "bg-muted text-primary w-20 h-fit py-2 cursor-pointer text-center justify-center rounded-full",
         success:
-          "bg-success-foreground text-success border-none font-semibold text-sm",
+          "bg-success-foreground text-success border-none font-semibold ",
         warning:
           "bg-warning-foreground text-warning border-none font-semibold text-sm",
       },

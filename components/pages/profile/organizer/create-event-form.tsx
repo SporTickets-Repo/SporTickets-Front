@@ -8,10 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
+  ArrowUpIcon,
   ChevronLeft,
+  ChevronRight,
   ClipboardList,
   Ticket,
   TicketPercent,
+  Trash2Icon,
   Users2,
 } from "lucide-react";
 
@@ -236,15 +239,22 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             </nav>
             <Separator orientation="horizontal" className="w-full" />
 
-            <Button disabled type="button" className="w-full">
+            <Button
+              disabled
+              variant={"select"}
+              type="button"
+              className="w-full justify-start gap-2 h-10"
+            >
+              <ArrowUpIcon className="w-4 h-4" />
               Publicar evento
             </Button>
             <Button
               disabled
               type="button"
               variant="destructive"
-              className="w-full"
+              className="w-full justify-start gap-2 h-10"
             >
+              <Trash2Icon className="w-4 h-4" />
               Apagar evento
             </Button>
           </div>
@@ -265,10 +275,11 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                     <Button
                       variant="default-inverse"
                       size={"sm"}
-                      className="text-sm p-5"
+                      className="text-sm p-5 items-center [&_svg]:size-5"
                       type="button"
                       onClick={handlePreviousTab}
                     >
+                      <ChevronLeft />
                       Anterior
                     </Button>
                   )}
@@ -277,10 +288,11 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                       type="button"
                       size={"sm"}
                       variant={"default-inverse"}
-                      className="text-sm p-5"
+                      className="text-sm p-5 items-center [&_svg]:size-5"
                       onClick={handleNextTab}
                     >
-                      Próximo
+                      Próximo Passo
+                      <ChevronRight />
                     </Button>
                   )}
                 </div>

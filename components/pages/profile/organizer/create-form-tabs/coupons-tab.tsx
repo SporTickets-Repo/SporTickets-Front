@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, PlusIcon, TrashIcon } from "lucide-react";
+import { Loader2, PlusIcon, Ticket, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
@@ -80,16 +80,17 @@ export function CouponsTab() {
   }
 
   return (
-    <div className="space-y-6 px-0 sm:px-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
-        <div>
-          <h2 className="text-lg font-semibold">Cupons</h2>
+    <div className="space-y-6 px-4 py-6 sm:px-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold">Cupons</h2>
           <p className="text-sm text-muted-foreground">
             Quantidade total: {fields.length}
           </p>
         </div>
         <Button
-          size="sm"
+          variant="linkPurple"
+          className="gap-2 self-start sm:self-center"
           type="button"
           onClick={() => {
             const newIndex = fields.length;
@@ -102,25 +103,53 @@ export function CouponsTab() {
             setOpenItems((prev) => [...prev, `coupon-${newIndex}`]);
           }}
         >
-          <PlusIcon className="w-4 h-4 mr-2" />
+          <PlusIcon />
           Novo Cupom
         </Button>
       </div>
+
+      {fields.length === 0 && (
+        <div className="text-center py-12 border rounded-lg bg-muted/30">
+          <Ticket className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <h3 className="text-lg font-medium mb-2">Nenhum cupom cadastrado</h3>
+          <p className="text-muted-foreground mb-6">
+            Clique em "Novo cupom" para começar a configurar os cupoms do seu
+            evento.
+          </p>
+          <Button
+            onClick={() => {
+              const newIndex = fields.length;
+              append({
+                name: "",
+                percentage: 0,
+                quantity: 0,
+                isActive: true,
+              });
+              setOpenItems((prev) => [...prev, `coupon-${newIndex}`]);
+            }}
+            type="button"
+            className="gap-2"
+          >
+            <PlusIcon className="h-4 w-4" />
+            Novo Cupom
+          </Button>
+        </div>
+      )}
 
       <Accordion
         value={openItems}
         onValueChange={(val) => setOpenItems(val)}
         type="multiple"
-        className="space-y-4 sm:p-4"
+        className="border rounded-md shadow-sm overflow-hidden"
       >
         {fields.map((item, index) => (
           <AccordionItem
             key={item.id}
             value={`coupon-${index}`}
-            className="border rounded-md"
+            className="border-0 rounded-md"
           >
             <AccordionTrigger className="flex items-center justify-between">
-              <div className="flex items-center justify-between w-full px-2">
+              <div className="flex items-center justify-between w-full">
                 <div>
                   <h3 className="font-medium">
                     {item.name || `Cupom ${index + 1}`}
@@ -129,7 +158,7 @@ export function CouponsTab() {
                     {item.percentage}% • Quantidade: {item.quantity}
                   </p>
                 </div>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-2">
+                <div className="flex items-center gap-3 mr-3">
                   <FormField
                     control={control}
                     name={`coupons.${index}.isActive`}
@@ -142,26 +171,32 @@ export function CouponsTab() {
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
-                        <Label>Ativo</Label>
+                        <Label className="font-light text-gray-600">
+                          Ativo
+                        </Label>
                       </FormItem>
                     )}
                   />
 
                   <Button
-                    variant="ghost"
+                    variant="default-inverse"
                     type="button"
                     size="icon"
+                    className="p-[10px] [&_svg]:size-4 rounded-sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       remove(index);
                     }}
                   >
-                    <TrashIcon className="h-4 w-4" />
+                    <Trash2Icon />
                   </Button>
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="p-4 sm:p-6 space-y-4 bg-white">
+            <AccordionContent
+              style={{ padding: 0 }}
+              className="pt-4 pb-5 px-4 border rounded-b-xl rounded-t-none border-t-0"
+            >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={control}

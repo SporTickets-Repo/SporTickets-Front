@@ -33,6 +33,7 @@ import {
   Loader2,
   MinusIcon,
   PlusIcon,
+  SaveIcon,
   Ticket,
   Trash2Icon,
   UserCheck,
@@ -89,25 +90,23 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
             <span className="text-lg font-semibold">
               {watch(`ticketTypes.${index}.name`) || "Novo Ingresso"}
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 mr-3">
               <Badge
-                variant={
-                  currentUserType === "ATHLETE" ? "default" : "secondary"
-                }
+                variant={currentUserType === "ATHLETE" ? "default" : "success"}
               >
                 {currentUserType === "ATHLETE" ? "Atleta" : "Espectador"}
               </Badge>
               <Button
-                variant="ghost"
+                variant="default-inverse"
                 type="button"
                 size="icon"
+                className="p-[10px] [&_svg]:size-4 rounded-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   removeTicket(index);
                 }}
-                className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
               >
-                <Trash2Icon className="h-4 w-4" />
+                <Trash2Icon />
               </Button>
             </div>
           </div>
@@ -124,7 +123,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
               </AccordionTrigger>
               <AccordionContent
                 style={{ padding: 0 }}
-                className="pt-4 pb-2 px-4 border rounded-b-xl rounded-t-none border-t-0"
+                className="pt-4 pb-5 px-4 border rounded-b-xl rounded-t-none border-t-0"
               >
                 <div className="grid gap-6">
                   <div className="grid sm:grid-cols-2 gap-4">
@@ -213,7 +212,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                 <MinusIcon className="h-4 w-4" />
                               </Button>
                               <Input
-                                className="w-16 text-center bg-muted"
+                                className="w-24 h-10 text-center bg-muted "
                                 {...field}
                                 onChange={(e) => {
                                   const numericVal = e.target.value.replace(
@@ -248,7 +247,15 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
             {currentUserType === "ATHLETE" && (
               <AccordionItem value="categories" className="px-0 py-2">
                 <AccordionTrigger className="text-base font-medium">
-                  Categorias
+                  <div className="flex items-center justify-between w-full">
+                    <span>Categorias</span>
+                    <span className="text-xs font-normal text-muted-foreground mr-2">
+                      {categoriesArray.fields.length}{" "}
+                      {categoriesArray.fields.length === 1
+                        ? "categoria"
+                        : "categorias"}
+                    </span>
+                  </div>
                 </AccordionTrigger>
                 <AccordionContent
                   style={{ padding: 0 }}
@@ -264,7 +271,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                     {categoriesArray.fields.map((cat, catIndex) => (
                       <div
                         key={cat.id}
-                        className="grid sm:grid-cols-[1fr_100px_1fr_40px] gap-4 items-end"
+                        className="grid sm:grid-cols-[1fr_100px_1fr_60px] gap-2 items-end"
                       >
                         <FormField
                           control={control}
@@ -339,13 +346,13 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                         />
 
                         <Button
-                          variant="ghost"
+                          variant="default-inverse"
                           type="button"
                           size="icon"
-                          className="text-destructive hover:text-destructive/90 hover:bg-destructive/10 mb-2"
+                          className="py-[14px] px-5 [&_svg]:size-5 rounded-sm mr-2"
                           onClick={() => categoriesArray.remove(catIndex)}
                         >
-                          <Trash2Icon className="h-4 w-4" />
+                          <Trash2Icon />
                         </Button>
                       </div>
                     ))}
@@ -385,7 +392,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
               </AccordionTrigger>
               <AccordionContent
                 style={{ padding: 0 }}
-                className="pt-4 pb-2 px-4 border rounded-b-xl rounded-t-none border-t-0"
+                className="pt-4 pb-2 px-2 border rounded-b-xl rounded-t-none border-t-0"
               >
                 <div className="space-y-4">
                   {lotsArray.fields.length === 0 && (
@@ -413,7 +420,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                 `ticketTypes.${index}.ticketLots.${lotIndex}.name`
                               ) || `Lote ${lotIndex + 1}`}
                             </span>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 mr-2">
                               <FormField
                                 control={control}
                                 name={`ticketTypes.${index}.ticketLots.${lotIndex}.isActive`}
@@ -433,23 +440,23 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                 )}
                               />
                               <Button
-                                variant="ghost"
+                                variant="default-inverse"
                                 type="button"
                                 size="icon"
-                                className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                                className="p-[10px] [&_svg]:size-4 rounded-sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   lotsArray.remove(lotIndex);
                                 }}
                               >
-                                <Trash2Icon className="h-4 w-4" />
+                                <Trash2Icon />
                               </Button>
                             </div>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent
                           style={{ padding: 0 }}
-                          className="pt-4 pb-2 px-4 border rounded-b-xl rounded-t-none border-t-0"
+                          className="pt-4 pb-5 px-4 border rounded-b-xl rounded-t-none border-t-0"
                         >
                           <div className="grid gap-6">
                             <div className="grid sm:grid-cols-2 gap-4">
@@ -578,7 +585,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                         <MinusIcon className="h-4 w-4" />
                                       </Button>
                                       <Input
-                                        className="w-16 text-center bg-muted"
+                                        className="w-24 h-10 text-center bg-muted "
                                         value={field.value ?? ""}
                                         onChange={(e) => {
                                           const val = e.target.value.replace(
@@ -667,7 +674,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                     return (
                       <div
                         key={field.id}
-                        className="grid sm:grid-cols-[1fr_1fr_auto] gap-4 items-end"
+                        className="grid sm:grid-cols-[1fr_1fr_auto] gap-2 items-end"
                       >
                         <FormField
                           control={control}
@@ -688,10 +695,12 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                         />
 
                         <div
-                          className="grid gap-4"
+                          className="grid gap-2"
                           style={{
                             gridTemplateColumns:
-                              responseType === "checkbox" ? "1fr 1fr" : "1fr",
+                              responseType === "checkbox"
+                                ? "0.75fr 1fr"
+                                : "1fr",
                           }}
                         >
                           <FormField
@@ -759,10 +768,10 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                         </div>
 
                         <Button
-                          variant="ghost"
+                          variant="default-inverse"
                           type="button"
                           size="icon"
-                          className="text-destructive hover:text-destructive/90 hover:bg-destructive/10 mb-2"
+                          className="py-[14px] px-5 [&_svg]:size-5 rounded-sm mr-2"
                           onClick={() => customFieldsArray.remove(fieldIndex)}
                         >
                           <Trash2Icon className="h-4 w-4" />
@@ -867,14 +876,17 @@ export function TicketsTab() {
             Gerencie os tipos de ingressos disponíveis para o seu evento
           </p>
         </div>
-        <Button
-          onClick={addNewTicket}
-          type="button"
-          className="gap-2 self-start sm:self-center"
-        >
-          <PlusIcon className="h-4 w-4" />
-          Novo Ingresso
-        </Button>
+        {fields.length > 0 && (
+          <Button
+            variant="linkPurple"
+            onClick={addNewTicket}
+            type="button"
+            className="gap-2 self-start sm:self-center"
+          >
+            <PlusIcon />
+            Novo Ingresso
+          </Button>
+        )}
       </div>
 
       {fields.length === 0 ? (
@@ -903,9 +915,9 @@ export function TicketsTab() {
       <div className="flex justify-end pt-6">
         <Button
           type="button"
+          className="[&_svg]:size-5 items-center"
           onClick={handleSave}
           disabled={isSaving}
-          size="lg"
         >
           {isSaving ? (
             <>
@@ -913,7 +925,10 @@ export function TicketsTab() {
               Salvando...
             </>
           ) : (
-            "Salvar alterações"
+            <>
+              Salvar alterações
+              <SaveIcon className="h-4 w-4 ml-2" />
+            </>
           )}
         </Button>
       </div>

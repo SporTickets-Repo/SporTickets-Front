@@ -26,7 +26,14 @@ import {
   translateEventLevel,
   translateEventType,
 } from "@/utils/eventTranslations";
-import { Circle, CircleCheck, ImageIcon, Loader2, Upload } from "lucide-react";
+import {
+  Circle,
+  CircleCheck,
+  ImageIcon,
+  Loader2,
+  SaveIcon,
+  Upload,
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -812,11 +819,23 @@ export function InfoTab() {
       </section>
 
       <div className="flex justify-end pt-4">
-        <Button type="button" onClick={handleSave} disabled={isSaving}>
-          {isSaving && (
-            <Loader2 className="animate-spin self-center w-4 h-4 mr-2" />
+        <Button
+          type="button"
+          onClick={handleSave}
+          disabled={isSaving}
+          className="[&_svg]:size-5 items-center"
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              Salvando...
+            </>
+          ) : (
+            <>
+              Salvar alterações
+              <SaveIcon className="h-4 w-4 ml-2" />
+            </>
           )}
-          Salvar alterações
         </Button>
       </div>
     </div>

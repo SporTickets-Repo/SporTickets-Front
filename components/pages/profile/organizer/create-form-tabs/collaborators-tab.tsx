@@ -30,7 +30,7 @@ import { dashboardService } from "@/service/dashboard";
 import { userService } from "@/service/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { Loader2 } from "lucide-react";
+import { Loader2, PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -163,10 +163,10 @@ export function CollaboratorsTab() {
   };
 
   return (
-    <div className="space-y-6 px-0 sm:px-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Colaboradores</h2>
+    <div className="space-y-6 px-4 py-6 sm:px-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold">Colaboradores</h2>
           <p className="text-sm text-muted-foreground">
             Quando você convida colaboradores para o seu evento, eles podem
             administrar o conteúdo, informações e ações. Esses usuários também
@@ -177,15 +177,16 @@ export function CollaboratorsTab() {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button
-              variant="ghost"
+              variant="linkPurple"
+              className="gap-2 self-start sm:self-center"
               type="button"
-              className="text-sporticket-purple w-full sm:w-auto"
               onClick={() => {
                 setDialogOpen(true);
                 setFoundCollaborator(null);
                 reset();
               }}
             >
+              <PlusIcon />
               Novo Colaborador
             </Button>
           </DialogTrigger>
