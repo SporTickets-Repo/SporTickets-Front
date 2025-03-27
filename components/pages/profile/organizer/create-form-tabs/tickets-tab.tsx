@@ -112,17 +112,20 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
             </div>
           </div>
         </AccordionTrigger>
-        <AccordionContent className="p-0">
+        <AccordionContent style={{ padding: "0 10px" }} className="p-0 ">
           <Accordion
             type="multiple"
             defaultValue={["basic-info"]}
             className="w-full"
           >
-            <AccordionItem value="basic-info" className="border-0 px-4 py-2">
-              <AccordionTrigger className="py-3 text-primary font-medium">
+            <AccordionItem value="basic-info" className="px-0 py-2">
+              <AccordionTrigger className="text-base font-medium">
                 Informações básicas
               </AccordionTrigger>
-              <AccordionContent className="pt-4 pb-2 px-1">
+              <AccordionContent
+                style={{ padding: 0 }}
+                className="pt-4 pb-2 px-4 border rounded-b-xl rounded-t-none border-t-0"
+              >
                 <div className="grid gap-6">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <FormField
@@ -243,11 +246,14 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
             </AccordionItem>
 
             {currentUserType === "ATHLETE" && (
-              <AccordionItem value="categories" className="border-0 px-4 py-2">
-                <AccordionTrigger className="py-3 text-primary font-medium">
+              <AccordionItem value="categories" className="px-0 py-2">
+                <AccordionTrigger className="text-base font-medium">
                   Categorias
                 </AccordionTrigger>
-                <AccordionContent className="pt-4 pb-2 px-1">
+                <AccordionContent
+                  style={{ padding: 0 }}
+                  className="pt-4 pb-2 px-4 border rounded-b-xl rounded-t-none border-t-0"
+                >
                   <div className="space-y-4">
                     {categoriesArray.fields.length === 0 && (
                       <div className="text-center py-4 text-muted-foreground">
@@ -336,7 +342,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           variant="ghost"
                           type="button"
                           size="icon"
-                          className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                          className="text-destructive hover:text-destructive/90 hover:bg-destructive/10 mb-2"
                           onClick={() => categoriesArray.remove(catIndex)}
                         >
                           <Trash2Icon className="h-4 w-4" />
@@ -346,7 +352,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
 
                     <div className="flex justify-end mt-4">
                       <Button
-                        variant="outline"
+                        variant="link"
                         type="button"
                         size="sm"
                         className="gap-2"
@@ -367,8 +373,8 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
               </AccordionItem>
             )}
 
-            <AccordionItem value="lots" className="border-0 px-4 py-2">
-              <AccordionTrigger className="py-3 text-primary font-medium">
+            <AccordionItem value="lots" className="px-0 py-2">
+              <AccordionTrigger className="text-base font-medium">
                 <div className="flex items-center justify-between w-full">
                   <span>Lotes</span>
                   <span className="text-xs font-normal text-muted-foreground mr-2">
@@ -377,7 +383,10 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   </span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="pt-4 pb-2 px-1">
+              <AccordionContent
+                style={{ padding: 0 }}
+                className="pt-4 pb-2 px-4 border rounded-b-xl rounded-t-none border-t-0"
+              >
                 <div className="space-y-4">
                   {lotsArray.fields.length === 0 && (
                     <div className="text-center py-4 text-muted-foreground">
@@ -395,7 +404,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       <AccordionItem
                         key={lot.id}
                         value={`lot-${lotIndex}`}
-                        className="border rounded-md overflow-hidden"
+                        className="overflow-hidden"
                       >
                         <AccordionTrigger className="px-4 py-3 bg-muted/50 hover:bg-muted">
                           <div className="flex items-center justify-between w-full">
@@ -417,7 +426,9 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                         onCheckedChange={field.onChange}
                                       />
                                     </FormControl>
-                                    <Label className="text-xs">Ativo</Label>
+                                    <Label className="text-xs !m-0 !ml-2">
+                                      Ativo
+                                    </Label>
                                   </FormItem>
                                 )}
                               />
@@ -436,7 +447,10 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                             </div>
                           </div>
                         </AccordionTrigger>
-                        <AccordionContent className="p-4">
+                        <AccordionContent
+                          style={{ padding: 0 }}
+                          className="pt-4 pb-2 px-4 border rounded-b-xl rounded-t-none border-t-0"
+                        >
                           <div className="grid gap-6">
                             <div className="grid sm:grid-cols-2 gap-4">
                               <FormField
@@ -599,7 +613,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
 
                   <div className="flex justify-end mt-4">
                     <Button
-                      variant="outline"
+                      variant="link"
                       type="button"
                       size="sm"
                       className="gap-2"
@@ -624,8 +638,8 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="custom-fields" className="border-0 px-4 py-2">
-              <AccordionTrigger className="py-3 text-primary font-medium">
+            <AccordionItem value="custom-fields" className="px-0 py-2">
+              <AccordionTrigger className="text-base font-medium">
                 <div className="flex items-center justify-between w-full">
                   <span>Campos personalizados</span>
                   <span className="text-xs font-normal text-muted-foreground mr-2">
@@ -634,7 +648,10 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   </span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="pt-4 pb-2 px-1">
+              <AccordionContent
+                style={{ padding: 0 }}
+                className="pt-4 pb-2 px-4 border rounded-b-xl rounded-t-none border-t-0"
+              >
                 <div className="space-y-6">
                   {customFieldsArray.fields.length === 0 && (
                     <div className="text-center py-4 text-muted-foreground">
@@ -745,7 +762,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           variant="ghost"
                           type="button"
                           size="icon"
-                          className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                          className="text-destructive hover:text-destructive/90 hover:bg-destructive/10 mb-2"
                           onClick={() => customFieldsArray.remove(fieldIndex)}
                         >
                           <Trash2Icon className="h-4 w-4" />
@@ -756,7 +773,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
 
                   <div className="flex justify-end mt-4">
                     <Button
-                      variant="outline"
+                      variant="link"
                       type="button"
                       size="sm"
                       className="gap-2"

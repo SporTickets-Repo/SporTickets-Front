@@ -21,7 +21,7 @@ const buttonVariants = cva(
           "bg-sporticket-blue text-md font-bold text-sporticket-purple shadow-sm hover:bg-sporticket-blue/80",
         tertiary:
           "bg-neutral-100 text-sporticket-blue-600 shadow-sm hover:bg-neutral-100/90",
-        link: "text-sporticket-orange underline mt-1 h-auto p-0 text-sm font-medium hover:text-sporticket-orange/60",
+        link: "text-sporticket-orange mt-1 h-auto p-0 text-sm font-medium hover:text-sporticket-orange/60",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         select: "bg-sporticket-purple text-white hover:sporticket-purple/90",
       },
