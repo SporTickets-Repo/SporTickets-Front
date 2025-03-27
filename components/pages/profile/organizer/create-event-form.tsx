@@ -19,6 +19,7 @@ import {
   Users2,
 } from "lucide-react";
 
+import { Label } from "@/components/ui/label";
 import { useCreateEventContext } from "@/context/create-event";
 import { EventLevel, EventStatus, EventType } from "@/interface/event";
 import {
@@ -26,6 +27,7 @@ import {
   createEventFormValuesSchema,
 } from "@/schemas/createEventSchema";
 import { eventService } from "@/service/event";
+import { translateEventStatus } from "@/utils/eventTranslations";
 import { useRouter } from "next/navigation";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
@@ -295,6 +297,13 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               ))}
             </nav>
             <Separator orientation="horizontal" className="w-full" />
+
+            <div className="justify-center text-center w-full bg-muted rounded-xl">
+              <Label>Status</Label>
+              <h2 className="text-lg font-medium">
+                {translateEventStatus(eventData?.status as EventStatus)}
+              </h2>
+            </div>
 
             <Button
               disabled
