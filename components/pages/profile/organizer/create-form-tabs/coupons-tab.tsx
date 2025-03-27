@@ -80,7 +80,7 @@ export function CouponsTab() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-0 sm:px-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
         <div>
           <h2 className="text-lg font-semibold">Cupons</h2>

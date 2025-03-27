@@ -163,7 +163,7 @@ export function CollaboratorsTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-0 sm:px-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
         <div className="space-y-2">
           <h2 className="text-lg font-semibold">Colaboradores</h2>

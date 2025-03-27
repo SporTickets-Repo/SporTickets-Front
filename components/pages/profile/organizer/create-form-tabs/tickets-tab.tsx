@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -245,6 +245,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       />
 
                       <Button
+                        className="mt-6"
                         variant="ghost"
                         type="button"
                         size="icon"
@@ -469,22 +470,38 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           <FormField
                             control={control}
                             name={`ticketTypes.${index}.ticketLots.${lotIndex}.price`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Preço do lote</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="number"
-                                    placeholder="R$ 50,00"
-                                    {...field}
-                                    onChange={(e) =>
-                                      field.onChange(Number(e.target.value))
-                                    }
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
+                            render={({ field }) => {
+                              const formattedValue = useMemo(() => {
+                                const val = Number(field.value || 0);
+                                return new Intl.NumberFormat("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                  minimumFractionDigits: 2,
+                                }).format(val);
+                              }, [field.value]);
+
+                              return (
+                                <FormItem>
+                                  <FormLabel>Preço do lote</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder="R$ 0,00"
+                                      inputMode="decimal"
+                                      value={formattedValue}
+                                      onChange={(e) => {
+                                        const raw = e.target.value
+                                          .replace(/\D/g, "")
+                                          .replace(/^0+/, "");
+
+                                        const cents = Number(raw) / 100;
+                                        field.onChange(cents);
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              );
+                            }}
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -703,7 +720,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       variant="ghost"
                       type="button"
                       size="icon"
-                      className="text-sporticket-purple"
+                      className="text-sporticket-purple mt-6"
                       onClick={() => customFieldsArray.remove(fieldIndex)}
                     >
                       <Trash2Icon className="h-4 w-4" />
@@ -767,6 +784,13 @@ export function TicketsTab() {
       const currentTickets = getValues("ticketTypes");
       await ticketService.upsertTickets(currentTickets, eventId);
       toast.success("Ingressos atualizados com sucesso!");
+      try {
+        const data = await ticketService.getTicketsByEventId(eventId);
+
+        setValue("ticketTypes", data, { shouldDirty: false });
+      } catch (err) {
+        toast.error("Falha ao carregar ingressos.");
+      }
     } catch (err: any) {
       toast.error("Falha ao salvar as alterações.");
     } finally {
@@ -775,7 +799,7 @@ export function TicketsTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-0 sm:px-6">
       <div className="flex items-center justify-between mb-4">
         <div className="space-y-1">
           <h2 className="text-lg font-semibold">Ingressos</h2>
