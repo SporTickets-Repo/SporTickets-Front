@@ -20,11 +20,12 @@ import {
 } from "lucide-react";
 
 import { useCreateEventContext } from "@/context/create-event";
-import { EventLevel, EventType } from "@/interface/event";
+import { EventLevel, EventStatus, EventType } from "@/interface/event";
 import {
   CreateEventFormValues,
   createEventFormValuesSchema,
 } from "@/schemas/createEventSchema";
+import { eventService } from "@/service/event";
 import { useRouter } from "next/navigation";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
@@ -168,7 +169,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     if (eventId) {
       setEventId(eventId);
     }
-  }, [eventId]);
+  }, [eventId, setEventId]);
 
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("info");
@@ -237,6 +238,27 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     setTabErrors(getTabErrors(errors));
   };
 
+  const handlePublishEvent = async () => {
+    try {
+      await eventService.setEventStatus(eventId, EventStatus.PROGRESS);
+
+      console.log("Event published successfully!");
+    } catch (error) {
+      console.error("Failed to publish event:", error);
+    }
+  };
+
+  const handleDeleteEvent = async () => {
+    try {
+      await eventService.setEventStatus(eventId, EventStatus.CANCELLED);
+      console.log("Event canceled/deleted successfully!");
+
+      router.push("/perfil");
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+    }
+  };
+
   return (
     <div className="container max-w-7xl pb-10">
       <div className="flex items-center space-x-4 mt-2 mb-4">
@@ -279,15 +301,16 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               variant={"select"}
               type="button"
               className="w-full justify-start gap-2 h-10"
+              onClick={handlePublishEvent}
             >
               <ArrowUpIcon className="w-4 h-4" />
               Publicar evento
             </Button>
             <Button
-              disabled
               type="button"
               variant="destructive"
               className="w-full justify-start gap-2 h-10"
+              onClick={handleDeleteEvent}
             >
               <Trash2Icon className="w-4 h-4" />
               Apagar evento

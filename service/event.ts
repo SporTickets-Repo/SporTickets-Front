@@ -114,4 +114,15 @@ export const eventService = {
       throw error;
     }
   },
+
+  setEventStatus: async (eventId: string, status: string): Promise<Event> => {
+    try {
+      const response = await api.put<Event>(`/events/${eventId}/set-status`, {
+        status,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
