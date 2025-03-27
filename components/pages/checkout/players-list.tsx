@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEvent } from "@/context/event";
 import type { Player, TicketResponse } from "@/interface/tickets";
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa6";
 import { FiUserPlus } from "react-icons/fi";
@@ -55,12 +55,13 @@ export function PlayersList({
           </p>
         </div>
         <Button
-          variant="outline"
+          variant="linkPurple"
           size="sm"
-          className="text-md text-sporticket-purple border-sporticket-purple hover:bg-sporticket-purple-50"
+          className="text-md"
           onClick={onAddPlayer}
           disabled={players.length === currentTicket.ticketType.teamSize}
         >
+          <Plus />
           Novo Jogador
         </Button>
       </div>

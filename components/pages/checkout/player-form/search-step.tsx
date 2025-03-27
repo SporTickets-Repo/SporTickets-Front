@@ -73,7 +73,7 @@ export function SearchStep({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <Button onClick={handleAddMe} className="w-full">
+        <Button onClick={handleAddMe} className="w-full" type="button">
           Adicionar meu usuário
         </Button>
         <FormField
