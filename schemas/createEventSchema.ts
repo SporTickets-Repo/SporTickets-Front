@@ -72,7 +72,7 @@ export const eventFormValuesSchema = z
   );
 
 const userTypeEnum = z.enum(["ATHLETE", "VIEWER"]);
-const restrictionEnum = z.enum(["SAMECATEGORY", "NONE"]);
+const restrictionEnum = z.enum(["SAME_CATEGORY", "NONE"]);
 
 const categorySchema = z.object({
   title: z

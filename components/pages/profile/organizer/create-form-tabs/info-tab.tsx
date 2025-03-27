@@ -545,7 +545,7 @@ export function InfoTab() {
                   <Tiptap
                     onChange={(value: string) =>
                       setValue("event.description", value, {
-                        shouldValidate: true,
+                        shouldValidate: value.length > 0,
                       })
                     }
                     initialContent={field.value}
@@ -566,7 +566,7 @@ export function InfoTab() {
                   <Tiptap
                     onChange={(value: string) =>
                       setValue("event.regulation", value, {
-                        shouldValidate: true,
+                        shouldValidate: value.length > 0,
                       })
                     }
                     initialContent={field.value}
@@ -587,7 +587,7 @@ export function InfoTab() {
                   <Tiptap
                     onChange={(value: string) =>
                       setValue("event.additionalInfo", value, {
-                        shouldValidate: true,
+                        shouldValidate: value.length > 0,
                       })
                     }
                     initialContent={field.value}

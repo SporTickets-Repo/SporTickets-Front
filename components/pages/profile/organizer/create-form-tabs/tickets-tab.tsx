@@ -51,6 +51,7 @@ interface TicketItemProps {
 function TicketItem({ index, removeTicket }: TicketItemProps) {
   const { control, watch } = useFormContext();
   const currentUserType = watch(`ticketTypes.${index}.userType`);
+  const [openLots, setOpenLots] = useState<string[]>([]);
 
   const lotsArray = useFieldArray({
     control,
@@ -137,7 +138,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                     <FormControl>
                       <Textarea
                         placeholder="Ex: Inclui short e camiseta"
-                        className="resize-none"
+                        className="resize-none bg-muted"
                         rows={6}
                         {...field}
                       />
@@ -154,7 +155,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   <FormItem>
                     <FormLabel>Tipo de usuário</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-muted">
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                       <SelectContent>
@@ -227,7 +228,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                 value={field.value}
                                 onValueChange={field.onChange}
                               >
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-muted">
                                   <SelectValue placeholder="Selecione a restrição" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -291,13 +292,13 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           variant="outline"
                           className="w-8 h-8 p-0"
                           onClick={() =>
-                            field.onChange(Math.max(1, field.value - 1))
+                            field.onChange(Math.max(0, field.value - 1))
                           }
                         >
                           <MinusIcon className="h-4 w-4" />
                         </Button>
                         <Input
-                          className="w-20 text-center"
+                          className="w-20 text-center p-0"
                           {...field}
                           onChange={(e) => {
                             const numericVal = e.target.value.replace(
@@ -377,7 +378,8 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   variant="ghost"
                   type="button"
                   className="gap-2 text-sporticket-orange text-sm"
-                  onClick={() =>
+                  onClick={() => {
+                    const newIndex = lotsArray.fields.length;
                     lotsArray.append({
                       name: "",
                       price: 0,
@@ -385,19 +387,25 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       endDate: "",
                       quantity: 0,
                       isActive: true,
-                    })
-                  }
+                    });
+                    setOpenLots((prev) => [...prev, `lot-${newIndex}`]);
+                  }}
                 >
                   <PlusIcon className="h-4 w-4" />
                   Adicionar novo lote
                 </Button>
               </div>
 
-              <Accordion type="multiple" className="space-y-4 p-2">
+              <Accordion
+                value={openLots}
+                onValueChange={(val) => setOpenLots(val)}
+                type="multiple"
+                className="space-y-4 p-2"
+              >
                 {lotsArray.fields.map((lot, lotIndex) => (
                   <AccordionItem
                     key={lot.id}
-                    value={`lot-${lot.id}`}
+                    value={`lot-${lotIndex}`}
                     className="border rounded-md"
                   >
                     <AccordionTrigger>
@@ -639,7 +647,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                 value={field.value}
                                 onValueChange={field.onChange}
                               >
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-muted">
                                   <SelectValue placeholder="Selecione o tipo" />
                                 </SelectTrigger>
                                 <SelectContent>

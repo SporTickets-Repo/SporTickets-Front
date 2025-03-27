@@ -29,6 +29,7 @@ import { mutate } from "swr";
 
 export function CouponsTab() {
   const [isSaving, setIsSaving] = useState(false);
+  const [openItems, setOpenItems] = useState<string[]>([]);
 
   const { eventId } = useCreateEventContext();
 
@@ -90,21 +91,28 @@ export function CouponsTab() {
         <Button
           size="sm"
           type="button"
-          onClick={() =>
+          onClick={() => {
+            const newIndex = fields.length;
             append({
               name: "",
               percentage: 0,
               quantity: 0,
               isActive: true,
-            })
-          }
+            });
+            setOpenItems((prev) => [...prev, `coupon-${newIndex}`]);
+          }}
         >
           <PlusIcon className="w-4 h-4 mr-2" />
           Novo Cupom
         </Button>
       </div>
 
-      <Accordion type="multiple" className="space-y-4 sm:p-4">
+      <Accordion
+        value={openItems}
+        onValueChange={(val) => setOpenItems(val)}
+        type="multiple"
+        className="space-y-4 sm:p-4"
+      >
         {fields.map((item, index) => (
           <AccordionItem
             key={item.id}

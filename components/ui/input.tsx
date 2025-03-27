@@ -18,7 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           type={isPassword && showPassword ? "text" : type}
           className={cn(
-            "flex h-12 w-full rounded-md border px-3 py-1 pr-10 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+            "flex h-12 w-full rounded-md border px-3 py-1 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
             error
               ? "border-red-500 focus-visible:ring-red-500"
               : "border-input bg-neutral-100",
