@@ -17,16 +17,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useCreateEventContext } from "@/context/create-event";
 import { CreateEventFormValues } from "@/schemas/createEventSchema";
+import { bracketService } from "@/service/bracket";
+import { rankingService } from "@/service/ranking";
 import { Loader2, PlusIcon, SaveIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
+import { mutate } from "swr";
 
 export function IntegrationsTab() {
   const [isSaving, setIsSaving] = useState(false);
   const [openBrackets, setOpenBrackets] = useState<string[]>([]);
   const [openRankings, setOpenRankings] = useState<string[]>([]);
+  const { eventId } = useCreateEventContext();
 
   const { control, trigger, getValues } =
     useFormContext<CreateEventFormValues>();
@@ -75,10 +80,25 @@ export function IntegrationsTab() {
 
     try {
       setIsSaving(true);
+
       const formValues = getValues();
       const { bracket, ranking } = formValues;
-      console.log("bracket", bracket);
-      console.log("ranking", ranking);
+      const response = await bracketService.updateBracketList(
+        eventId as string,
+        bracket.map((bracketItem) => ({
+          ...bracketItem,
+        }))
+      );
+      console.log("bracket salvos", response);
+      const rankingResponse = await rankingService.updateRankingList(
+        eventId as string,
+        ranking.map((rankingItem) => ({
+          ...rankingItem,
+        }))
+      );
+      console.log("rankings salvos", rankingResponse);
+      toast.success("Integrações salvas com sucesso.");
+      await mutate(`/events/${eventId}`);
     } catch (err) {
       toast.error("Não foi possível salvar as integrações.");
     } finally {

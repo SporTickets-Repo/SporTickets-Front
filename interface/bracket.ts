@@ -5,3 +5,10 @@ export interface Bracket {
   url: string;
   isActive: boolean;
 }
+
+export interface BracketUpdate {
+  id?: string;
+  name?: string;
+  url?: string;
+  isActive?: boolean;
+}
