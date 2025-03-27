@@ -900,25 +900,23 @@ export function TicketsTab() {
         </div>
       )}
 
-      {fields.length > 0 && (
-        <div className="flex justify-end pt-6">
-          <Button
-            type="button"
-            onClick={handleSave}
-            disabled={isSaving}
-            size="lg"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                Salvando...
-              </>
-            ) : (
-              "Salvar alterações"
-            )}
-          </Button>
-        </div>
-      )}
+      <div className="flex justify-end pt-6">
+        <Button
+          type="button"
+          onClick={handleSave}
+          disabled={isSaving}
+          size="lg"
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              Salvando...
+            </>
+          ) : (
+            "Salvar alterações"
+          )}
+        </Button>
+      </div>
     </div>
   );
 }
