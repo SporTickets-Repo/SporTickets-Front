@@ -19,13 +19,16 @@ import {
   Users2,
 } from "lucide-react";
 
+import { Label } from "@/components/ui/label";
 import { useCreateEventContext } from "@/context/create-event";
 import { EventLevel, EventStatus, EventType } from "@/interface/event";
+import { UserType } from "@/interface/tickets";
 import {
   CreateEventFormValues,
   createEventFormValuesSchema,
 } from "@/schemas/createEventSchema";
 import { eventService } from "@/service/event";
+import { translateEventStatus } from "@/utils/eventTranslations";
 import { useRouter } from "next/navigation";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
@@ -134,6 +137,46 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               percentage: Number(c.percentage) * 100,
               quantity: c.quantity ?? 0,
               isActive: true,
+            }))
+          : [],
+
+        ticketTypes: eventData.ticketTypes
+          ? eventData.ticketTypes.map((t) => ({
+              id: t.id,
+              eventId: t.eventId,
+              name: t.name,
+              description: t.description,
+              userType: t.userType as UserType,
+              teamSize: t.teamSize,
+              ticketLots: t.ticketLots.map((lot) => ({
+                id: lot.id,
+                ticketTypeId: lot.ticketTypeId,
+                name: lot.name,
+                price: parseFloat(lot.price),
+                quantity: lot.quantity,
+                startDate: lot.startDate,
+                endDate: lot.endDate,
+                isActive: lot.isActive,
+                createdAt: lot.createdAt,
+                updatedAt: lot.updatedAt,
+                deletedAt: lot.deletedAt || null,
+              })),
+              categories: t.categories.map((c) => ({
+                id: c.id,
+                ticketTypeId: c.ticketTypeId,
+                title: c.title,
+                restriction: c.restriction,
+                quantity: c.quantity,
+                deletedAt: c.deletedAt || null,
+              })),
+              personalizedFields: t.personalizedFields.map((pf) => ({
+                id: pf.id,
+                ticketTypeId: pf.ticketTypeId,
+                type: pf.type,
+                requestTitle: pf.requestTitle,
+                optionsList: pf.optionsList,
+                deletedAt: pf.deletedAt || null,
+              })),
             }))
           : [],
 
@@ -295,6 +338,13 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               ))}
             </nav>
             <Separator orientation="horizontal" className="w-full" />
+
+            <div className="justify-center text-center w-full bg-muted rounded-xl">
+              <Label>Status</Label>
+              <h2 className="text-lg font-medium">
+                {translateEventStatus(eventData?.status as EventStatus)}
+              </h2>
+            </div>
 
             <Button
               disabled
