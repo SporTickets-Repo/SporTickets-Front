@@ -79,22 +79,6 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
               {watch(`ticketTypes.${index}.name`) || "Novo Ingresso"}
             </h3>
             <div className="gap-2 flex items-center">
-              <FormField
-                control={control}
-                name={`ticketTypes.${index}.isActive`}
-                render={({ field }) => (
-                  <FormItem className="flex items-center space-x-2">
-                    <FormControl>
-                      <Switch
-                        onClick={(e) => e.stopPropagation()}
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <Label>Ativo</Label>
-                  </FormItem>
-                )}
-              />
               <Button
                 variant="ghost"
                 type="button"
