@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/auth";
-import { Player, TicketProps } from "@/interface/tickets";
+import { Player, TicketResponse } from "@/interface/tickets";
 import { userService } from "@/service/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -27,7 +27,7 @@ interface Props {
   onNotFound: (email: string) => void;
   onClose: () => void;
   initialEmail?: string;
-  currentTicket: TicketProps;
+  currentTicket: TicketResponse;
 }
 
 export function SearchStep({
@@ -58,7 +58,7 @@ export function SearchStep({
     try {
       const response = await userService.getUserByEmail(email);
       const isDuplicated = currentTicket.players.some(
-        (p) => p.Userid === response.Userid
+        (p) => p.userId === response.userId
       );
       if (isDuplicated) {
         setCustomError("Já existe um jogador com este CPF neste ingresso.");

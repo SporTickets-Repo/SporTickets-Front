@@ -1,6 +1,7 @@
 "use client";
 
 import EventAditionalInfo from "@/components/pages/event/event-aditional-info";
+import EventBracket from "@/components/pages/event/event-bracket";
 import EventDescription from "@/components/pages/event/event-description";
 import EventHeader from "@/components/pages/event/event-header";
 import EventLocation from "@/components/pages/event/event-location";
@@ -14,6 +15,7 @@ import { Address } from "@/interface/address";
 import { formatDateWithoutYear, formatHour } from "@/utils/dateTime";
 import { getEventIcon } from "@/utils/eventIcons";
 import {
+  translateEventLevel,
   translateEventStatus,
   translateEventType,
 } from "@/utils/eventTranslations";
@@ -69,14 +71,15 @@ export default function EventPage() {
                   <div className="flex items-center gap-1">
                     <LuMedal size={12} className="text-gray-400" />
                     <span className={`text-gray-600`}>
-                      {"Diversas Categorias"}
+                      {translateEventLevel(event.level || "GERAL")}
                     </span>
                     <span className="mr-1 text-gray-600">•</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <IoPin size={14} className="text-gray-400" />
                     <span className="text-gray-600">
-                      {event.address?.street}, {event.address?.state}
+                      {event.address?.street}, {event.address?.city} -{" "}
+                      {event.address?.state}
                     </span>
                   </div>
                 </div>
@@ -102,7 +105,9 @@ export default function EventPage() {
 
               <EventPolicy regulation={event.regulation as string} />
 
-              <EventRanking />
+              <EventRanking rankings={event.ranking} />
+
+              <EventBracket brackets={event.bracket} />
 
               <EventAditionalInfo
                 additionalInfo={event.additionalInfo as string}

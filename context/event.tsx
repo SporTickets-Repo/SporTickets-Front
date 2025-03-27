@@ -1,7 +1,7 @@
 "use client";
 import { Coupon } from "@/interface/coupons";
 import { Event } from "@/interface/event";
-import { Player, TicketProps } from "@/interface/tickets";
+import { Player, TicketResponse } from "@/interface/tickets";
 import { eventService } from "@/service/event";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -11,8 +11,8 @@ interface EventContextProps {
   loading: boolean;
   error: string | null;
   setSlug: (slug: string) => void;
-  selectedTickets: TicketProps[];
-  setSelectedTickets: React.Dispatch<React.SetStateAction<TicketProps[]>>;
+  selectedTickets: TicketResponse[];
+  setSelectedTickets: React.Dispatch<React.SetStateAction<TicketResponse[]>>;
   addTicket: (ticketTypeId: string) => void;
   removeTicket: (ticketTypeId: string) => void;
 }
@@ -35,7 +35,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [slug, setSlug] = useState<string>("");
-  const [selectedTickets, setSelectedTickets] = useState<TicketProps[]>([]);
+  const [selectedTickets, setSelectedTickets] = useState<TicketResponse[]>([]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -67,7 +67,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       const activeLot = ticketType.ticketLots.find((lot) => lot.isActive);
       if (!activeLot) return prev;
 
-      const newTicket: TicketProps = {
+      const newTicket: TicketResponse = {
         id: uuidv4(),
         ticketType,
         ticketLot: activeLot,

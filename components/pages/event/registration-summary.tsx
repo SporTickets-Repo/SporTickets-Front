@@ -54,10 +54,10 @@ export default function RegistrationSummary({
                     <Button
                       variant="select"
                       size="icon"
-                      className="h-6 w-6 "
+                      className="h-6 w-6 rounded"
                       onClick={() => removeTicket(ticket.id)}
                     >
-                      <Minus className="h-4 w-4" />
+                      <Minus />
                     </Button>
                     <p className="text-3xs w-[30px] text-center">
                       {getQuantity(ticket.id)}
@@ -65,10 +65,10 @@ export default function RegistrationSummary({
                     <Button
                       variant="select"
                       size="icon"
-                      className="h-6 w-6 "
+                      className="h-6 w-6 rounded"
                       onClick={() => addTicket(ticket.id)}
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus />
                     </Button>
                   </div>
                 </div>
