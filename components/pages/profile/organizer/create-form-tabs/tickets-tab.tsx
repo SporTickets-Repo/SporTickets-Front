@@ -597,7 +597,6 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                     customFieldsArray.append({
                       question: "",
                       type: "text",
-                      optionsList: [],
                     })
                   }
                 >
@@ -605,11 +604,11 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                   Adicionar campo
                 </Button>
               </div>
-
               {customFieldsArray.fields.map((field, fieldIndex) => {
                 const responseType = watch(
                   `ticketTypes.${index}.personalizedFields.${fieldIndex}.type`
                 );
+                const inputCount = responseType === "checkbox" ? 3 : 2;
 
                 return (
                   <div
@@ -617,7 +616,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                     className="flex items-center justify-between"
                   >
                     <div className="flex gap-4 w-full">
-                      <div className="w-1/2">
+                      <div className={inputCount === 3 ? "w-1/3" : "w-1/2"}>
                         <FormField
                           control={control}
                           name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.question`}
@@ -635,8 +634,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           )}
                         />
                       </div>
-
-                      <div className="w-1/2">
+                      <div className={inputCount === 3 ? "w-1/3" : "w-1/2"}>
                         <FormField
                           control={control}
                           name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.type`}
@@ -662,8 +660,45 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                           )}
                         />
                       </div>
+                      {responseType === "checkbox" && (
+                        <div className="w-1/3">
+                          <FormField
+                            control={control}
+                            name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.options`}
+                            render={({
+                              field: { onChange, onBlur, value, ref },
+                            }) => (
+                              <FormItem>
+                                <FormLabel>Opções</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Ex: sim, não, talvez"
+                                    ref={ref}
+                                    value={
+                                      Array.isArray(value)
+                                        ? value.join(", ")
+                                        : value
+                                    }
+                                    onChange={(e) => {
+                                      onChange(e.target.value);
+                                    }}
+                                    onBlur={(e) => {
+                                      const optionsArray = e.target.value
+                                        .split(",")
+                                        .map((option) => option.trim())
+                                        .filter((option) => option);
+                                      onChange(optionsArray);
+                                      onBlur();
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      )}
                     </div>
-
                     <Button
                       variant="ghost"
                       type="button"
