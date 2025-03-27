@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
+  Link,
   Ticket,
   TicketPercent,
   Trash2Icon,
@@ -28,15 +29,22 @@ import { useRouter } from "next/navigation";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
 import { InfoTab } from "./create-form-tabs/info-tab";
+import { IntegrationsTab } from "./create-form-tabs/integrations-tab";
 import { TicketsTab } from "./create-form-tabs/tickets-tab";
 
-type TabType = "info" | "tickets" | "coupons" | "collaborators";
+type TabType =
+  | "info"
+  | "tickets"
+  | "coupons"
+  | "collaborators"
+  | "integrations";
 
 const tabLabels = {
   info: "Informações",
   tickets: "Ingressos",
   coupons: "Cupons",
   collaborators: "Colaboradores",
+  integrations: "Integrações",
 };
 
 interface CreateEventFormProps {
@@ -127,6 +135,24 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               isActive: true,
             }))
           : [],
+
+        bracket: eventData.bracket
+          ? eventData.bracket.map((b) => ({
+              id: b.id,
+              name: b.name,
+              url: b.url,
+              isActive: true,
+            }))
+          : [],
+
+        ranking: eventData.ranking
+          ? eventData.ranking.map((r) => ({
+              id: r.id,
+              name: r.name,
+              url: r.url,
+              isActive: true,
+            }))
+          : [],
       });
 
       if (eventData.bannerUrl) {
@@ -148,7 +174,13 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
   const [activeTab, setActiveTab] = useState<TabType>("info");
   const [tabErrors, setTabErrors] = useState<TabType[]>([]);
 
-  const tabOrder: TabType[] = ["info", "tickets", "coupons", "collaborators"];
+  const tabOrder: TabType[] = [
+    "info",
+    "tickets",
+    "coupons",
+    "collaborators",
+    "integrations",
+  ];
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -160,6 +192,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         return <CouponsTab />;
       case "collaborators":
         return <CollaboratorsTab />;
+      case "integrations":
+        return <IntegrationsTab />;
       default:
         return null;
     }
@@ -233,6 +267,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                   {tab === "tickets" && <Ticket className="w-4 h-4" />}
                   {tab === "coupons" && <TicketPercent className="w-4 h-4" />}
                   {tab === "collaborators" && <Users2 className="w-4 h-4" />}
+                  {tab === "integrations" && <Link className="w-4 h-4" />}
                   {tabLabels[tab]}
                 </Button>
               ))}
@@ -283,7 +318,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                       Anterior
                     </Button>
                   )}
-                  {activeTab !== "collaborators" && (
+                  {activeTab !== "integrations" && (
                     <Button
                       type="button"
                       size={"sm"}

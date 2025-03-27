@@ -160,13 +160,37 @@ const couponSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
+const bracketSchema = z.object({
+  id: z.string().optional(),
+  name: z
+    .string()
+    .nonempty({ message: "O nome da chave é obrigatório" })
+    .min(3, { message: "O nome da chave deve ter no mínimo 3 caracteres" }),
+  url: z.string().nonempty({ message: "A URL da chave é obrigatória" }),
+  isActive: z.boolean().optional(),
+});
+
+const rankingSchema = z.object({
+  id: z.string().optional(),
+  name: z
+    .string()
+    .nonempty({ message: "O nome do ranking é obrigatório" })
+    .min(3, { message: "O nome do ranking deve ter no mínimo 3 caracteres" }),
+  url: z.string().nonempty({ message: "A URL do ranking é obrigatória" }),
+  isActive: z.boolean().optional(),
+});
+
 export const createEventFormValuesSchema = z.object({
   event: eventFormValuesSchema,
   ticketTypes: z.array(ticketTypeSchema),
   coupons: z.array(couponSchema),
+  bracket: z.array(bracketSchema),
+  ranking: z.array(rankingSchema),
 });
 
 export type CreateEventFormValues = z.infer<typeof createEventFormValuesSchema>;
 export type EventFormValues = z.infer<typeof eventFormValuesSchema>;
+export type RankingFormValues = z.infer<typeof rankingSchema>;
+export type BracketFormValues = z.infer<typeof bracketSchema>;
 
 export type InfoTabFormValues = z.infer<typeof eventFormValuesSchema>;
