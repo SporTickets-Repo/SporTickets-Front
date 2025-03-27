@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ClipboardList,
   Link,
+  Loader2,
   Ticket,
   TicketPercent,
   Trash2Icon,
@@ -58,6 +59,7 @@ interface CreateEventFormProps {
 export function CreateEventForm({ eventId }: CreateEventFormProps) {
   const {
     event: eventData,
+    eventLoading,
     eventTypes,
     eventLevels,
     setEventId,
@@ -339,11 +341,15 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             </nav>
             <Separator orientation="horizontal" className="w-full" />
 
-            <div className="justify-center text-center w-full bg-muted rounded-xl">
+            <div className="flex flex-col flex-1 justify-center text-center w-full bg-muted rounded-xl">
               <Label>Status</Label>
-              <h2 className="text-lg font-medium">
-                {translateEventStatus(eventData?.status as EventStatus)}
-              </h2>
+              {eventLoading || !eventData?.status ? (
+                <Loader2 className="animate-spin mr-2 h-6 w-6 self-center" />
+              ) : (
+                <h2 className="text-lg font-medium text-center">
+                  {translateEventStatus(eventData?.status as EventStatus)}
+                </h2>
+              )}
             </div>
 
             <Button
