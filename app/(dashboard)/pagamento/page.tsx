@@ -9,17 +9,18 @@ import { CouponDialog } from "@/components/pages/checkout/coupon-dialog";
 import { EventHeader } from "@/components/pages/checkout/event-header";
 import { PaymentMethodDialog } from "@/components/pages/checkout/payment-method-dialog";
 
+import { PaymentMethodDisplay } from "@/components/pages/checkout/payment-method-display";
 import { PlayerForm } from "@/components/pages/checkout/player-form/index";
 import { PlayersEmptyList } from "@/components/pages/checkout/players-empty-list";
 import { PlayersList } from "@/components/pages/checkout/players-list";
 import { TicketCard } from "@/components/pages/checkout/ticket-card";
 import { useEvent } from "@/context/event";
-import { Player, TicketResponse } from "@/interface/tickets";
+import type { Player, TicketResponse } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function PaymentPage() {
-  const { selectedTickets } = useEvent();
+  const { selectedTickets, submitCheckout } = useEvent();
   const router = useRouter();
 
   const [currentTicket, setCurrentTicket] = useState<TicketResponse | null>(
@@ -59,7 +60,7 @@ export default function PaymentPage() {
 
   const total =
     selectedTickets?.reduce((acc, ticket) => {
-      return acc + parseFloat(ticket.ticketLot.price);
+      return acc + Number.parseFloat(ticket.ticketLot.price);
     }, 0) || 0;
 
   const totalDiscount =
@@ -67,8 +68,8 @@ export default function PaymentPage() {
       if (ticket.coupon?.id) {
         return (
           acc +
-          parseFloat(ticket.ticketLot.price) -
-          ticket.coupon.percentage * parseFloat(ticket.ticketLot.price)
+          Number.parseFloat(ticket.ticketLot.price) -
+          ticket.coupon.percentage * Number.parseFloat(ticket.ticketLot.price)
         );
       }
       return acc;
@@ -155,7 +156,14 @@ export default function PaymentPage() {
                 size="outline"
                 onClick={() => setPaymentMethodDialogOpen(true)}
               >
-                {"Selecionar opção"}
+                {currentTicket?.paymentData?.paymentMethod ? (
+                  <PaymentMethodDisplay
+                    key={currentTicket?.paymentData?.paymentMethod}
+                    paymentData={currentTicket.paymentData}
+                  />
+                ) : (
+                  "Selecionar opção"
+                )}
                 <ChevronRight size={16} className="text-zinc-800/80" />
               </Button>
             </div>
@@ -178,7 +186,11 @@ export default function PaymentPage() {
               )}
             </div>
             <div>
-              <Button variant="destructive" className="w-full mt-10">
+              <Button
+                onClick={submitCheckout}
+                variant="destructive"
+                className="w-full mt-10"
+              >
                 Realizar inscrição
                 <ArrowRight size={16} className="text-white ml-2" />
               </Button>
@@ -221,7 +233,6 @@ export default function PaymentPage() {
       <PaymentMethodDialog
         open={paymentMethodDialogOpen}
         onClose={() => setPaymentMethodDialogOpen(false)}
-        onSelect={(method) => console.log(method)}
       />
     </div>
   );

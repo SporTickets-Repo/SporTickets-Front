@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useEvent } from "@/context/event";
 import {
   detectCardType,
   formatCardNumber,
@@ -22,6 +23,8 @@ import {
   isValidCardNumber,
   isValidName,
 } from "@/utils/creditCardValidation";
+import { formatCPF } from "@/utils/format";
+import { isValidCPF } from "@/utils/validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -52,6 +55,15 @@ const cardFormSchema = z.object({
     .refine((val) => isValidName(val), {
       message: "O nome deve conter apenas letras e espaços.",
     }),
+  cardHolderDocument: z
+    .string()
+    .min(1, { message: "O CPF é obrigatório." })
+    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, {
+      message: "O CPF deve estar no formato 000.000.000-00.",
+    })
+    .refine((val) => isValidCPF(val), {
+      message: "CPF inválido.",
+    }),
 });
 
 type CardFormValues = z.infer<typeof cardFormSchema>;
@@ -59,23 +71,22 @@ type CardFormValues = z.infer<typeof cardFormSchema>;
 interface CardFormDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: CardFormValues) => void;
 }
 
-export function CardFormDialog({
-  open,
-  onClose,
-  onSubmit,
-}: CardFormDialogProps) {
+export function CardFormDialog({ open, onClose }: CardFormDialogProps) {
   const [cardType, setCardType] = useState<string | null>(null);
+
+  const { selectedTickets, setSelectedTickets } = useEvent();
 
   const form = useForm<CardFormValues>({
     resolver: zodResolver(cardFormSchema),
+    mode: "onChange",
     defaultValues: {
       cardNumber: "",
       expiryDate: "",
       cvv: "",
       cardholderName: "",
+      cardHolderDocument: "",
     },
   });
 
@@ -85,7 +96,31 @@ export function CardFormDialog({
   }, [cardType]);
 
   function onFormSubmit(data: CardFormValues) {
-    onSubmit(data);
+    const newSelectedTickets = selectedTickets.map((ticket) => {
+      return {
+        ...ticket,
+        paymentData: {
+          paymentMethod: "CREDIT_CARD",
+          cardData: {
+            cardNumber: data.cardNumber.replace(/\D/g, ""),
+            expirationMonth: Number(data.expiryDate.split("/")[0]),
+            expirationYear: Number(data.expiryDate.split("/")[1]),
+            securityCode: data.cvv,
+            installments: 1,
+            cardBrand: cardType,
+            cardHolder: {
+              name: data.cardholderName,
+              identification: {
+                type: "CPF",
+                number: data.cardHolderDocument.replace(/\D/g, ""),
+              },
+            },
+          },
+        },
+      };
+    });
+    setSelectedTickets(newSelectedTickets);
+    onClose();
   }
 
   return (
@@ -207,6 +242,26 @@ export function CardFormDialog({
                     <Input
                       placeholder="Nome no Cartão"
                       {...field}
+                      className="bg-muted"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="cardHolderDocument"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="CPF do Titular"
+                      value={field.value}
+                      onChange={(e) => {
+                        field.onChange(formatCPF(e.target.value));
+                      }}
                       className="bg-muted"
                     />
                   </FormControl>

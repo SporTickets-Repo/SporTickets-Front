@@ -61,13 +61,13 @@ export interface Category {
   deletedAt?: string | null;
 }
 
-// Objeto de gerenciamento de respostas
 export interface TicketResponse {
   id: string;
   ticketType: TicketType;
   ticketLot: TicketLot;
   players: Player[];
   coupon: Coupon;
+  paymentData: PaymentData;
 }
 
 export interface Player {
@@ -86,22 +86,26 @@ export interface PersonalizedFieldResponse {
   answer: string;
 }
 
-export interface TicketCheckout {
-  ticketType: TicketType;
-  coupon: Coupon;
-  tickets: TicketUser[];
+export interface TicketCheckoutPayload {
+  couponId?: string;
+  teams: Teams[];
   paymentData: PaymentData;
+}
+
+export interface Teams {
+  ticketTypeId: string;
+  player: TicketUser[];
 }
 
 export interface TicketUser {
   userId: string;
   personalFields: PersonalizedFieldResponse[];
-  category: Category;
+  categoryId: string;
 }
 
 export interface PaymentData {
   paymentMethod: string;
-  cardData: CardData;
+  cardData?: CardData;
 }
 
 export interface CardData {
@@ -110,6 +114,8 @@ export interface CardData {
   expirationYear: number;
   securityCode: string;
   cardHolder: CardHolder;
+  installments?: number;
+  cardBrand: string | null;
 }
 
 export interface CardHolder {

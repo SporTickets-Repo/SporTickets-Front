@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useEvent } from "@/context/event";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { FaCreditCard, FaPix } from "react-icons/fa6";
@@ -24,23 +25,21 @@ interface PaymentMethod {
 interface PaymentMethodDialogProps {
   open: boolean;
   onClose: () => void;
-  onSelect: (method: PaymentMethod) => void;
 }
 
 export function PaymentMethodDialog({
   open,
   onClose,
-  onSelect,
 }: PaymentMethodDialogProps) {
   const [paymentMethods] = useState<PaymentMethod[]>([
     {
-      id: "pix",
+      id: "PIX",
       type: "pix",
       title: "PIX",
       icon: <FaPix className="text-xl text-primary" title="PIX" />,
     },
     {
-      id: "card-1",
+      id: "CREDIT_CARD",
       type: "card",
       title: "Cartão de crédito",
       subtitle: "Master, Visa, Elo, etc.",
@@ -50,15 +49,28 @@ export function PaymentMethodDialog({
     },
   ]);
 
+  const { setSelectedTickets } = useEvent();
+
   const [showCardForm, setShowCardForm] = useState(false);
 
   const handleSelect = (method: PaymentMethod) => {
     if (method.type === "card") {
       setShowCardForm(true);
-    } else {
-      onSelect(method);
-      onClose();
+      return;
     }
+    if (method.type === "pix") {
+      setSelectedTickets((prev) => {
+        return prev.map((ticket) => {
+          return {
+            ...ticket,
+            paymentData: { paymentMethod: method.id },
+          };
+        });
+      });
+      onClose();
+      return;
+    }
+    return;
   };
 
   const handleCardFormClose = () => {
@@ -98,14 +110,7 @@ export function PaymentMethodDialog({
         </DialogContent>
       </Dialog>
 
-      <CardFormDialog
-        open={showCardForm}
-        onClose={handleCardFormClose}
-        onSubmit={(data) => {
-          console.log(data);
-          handleCardFormClose();
-        }}
-      />
+      <CardFormDialog open={showCardForm} onClose={handleCardFormClose} />
     </>
   );
 }
