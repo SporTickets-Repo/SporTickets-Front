@@ -79,7 +79,7 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen container px-24">
+    <div className="min-h-screen container-sm">
       <div className="flex items-center space-x-4 mt-2 mb-4 ">
         <Button
           variant="tertiary"
