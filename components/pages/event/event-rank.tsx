@@ -24,7 +24,7 @@ export default function EventRanking({ rankings }: EventPolicyProps) {
           Veja sua posição no ranking e ganhe benefícios conforme sua pontuação
           aumenta!
         </p>
-        {rankings.length > 0 ? (
+        {rankings?.length > 0 ? (
           <>
             {rankings.map((ranking) => (
               <Button
@@ -39,7 +39,13 @@ export default function EventRanking({ rankings }: EventPolicyProps) {
             ))}
           </>
         ) : (
-          <Button variant="link"> Ainda não disponível</Button>
+          <Button
+            className="mt-2 h-auto p-0 text-sm font-medium mr-3 underline"
+            variant="link"
+          >
+            {" "}
+            Ainda não disponível
+          </Button>
         )}
       </div>
     </div>

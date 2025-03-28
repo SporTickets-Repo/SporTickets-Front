@@ -23,7 +23,7 @@ export default function EventBracket({ brackets }: EventBracketProps) {
         <p>
           Veja o chaveamento do torneio e acompanhe os resultados das partidas!
         </p>
-        {brackets.length > 0 ? (
+        {brackets?.length > 0 ? (
           <>
             {brackets.map((bracket) => (
               <Button
@@ -38,7 +38,13 @@ export default function EventBracket({ brackets }: EventBracketProps) {
             ))}
           </>
         ) : (
-          <Button variant="link"> Ainda não disponível</Button>
+          <Button
+            className="mt-2 h-auto p-0 text-sm font-medium mr-3 underline"
+            variant="link"
+          >
+            {" "}
+            Ainda não disponível
+          </Button>
         )}
       </div>
     </div>
