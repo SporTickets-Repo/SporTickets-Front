@@ -45,7 +45,7 @@ import {
   eventFormValuesSchema,
 } from "@/schemas/createEventSchema";
 import { eventService } from "@/service/event";
-import { translateEventStatus } from "@/utils/eventTranslations";
+import { translateEventStatusOrganizer } from "@/utils/eventTranslations";
 import { useRouter } from "next/navigation";
 import { mutate } from "swr";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
@@ -443,7 +443,9 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                 <Loader2 className="animate-spin mr-2 h-6 w-6 self-center" />
               ) : (
                 <h2 className="text-lg font-medium text-center">
-                  {translateEventStatus(eventData?.status as EventStatus)}
+                  {translateEventStatusOrganizer(
+                    eventData?.status as EventStatus
+                  )}
                 </h2>
               )}
             </div>
@@ -587,11 +589,13 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             <DialogDescription className="text-base">
               O Evento está em{" "}
               <span className="text-sporticket-orange font-medium">
-                {translateEventStatus(eventData?.status as EventStatus)}
+                {translateEventStatusOrganizer(
+                  eventData?.status as EventStatus
+                )}
               </span>
               , você realmente deseja alterar o status para{" "}
               <span className="text-sporticket-orange font-medium">
-                {translateEventStatus(EventStatus.REGISTRATION)}
+                {translateEventStatusOrganizer(EventStatus.REGISTRATION)}
               </span>
               ? <br /> Após publicado, o evento estará visível para todos os
               usuários.
@@ -618,11 +622,13 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             <DialogDescription className="text-base">
               O Evento está em{" "}
               <span className="text-sporticket-orange font-medium">
-                {translateEventStatus(eventData?.status as EventStatus)}
+                {translateEventStatusOrganizer(
+                  eventData?.status as EventStatus
+                )}
               </span>
               , você realmente deseja alterar o status para{" "}
               <span className="text-sporticket-orange font-medium">
-                {translateEventStatus(EventStatus.CANCELLED)}
+                {translateEventStatusOrganizer(EventStatus.CANCELLED)}
               </span>
               ? <br /> Tem certeza que deseja apagar este evento? Esta ação não
               pode ser desfeita.
@@ -651,11 +657,13 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             <DialogDescription className="text-base">
               O Evento está em{" "}
               <span className="text-sporticket-orange font-medium">
-                {translateEventStatus(eventData?.status as EventStatus)}
+                {translateEventStatusOrganizer(
+                  eventData?.status as EventStatus
+                )}
               </span>
               , você realmente deseja alterar o status para{" "}
               <span className="text-sporticket-orange font-medium">
-                {translateEventStatus(EventStatus.FINISHED)}
+                {translateEventStatusOrganizer(EventStatus.FINISHED)}
               </span>
               ?
             </DialogDescription>
