@@ -78,16 +78,16 @@ const categorySchema = z.object({
   title: z
     .string()
     .nonempty({ message: "O título da categoria é obrigatório" }),
-  quantity: z.number().int().nonnegative({
-    message: "A quantidade deve ser um número inteiro não negativo",
+  quantity: z.number().int().min(1, {
+    message: "Mínimo 1",
   }),
   restriction: restrictionEnum.optional(),
 });
 
 const personalizedFieldSchema = z.object({
-  question: z
+  requestTitle: z
     .string()
-    .nonempty({ message: "O título da requisição é obrigatório" }),
+    .min(3, { message: "A pergunta deve ter no mínimo 3 caracteres" }),
   type: z.string().nonempty({ message: "O tipo do campo é obrigatório" }),
   optionsList: z.array(z.string()).optional(),
 });
@@ -123,9 +123,9 @@ const ticketLotSchema = z.object({
 
 const ticketTypeSchema = z.object({
   id: z.string().optional(),
-  name: z
-    .string()
-    .nonempty({ message: "O nome do tipo de ingresso é obrigatório" }),
+  name: z.string().min(3, {
+    message: "O nome do tipo de ingresso deve ter no mínimo 3 caracteres",
+  }),
   description: z.string().optional(),
   restriction: z.string().optional(),
   userType: userTypeEnum,

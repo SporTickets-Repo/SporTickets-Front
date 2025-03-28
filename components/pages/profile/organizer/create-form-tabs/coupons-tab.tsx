@@ -68,7 +68,6 @@ export function CouponsTab() {
           percentage: coupon.percentage / 100,
         }))
       );
-      console.log("Cupons salvos:", response);
       toast.success("Cupons salvos com sucesso!");
       await mutate(`/events/${eventId}`);
     } catch (error) {

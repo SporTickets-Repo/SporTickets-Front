@@ -113,11 +113,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
           </div>
         </AccordionTrigger>
         <AccordionContent style={{ padding: "0 10px" }} className="p-0 ">
-          <Accordion
-            type="multiple"
-            defaultValue={["basic-info"]}
-            className="w-full"
-          >
+          <Accordion type="multiple" className="w-full">
             <AccordionItem value="basic-info" className="px-0 py-2">
               <AccordionTrigger className="text-base font-medium">
                 Informações básicas
@@ -809,7 +805,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
 }
 
 export function TicketsTab() {
-  const { control, getValues } = useFormContext();
+  const { control, getValues, trigger } = useFormContext();
   const { eventId } = useCreateEventContext();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -834,6 +830,24 @@ export function TicketsTab() {
   const handleSave = async () => {
     if (!eventId) {
       toast.error("Event ID is missing.");
+      return;
+    }
+
+    const isValid = await trigger("ticketTypes");
+
+    console.log("isValid", isValid);
+
+    if (!isValid) {
+      toast.error("Corrija os erros nos tickets antes de salvar.");
+      const firstErrorElement = document.querySelector(
+        "[id$='-form-item-message']"
+      );
+      if (firstErrorElement) {
+        firstErrorElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
       return;
     }
 
