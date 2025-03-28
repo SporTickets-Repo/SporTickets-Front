@@ -32,6 +32,7 @@ export const useEvent = () => useContext(EventContext);
 
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const [event, setEvent] = useState<Event | null>(null);
+  console.log("EventProvider renderizou", event);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [slug, setSlug] = useState<string>("");
