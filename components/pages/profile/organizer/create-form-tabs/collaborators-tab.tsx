@@ -26,22 +26,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useCreateEventContext } from "@/context/create-event";
+import { Collaborator, EventDashboardAccess } from "@/interface/tickets";
 import { dashboardService } from "@/service/dashboard";
 import { userService } from "@/service/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Loader2, PlusIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { mutate } from "swr";
 import { z } from "zod";
-
-interface Collaborator {
-  id: string;
-  name?: string;
-  email?: string;
-  role?: string;
-}
 
 const collaboratorSchema = z.object({
   identifier: z
@@ -56,9 +51,11 @@ const collaboratorSchema = z.object({
 });
 
 export function CollaboratorsTab() {
-  const { eventId } = useCreateEventContext();
+  const { eventId, event } = useCreateEventContext();
 
-  const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
+  const [collaborators, setCollaborators] = useState<EventDashboardAccess[]>(
+    event?.eventDashboardAccess || []
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [foundCollaborator, setFoundCollaborator] =
     useState<Collaborator | null>(null);
@@ -68,27 +65,7 @@ export function CollaboratorsTab() {
     resolver: zodResolver(collaboratorSchema),
     defaultValues: { identifier: "" },
   });
-  const {
-    control,
-    handleSubmit,
-    setError,
-    formState: { errors },
-    reset,
-  } = form;
-
-  useEffect(() => {
-    if (eventId) {
-      (async () => {
-        try {
-          const data = await dashboardService.getUsersWithAccess(eventId);
-
-          setCollaborators(data);
-        } catch (err) {
-          toast.error("Não foi possível carregar os colaboradores.");
-        }
-      })();
-    }
-  }, [eventId]);
+  const { control, handleSubmit, setError, reset } = form;
 
   const onSearchSubmit = async (data: z.infer<typeof collaboratorSchema>) => {
     try {
@@ -127,7 +104,19 @@ export function CollaboratorsTab() {
 
   const handleConfirmCollaborator = () => {
     if (foundCollaborator) {
-      setCollaborators((prev) => [...prev, foundCollaborator]);
+      if (eventId) {
+        setCollaborators((prev) => [
+          ...prev,
+          {
+            id: foundCollaborator.id,
+            name: foundCollaborator.name,
+            email: foundCollaborator.email,
+            userId: foundCollaborator.id,
+            eventId: eventId,
+            user: foundCollaborator,
+          },
+        ]);
+      }
       setFoundCollaborator(null);
       setDialogOpen(false);
       reset();
@@ -151,6 +140,7 @@ export function CollaboratorsTab() {
         eventId,
       });
       toast.success("Colaboradores atualizados com sucesso!");
+      await mutate(`/events/${eventId}`);
     } catch (err: any) {
       if (err.response?.status === 409) {
         toast.error("Você não pode se adicionar como colaborador.");
@@ -262,10 +252,10 @@ export function CollaboratorsTab() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {collaborators.map((item, index) => (
+            {collaborators?.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="break-all">
-                  {item.name} ({item.email})
+                  {item.user.name} ({item.user.email})
                 </TableCell>
                 <TableCell>
                   <Button
