@@ -3,7 +3,7 @@ import { EventLevel, EventStatus, EventType } from "@/interface/event";
 export const translateEventStatus = (status: EventStatus): string => {
   const translations: Record<EventStatus, string> = {
     [EventStatus.DRAFT]: "RASCUNHO",
-    [EventStatus.REGISTRATION]: "ABERTO",
+    [EventStatus.REGISTRATION]: "PUBLICADO",
     [EventStatus.PROGRESS]: "EM ANDAMENTO",
     [EventStatus.CANCELLED]: "CANCELADO",
     [EventStatus.FINISHED]: "FINALIZADO",

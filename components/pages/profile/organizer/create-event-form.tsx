@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
+  AlertCircle,
   ArrowUpIcon,
   ChevronLeft,
   ChevronRight,
@@ -20,17 +21,33 @@ import {
   Users2,
 } from "lucide-react";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useCreateEventContext } from "@/context/create-event";
 import { EventLevel, EventStatus, EventType } from "@/interface/event";
-import { UserType } from "@/interface/tickets";
+import type { UserType } from "@/interface/tickets";
 import {
-  CreateEventFormValues,
+  type CreateEventFormValues,
   createEventFormValuesSchema,
+  eventFormValuesSchema,
 } from "@/schemas/createEventSchema";
 import { eventService } from "@/service/event";
 import { translateEventStatus } from "@/utils/eventTranslations";
 import { useRouter } from "next/navigation";
+import { mutate } from "swr";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
 import { InfoTab } from "./create-form-tabs/info-tab";
@@ -155,7 +172,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                   id: lot.id,
                   ticketTypeId: lot.ticketTypeId,
                   name: lot.name,
-                  price: parseFloat(lot.price),
+                  price: Number.parseFloat(lot.price),
                   quantity: lot.quantity,
                   startDate: lot.startDate,
                   endDate: lot.endDate,
@@ -222,6 +239,9 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("info");
   const [tabErrors, setTabErrors] = useState<TabType[]>([]);
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showFinishDialog, setShowFinishDialog] = useState(false);
 
   const tabOrder: TabType[] = [
     "info",
@@ -288,9 +308,10 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
 
   const handlePublishEvent = async () => {
     try {
-      await eventService.setEventStatus(eventId, EventStatus.PROGRESS);
-
+      await eventService.setEventStatus(eventId, EventStatus.REGISTRATION);
       console.log("Event published successfully!");
+      setShowPublishDialog(false);
+      await mutate(`/events/${eventId}`);
     } catch (error) {
       console.error("Failed to publish event:", error);
     }
@@ -300,12 +321,84 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     try {
       await eventService.setEventStatus(eventId, EventStatus.CANCELLED);
       console.log("Event canceled/deleted successfully!");
-
+      setShowDeleteDialog(false);
+      await mutate(`/events/${eventId}`);
       router.push("/perfil");
     } catch (error) {
       console.error("Failed to delete event:", error);
     }
   };
+
+  const handleFinishEvent = async () => {
+    try {
+      await eventService.setEventStatus(eventId, EventStatus.FINISHED);
+      console.log("Event finished successfully!");
+      await mutate(`/events/${eventId}`);
+      setShowFinishDialog(false);
+    } catch (error) {
+      console.error("Failed to finish event:", error);
+    }
+  };
+
+  function getPublishRequirementsErrors(event: typeof eventData) {
+    const errors: string[] = [];
+
+    if (!event) return ["Dados do evento não carregados."];
+
+    const eventCheck = eventFormValuesSchema.safeParse({
+      name: event.name,
+      slug: event.slug,
+      type: event.type,
+      level: event.level,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      description: event.description,
+      additionalInfo: event.additionalInfo,
+      cep: event.address?.zipCode,
+      city: event.address?.city,
+      state: event.address?.state,
+      street: event.address?.street,
+      addressNumber: event.address?.number,
+      complement: event.address?.complement,
+      neighborhood: event.address?.neighborhood,
+      place: event.place,
+      regulation: event.regulation,
+    });
+
+    if (!eventCheck.success) {
+      errors.push(
+        "Preencha todos os campos obrigatórios nas informações do evento."
+      );
+    }
+
+    if (!event.ticketTypes || event.ticketTypes.length === 0) {
+      errors.push("Adicione pelo menos um tipo de ingresso.");
+    } else {
+      const hasValidTicket = event.ticketTypes.some((ticket) => {
+        const hasValidCategory =
+          ticket.categories && ticket.categories.length > 0;
+        const hasValidLot = ticket.ticketLots && ticket.ticketLots.length > 0;
+        return hasValidCategory && hasValidLot;
+      });
+
+      if (!hasValidTicket) {
+        errors.push(
+          "Cada tipo de ingresso precisa ter ao menos uma categoria e um lote."
+        );
+      }
+    }
+
+    return errors;
+  }
+
+  const [publishErrors, setPublishErrors] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (eventData) {
+      const errors = getPublishRequirementsErrors(eventData);
+      setPublishErrors(errors);
+    }
+  }, [eventData]);
 
   return (
     <div className="container max-w-7xl pb-10">
@@ -355,21 +448,87 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               )}
             </div>
 
-            <Button
-              disabled
-              variant={"select"}
-              type="button"
-              className="w-full justify-start gap-2 h-10"
-              onClick={handlePublishEvent}
-            >
-              <ArrowUpIcon className="w-4 h-4" />
-              Publicar evento
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {eventData?.status !== EventStatus.FINISHED &&
+                    eventData?.status !== EventStatus.REGISTRATION && (
+                      <div className="w-full">
+                        {eventData?.status === EventStatus.PROGRESS ? (
+                          <Button
+                            variant="select"
+                            type="button"
+                            className="w-full justify-start gap-2 h-10"
+                            onClick={() => setShowFinishDialog(true)}
+                          >
+                            <ArrowUpIcon className="w-4 h-4" />
+                            Finalizar evento
+                          </Button>
+                        ) : (
+                          <Button
+                            variant={
+                              publishErrors.length > 0 ? "outline" : "select"
+                            }
+                            type="button"
+                            className={`w-full justify-start gap-2 h-10 ${
+                              publishErrors.length > 0
+                                ? "border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800"
+                                : ""
+                            }`}
+                            onClick={() =>
+                              publishErrors.length === 0 &&
+                              setShowPublishDialog(true)
+                            }
+                            disabled={publishErrors.length > 0}
+                          >
+                            {publishErrors.length > 0 ? (
+                              <AlertCircle className="w-4 h-4" />
+                            ) : (
+                              <ArrowUpIcon className="w-4 h-4" />
+                            )}
+                            {publishErrors.length > 0
+                              ? "Pendências para publicar"
+                              : "Publicar evento"}
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                </TooltipTrigger>
+                {publishErrors.length > 0 && (
+                  <TooltipContent
+                    side="right"
+                    align="start"
+                    className="max-w-xs p-0 overflow-hidden border border-red-200 text-black"
+                  >
+                    <div className="bg-red-50 p-3 border-b border-red-200">
+                      <h3 className="font-semibold text-red-700 flex items-center gap-2">
+                        <AlertCircle size={16} />
+                        Campos obrigatórios pendentes
+                      </h3>
+                    </div>
+                    <div className="p-3 bg-white">
+                      <ul className="space-y-2">
+                        {publishErrors.map((error, i) => (
+                          <li
+                            key={i}
+                            className="flex items-start gap-2 text-sm"
+                          >
+                            <span className="text-red-500 mt-0.5">•</span>
+                            <span>{error}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+
             <Button
               type="button"
               variant="destructive"
               className="w-full justify-start gap-2 h-10"
-              onClick={handleDeleteEvent}
+              onClick={() => setShowDeleteDialog(true)}
             >
               <Trash2Icon className="w-4 h-4" />
               Apagar evento
@@ -418,6 +577,100 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           </div>
         </div>
       </Card>
+
+      <Dialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
+        <DialogContent className="pt-10">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-center text-xl">
+              Publicar evento
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              O Evento está em{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatus(eventData?.status as EventStatus)}
+              </span>
+              , você realmente deseja alterar o status para{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatus(EventStatus.REGISTRATION)}
+              </span>
+              ? <br /> Após publicado, o evento estará visível para todos os
+              usuários.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowPublishDialog(false)}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handlePublishEvent}>Confirmar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="pt-10">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-center text-xl">
+              Apagar evento
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              O Evento está em{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatus(eventData?.status as EventStatus)}
+              </span>
+              , você realmente deseja alterar o status para{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatus(EventStatus.CANCELLED)}
+              </span>
+              ? <br /> Tem certeza que deseja apagar este evento? Esta ação não
+              pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteEvent}>
+              Apagar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showFinishDialog} onOpenChange={setShowFinishDialog}>
+        <DialogContent className="pt-10">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-center text-xl">
+              Finalizar evento
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              O Evento está em{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatus(eventData?.status as EventStatus)}
+              </span>
+              , você realmente deseja alterar o status para{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatus(EventStatus.FINISHED)}
+              </span>
+              ?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowFinishDialog(false)}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handleFinishEvent}>Confirmar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
