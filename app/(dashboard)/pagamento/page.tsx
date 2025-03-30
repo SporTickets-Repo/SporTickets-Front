@@ -20,7 +20,7 @@ import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function PaymentPage() {
-  const { selectedTickets, submitCheckout } = useEvent();
+  const { selectedTickets, submitCheckout, event } = useEvent();
   const router = useRouter();
 
   const [currentTicket, setCurrentTicket] = useState<TicketResponse | null>(
@@ -33,7 +33,8 @@ export default function PaymentPage() {
 
   useEffect(() => {
     if (!selectedTickets || selectedTickets.length === 0) {
-      router.push("/");
+      router.push(`/evento/${event?.slug}`);
+      return;
     } else {
       setCurrentTicket((prev) => {
         return (
@@ -86,7 +87,7 @@ export default function PaymentPage() {
           variant="tertiary"
           className="rounded-full"
           size="icon"
-          onClick={() => router.push("/")}
+          onClick={() => router.push(`/evento/${event?.slug}`)}
         >
           <ChevronLeft size={16} className="text-zinc-500" />
         </Button>
