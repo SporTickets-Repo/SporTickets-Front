@@ -44,6 +44,7 @@ import { DatePicker } from "@/components/ui/datePicker";
 import { useCreateEventContext } from "@/context/create-event";
 import { ticketService } from "@/service/ticket";
 import { mutate } from "swr";
+import { OptionsInputField } from "../options-input-field";
 
 interface TicketItemProps {
   index: number;
@@ -729,36 +730,13 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                             <FormField
                               control={control}
                               name={`ticketTypes.${index}.personalizedFields.${fieldIndex}.optionsList`}
-                              render={({
-                                field: { onChange, onBlur, value, ref },
-                              }) => (
-                                <FormItem>
-                                  <FormLabel>Opções</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      placeholder="Ex: sim, não, talvez"
-                                      className="bg-muted"
-                                      ref={ref}
-                                      value={
-                                        Array.isArray(value)
-                                          ? value.join(", ")
-                                          : value
-                                      }
-                                      onChange={(e) => {
-                                        onChange(e.target.value);
-                                      }}
-                                      onBlur={(e) => {
-                                        const optionsArray = e.target.value
-                                          .split(",")
-                                          .map((option) => option.trim())
-                                          .filter((option) => option);
-                                        onChange(optionsArray);
-                                        onBlur();
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
+                              render={({ field }) => (
+                                <OptionsInputField
+                                  name={field.name}
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  onBlur={field.onBlur}
+                                />
                               )}
                             />
                           )}

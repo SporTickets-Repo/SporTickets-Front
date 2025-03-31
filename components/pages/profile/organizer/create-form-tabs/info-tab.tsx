@@ -26,6 +26,7 @@ import {
   translateEventLevel,
   translateEventType,
 } from "@/utils/eventTranslations";
+import { formatCEP } from "@/utils/format";
 import {
   Circle,
   CircleCheck,
@@ -637,6 +638,7 @@ export function InfoTab() {
                       placeholder="00000-000"
                       {...field}
                       onBlur={() => handleCepBlur(field.value)}
+                      value={formatCEP(field.value)}
                     />
                   </FormControl>
                   <FormMessage />

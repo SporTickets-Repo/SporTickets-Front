@@ -1,4 +1,4 @@
-import { stripHtml } from "@/utils/format";
+import { formatCEP, stripHtml } from "@/utils/format";
 import * as z from "zod";
 
 export const eventFormValuesSchema = z
@@ -36,10 +36,11 @@ export const eventFormValuesSchema = z
     }),
     cep: z
       .string()
-      .regex(/^\d{5}-\d{3}$/, {
-        message: "O CEP deve estar no formato 12345-678",
+      .transform((val) => val.replace(/\D/g, "").slice(0, 8))
+      .refine((val) => /^\d{8}$/.test(val), {
+        message: "O CEP deve conter 8 dígitos numéricos",
       })
-      .nonempty({ message: "O CEP é obrigatório" }),
+      .transform(formatCEP),
     city: z.string().nonempty({ message: "A cidade é obrigatória" }),
     state: z.string().nonempty({ message: "O estado é obrigatório" }),
     street: z.string().nonempty({ message: "A rua é obrigatória" }),
