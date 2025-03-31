@@ -84,6 +84,23 @@ export default function PaymentPage() {
     return null;
   }
 
+  const formCompleted = selectedTickets.every((ticket) => {
+    const players = ticket.players || [];
+    if (
+      players.length === ticket.ticketType.teamSize &&
+      players.every(
+        (player) =>
+          player.personalizedField?.length ===
+          ticket.ticketType.personalizedFields?.length
+      ) &&
+      players.every((player) => player.category.id !== "")
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
   return (
     <div className="min-h-screen container-sm">
       <div className="flex items-center space-x-4 mt-2 mb-4 ">
@@ -197,6 +214,7 @@ export default function PaymentPage() {
                 onClick={submitCheckout}
                 variant="destructive"
                 className="w-full mt-10"
+                disabled={!formCompleted}
               >
                 Realizar inscrição
                 <ArrowRight size={16} className="text-white ml-2" />

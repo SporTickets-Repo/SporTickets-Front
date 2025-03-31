@@ -108,7 +108,7 @@ export function PlayerForm({
           {step === "register" && (
             <TabsContent value="register">
               <RegisterStep
-                email={playerData?.email ?? ""}
+                email={""}
                 onClose={onClose}
                 onRegistered={(newPlayer) => {
                   handleAdd(newPlayer);
