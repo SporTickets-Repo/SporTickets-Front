@@ -21,7 +21,7 @@ export function detectCardType(cardNumber: string) {
 
   const patterns: { [key: string]: RegExp } = {
     visa: /^4/,
-    mastercard: /^5[1-5]/,
+    mastercard: /^(5[0-5]|222[1-9]|22[3-9]\d|2[3-6]\d\d|27[01]\d|2720)/,
     amex: /^3[47]/,
     elo: /^(((636368)|(438935)|(504175)|(451416)|(636297)))/,
     hipercard: /^(38|60)/,
