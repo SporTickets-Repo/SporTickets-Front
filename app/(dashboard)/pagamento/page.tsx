@@ -33,7 +33,7 @@ export default function PaymentPage() {
 
   useEffect(() => {
     if (!selectedTickets || selectedTickets.length === 0) {
-      router.push(`/evento/${event?.slug}`);
+      router.push(event?.slug ? `/evento/${event?.slug}` : "/");
       return;
     } else {
       setCurrentTicket((prev) => {
@@ -61,19 +61,23 @@ export default function PaymentPage() {
 
   const total =
     selectedTickets?.reduce((acc, ticket) => {
-      return acc + Number.parseFloat(ticket.ticketLot.price);
+      const teamSize = ticket.ticketType.teamSize;
+      const price = parseFloat(ticket.ticketLot.price);
+      return acc + price * teamSize;
     }, 0) || 0;
 
   const totalDiscount =
     selectedTickets?.reduce((acc, ticket) => {
+      const teamSize = ticket.ticketType.teamSize;
+      const price = parseFloat(ticket.ticketLot.price);
+      const teamPrice = price * teamSize;
+
       if (ticket.coupon?.id) {
-        return (
-          acc +
-          Number.parseFloat(ticket.ticketLot.price) -
-          ticket.coupon.percentage * Number.parseFloat(ticket.ticketLot.price)
-        );
+        const discountAmount = teamPrice * ticket.coupon.percentage;
+        return acc + teamPrice - discountAmount;
       }
-      return acc;
+
+      return acc + teamPrice;
     }, 0) || 0;
 
   if (!selectedTickets || selectedTickets.length === 0 || !currentTicket) {
@@ -87,7 +91,9 @@ export default function PaymentPage() {
           variant="tertiary"
           className="rounded-full"
           size="icon"
-          onClick={() => router.push(`/evento/${event?.slug}`)}
+          onClick={() =>
+            router.push(event?.slug ? `/evento/${event?.slug}` : "/")
+          }
         >
           <ChevronLeft size={16} className="text-zinc-500" />
         </Button>

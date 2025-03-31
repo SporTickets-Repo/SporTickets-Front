@@ -65,7 +65,7 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
         </div>
         <div className="text-right flex items-center gap-4">
           <p className="font-semibold">
-            {formatMoneyBR(ticket.ticketLot.price)}
+            {formatMoneyBR(Number(ticket.ticketLot.price) * maxPlayers)}
           </p>
 
           {completedTicket() ? (

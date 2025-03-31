@@ -21,7 +21,9 @@ export default function RegistrationSummary({
   };
 
   const total = selectedTickets.reduce((acc, ticket) => {
-    return acc + parseFloat(ticket.ticketLot.price);
+    return (
+      acc + parseFloat(ticket.ticketLot.price) * ticket.ticketType.teamSize
+    );
   }, 0);
 
   return (
@@ -31,6 +33,11 @@ export default function RegistrationSummary({
           const activeLot = ticket.ticketLots.find((lot) => lot.isActive);
 
           if (!activeLot) return null;
+
+          const quantity = getQuantity(ticket.id);
+          const individualPrice = parseFloat(activeLot.price);
+          const teamPrice = individualPrice * ticket.teamSize;
+          const totalTicketPrice = teamPrice * quantity;
 
           return (
             <div
@@ -44,9 +51,20 @@ export default function RegistrationSummary({
                 <p className="text-xs text-gray-500">
                   Resta {activeLot.quantity} vagas
                 </p>
-                <span className="font-light text-sm text-sporticket-green-700">
-                  R$ {parseFloat(activeLot.price).toFixed(2)}
+                <span className="block text-sm text-sporticket-green-700">
+                  Valor por equipe ({ticket.teamSize} pessoas):{" "}
+                  <strong>R$ {teamPrice.toFixed(2)}</strong>
                 </span>
+                <div className="flex items-center text-xs text-gray-500">
+                  <span>Valor por pessoa:</span>
+                  <span className="ml-1">R$ {individualPrice.toFixed(2)}</span>
+                </div>
+                {quantity > 0 && (
+                  <span className="block text-xs mt-1 text-gray-500">
+                    Total para {quantity} {quantity > 1 ? "equipes" : "equipe"}:{" "}
+                    <strong>R$ {totalTicketPrice.toFixed(2)}</strong>
+                  </span>
+                )}
               </div>
               {activeLot.quantity > 0 ? (
                 <div className="flex items-center gap-2">
@@ -59,9 +77,7 @@ export default function RegistrationSummary({
                     >
                       <Minus />
                     </Button>
-                    <p className="text-3xs w-[30px] text-center">
-                      {getQuantity(ticket.id)}
-                    </p>
+                    <p className="text-3xs w-[30px] text-center">{quantity}</p>
                     <Button
                       variant="select"
                       size="icon"

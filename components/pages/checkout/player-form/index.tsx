@@ -36,6 +36,8 @@ export function PlayerForm({
   const hasPersonalizedFields =
     currentTicket.ticketType.personalizedFields.length > 0;
 
+  const hasCategoryFields = currentTicket.ticketType.categories.length > 0;
+
   const handleAdd = (newPlayer: Player) => {
     setPlayerData(newPlayer);
     setSelectedTickets((tickets) =>
@@ -88,7 +90,7 @@ export function PlayerForm({
               onClose={onClose}
               onFound={(player) => {
                 handleAdd(player);
-                if (hasPersonalizedFields) {
+                if (hasPersonalizedFields || hasCategoryFields) {
                   setStep("fields");
                 } else {
                   onClose();
