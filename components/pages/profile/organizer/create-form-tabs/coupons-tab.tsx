@@ -180,18 +180,15 @@ export function CouponsTab() {
                       )}
                     />
 
-                    <Button
-                      variant="default-inverse"
-                      type="button"
-                      size="icon"
-                      className="p-[10px] [&_svg]:size-4 rounded-sm"
+                    <span
+                      className="p-[10px] [&_svg]:size-4 rounded-sm bg-sporticket-purple-100 text-sporticket-purple-800 shadow hover:bg-sporticket-purple-100/60"
                       onClick={(e) => {
                         e.stopPropagation();
                         remove(index);
                       }}
                     >
                       <Trash2Icon />
-                    </Button>
+                    </span>
                   </div>
                 </div>
               </AccordionTrigger>

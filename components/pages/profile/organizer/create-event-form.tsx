@@ -437,8 +437,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             </nav>
             <Separator orientation="horizontal" className="w-full" />
 
-            <div className="flex flex-col flex-1 justify-center text-center w-full bg-muted rounded-xl">
-              <Label>Status</Label>
+            <div className="flex flex-row flex-1 text-center w-full rounded-xl justify-start pt-2 gap-2 items-center">
+              <Label>Status:</Label>
               {eventLoading || !eventData?.status ? (
                 <Loader2 className="animate-spin mr-2 h-6 w-6 self-center" />
               ) : (
@@ -581,8 +581,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
       </Card>
 
       <Dialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
-        <DialogContent className="pt-10">
-          <DialogHeader className="space-y-4">
+        <DialogContent className="">
+          <DialogHeader className="items-center mb-4 space-y-8">
             <DialogTitle className="text-center text-xl">
               Publicar evento
             </DialogTitle>
@@ -597,8 +597,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               <span className="text-sporticket-orange font-medium">
                 {translateEventStatusOrganizer(EventStatus.REGISTRATION)}
               </span>
-              ? <br /> Após publicado, o evento estará visível para todos os
-              usuários.
+              ? <br /> <br /> Após publicado, o evento estará visível para todos
+              os usuários.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

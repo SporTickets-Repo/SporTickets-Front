@@ -97,18 +97,15 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
               >
                 {currentUserType === "ATHLETE" ? "Atleta" : "Espectador"}
               </Badge>
-              <Button
-                variant="default-inverse"
-                type="button"
-                size="icon"
-                className="p-[10px] [&_svg]:size-4 rounded-sm"
+              <span
+                className="p-[10px] [&_svg]:size-4 rounded-sm bg-sporticket-purple-100 text-sporticket-purple-800 shadow hover:bg-sporticket-purple-100/80"
                 onClick={(e) => {
                   e.stopPropagation();
                   removeTicket(index);
                 }}
               >
                 <Trash2Icon />
-              </Button>
+              </span>
             </div>
           </div>
         </AccordionTrigger>
@@ -436,18 +433,15 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                   </FormItem>
                                 )}
                               />
-                              <Button
-                                variant="default-inverse"
-                                type="button"
-                                size="icon"
-                                className="p-[10px] [&_svg]:size-4 rounded-sm"
+                              <span
+                                className="p-[10px] [&_svg]:size-4 rounded-sm bg-sporticket-purple-100 text-sporticket-purple-800 shadow hover:bg-sporticket-purple-100/60"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   lotsArray.remove(lotIndex);
                                 }}
                               >
                                 <Trash2Icon />
-                              </Button>
+                              </span>
                             </div>
                           </div>
                         </AccordionTrigger>
