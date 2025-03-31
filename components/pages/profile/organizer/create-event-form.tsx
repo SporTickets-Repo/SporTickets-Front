@@ -467,31 +467,37 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                             Finalizar evento
                           </Button>
                         ) : (
-                          <Button
-                            variant={
-                              publishErrors.length > 0 ? "outline" : "select"
-                            }
-                            type="button"
-                            className={`w-full justify-start gap-2 h-10 ${
-                              publishErrors.length > 0
-                                ? "border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800"
-                                : ""
-                            }`}
-                            onClick={() =>
-                              publishErrors.length === 0 &&
-                              setShowPublishDialog(true)
-                            }
-                            disabled={publishErrors.length > 0}
-                          >
-                            {publishErrors.length > 0 ? (
-                              <AlertCircle className="w-4 h-4" />
-                            ) : (
-                              <ArrowUpIcon className="w-4 h-4" />
+                          <>
+                            {!eventLoading && eventData && (
+                              <Button
+                                variant={
+                                  publishErrors.length > 0
+                                    ? "outline"
+                                    : "select"
+                                }
+                                type="button"
+                                className={`w-full justify-start gap-2 h-10 ${
+                                  publishErrors.length > 0
+                                    ? "border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  publishErrors.length === 0 &&
+                                  setShowPublishDialog(true)
+                                }
+                                disabled={publishErrors.length > 0}
+                              >
+                                {publishErrors.length > 0 ? (
+                                  <AlertCircle className="w-4 h-4" />
+                                ) : (
+                                  <ArrowUpIcon className="w-4 h-4" />
+                                )}
+                                {publishErrors.length > 0
+                                  ? "Pendências para publicar"
+                                  : "Publicar evento"}
+                              </Button>
                             )}
-                            {publishErrors.length > 0
-                              ? "Pendências para publicar"
-                              : "Publicar evento"}
-                          </Button>
+                          </>
                         )}
                       </div>
                     )}
