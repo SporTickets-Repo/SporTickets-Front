@@ -14,4 +14,13 @@ export const rankingService = {
       throw error;
     }
   },
+
+  getRankingsById: async (id: string) => {
+    try {
+      const response = await api.get(`/rankings/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

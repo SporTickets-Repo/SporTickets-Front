@@ -70,7 +70,7 @@ export function CollaboratorsTab() {
   const onSearchSubmit = async (data: z.infer<typeof collaboratorSchema>) => {
     try {
       const { identifier } = data;
-      const res = await userService.userByIdentifier(identifier);
+      const res = await userService.getCollaborators(identifier);
 
       if (res.exist) {
         setFoundCollaborator(res.user);
