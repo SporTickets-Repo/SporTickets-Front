@@ -81,6 +81,39 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
 
   useSyncNextLotStartDate(index);
 
+  const handleAddLot = useCallback(async () => {
+    console.log("handleAddLot", index);
+    const newIndex = lotsArray.fields.length;
+    const prevIndex = newIndex - 1;
+
+    if (prevIndex >= 0) {
+      const isPrevValid = await trigger(
+        `ticketTypes.${index}.ticketLots.${prevIndex}`
+      );
+
+      if (!isPrevValid) {
+        toast.warning(
+          "Complete corretamente o lote anterior antes de adicionar um novo."
+        );
+        return;
+      }
+    }
+
+    const lots = watch(`ticketTypes.${index}.ticketLots`);
+    const previousEndDate = lots?.[prevIndex]?.endDate ?? "";
+
+    lotsArray.append({
+      name: "",
+      price: 0,
+      startDate: previousEndDate || undefined,
+      endDate: undefined,
+      quantity: 0,
+      isActive: true,
+    });
+
+    setOpenLots((prev) => [...prev, `lot-${newIndex}`]);
+  }, [lotsArray, index, trigger, watch]);
+
   return (
     <Accordion
       type="multiple"
@@ -629,38 +662,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       type="button"
                       size="sm"
                       className="gap-2"
-                      onClick={async () => {
-                        const newIndex = lotsArray.fields.length;
-                        const prevIndex = newIndex - 1;
-
-                        if (prevIndex >= 0) {
-                          const isPrevValid = await trigger(
-                            `ticketTypes.${index}.ticketLots.${prevIndex}`
-                          );
-
-                          if (!isPrevValid) {
-                            toast.warning(
-                              "Complete corretamente o lote anterior antes de adicionar um novo."
-                            );
-                            return;
-                          }
-                        }
-
-                        const lots = watch(`ticketTypes.${index}.ticketLots`);
-                        const previousEndDate =
-                          lots?.[prevIndex]?.endDate ?? "";
-
-                        lotsArray.append({
-                          name: "",
-                          price: 0,
-                          startDate: previousEndDate,
-                          endDate: "",
-                          quantity: 0,
-                          isActive: true,
-                        });
-
-                        setOpenLots((prev) => [...prev, `lot-${newIndex}`]);
-                      }}
+                      onClick={handleAddLot}
                     >
                       <PlusIcon className="h-4 w-4" />
                       Adicionar novo lote
@@ -955,16 +957,17 @@ function useSyncNextLotStartDate(index: number) {
       const currentIndex = Number(match[1]);
       const nextIndex = currentIndex + 1;
 
-      const currentEndDate =
-        value.ticketTypes?.[index]?.ticketLots?.[currentIndex]?.endDate;
-      const nextStartDate =
-        value.ticketTypes?.[index]?.ticketLots?.[nextIndex]?.startDate;
+      const ticketLots = value.ticketTypes?.[index]?.ticketLots;
+      const currentEndDate = ticketLots?.[currentIndex]?.endDate;
+      const nextStartDate = ticketLots?.[nextIndex]?.startDate;
 
-      if (currentEndDate && nextStartDate !== currentEndDate) {
-        setValue(
-          `ticketTypes.${index}.ticketLots.${nextIndex}.startDate`,
-          currentEndDate
-        );
+      if (currentEndDate && ticketLots && ticketLots[nextIndex]) {
+        if (nextStartDate !== currentEndDate) {
+          setValue(
+            `ticketTypes.${index}.ticketLots.${nextIndex}.startDate`,
+            currentEndDate
+          );
+        }
       }
     });
 
