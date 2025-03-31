@@ -407,7 +407,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                         value={`lot-${lotIndex}`}
                         className="overflow-hidden"
                       >
-                        <AccordionTrigger className="px-4 py-3 bg-muted/50 hover:bg-muted">
+                        <AccordionTrigger className="px-4 py-3 ">
                           <div className="flex items-center justify-between w-full">
                             <span className="font-medium">
                               {watch(
@@ -829,8 +829,6 @@ export function TicketsTab() {
 
     const isValid = await trigger("ticketTypes");
 
-    console.log("isValid", isValid);
-
     if (!isValid) {
       toast.error("Corrija os erros nos tickets antes de salvar.");
       const firstErrorElement = document.querySelector(
@@ -863,7 +861,7 @@ export function TicketsTab() {
   };
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6">
+    <div className="space-y-4 max-w-full px-0 sm:px-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold">Ingressos</h2>
