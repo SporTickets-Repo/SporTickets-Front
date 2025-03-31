@@ -86,7 +86,13 @@ export function CouponDialog({ open, onClose, eventId }: CouponDialogProps) {
                 <FormItem>
                   <FormLabel>Código do Cupom</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Digite o código" />
+                    <Input
+                      {...field}
+                      placeholder="Digite o código"
+                      onChange={(e) =>
+                        field.onChange(e.target.value.toUpperCase())
+                      }
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
