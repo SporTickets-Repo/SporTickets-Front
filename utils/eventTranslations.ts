@@ -1,5 +1,17 @@
 import { EventLevel, EventStatus, EventType } from "@/interface/event";
 
+export const translateEventStatusOrganizer = (status: EventStatus): string => {
+  const translations: Record<EventStatus, string> = {
+    [EventStatus.DRAFT]: "RASCUNHO",
+    [EventStatus.REGISTRATION]: "PUBLICADO",
+    [EventStatus.PROGRESS]: "EM ANDAMENTO",
+    [EventStatus.CANCELLED]: "CANCELADO",
+    [EventStatus.FINISHED]: "FINALIZADO",
+  };
+
+  return translations[status] || "Desconhecido";
+};
+
 export const translateEventStatus = (status: EventStatus): string => {
   const translations: Record<EventStatus, string> = {
     [EventStatus.DRAFT]: "RASCUNHO",

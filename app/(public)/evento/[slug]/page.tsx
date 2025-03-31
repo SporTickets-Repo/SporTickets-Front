@@ -1,5 +1,7 @@
 "use client";
 
+import EventAditionalInfo from "@/components/pages/event/event-aditional-info";
+import EventBracket from "@/components/pages/event/event-bracket";
 import EventDescription from "@/components/pages/event/event-description";
 import EventHeader from "@/components/pages/event/event-header";
 import EventLocation from "@/components/pages/event/event-location";
@@ -13,6 +15,7 @@ import { Address } from "@/interface/address";
 import { formatDateWithoutYear, formatHour } from "@/utils/dateTime";
 import { getEventIcon } from "@/utils/eventIcons";
 import {
+  translateEventLevel,
   translateEventStatus,
   translateEventType,
 } from "@/utils/eventTranslations";
@@ -35,78 +38,80 @@ export default function EventPage() {
   const EventIcon = getEventIcon(event.type);
 
   return (
-    <div className="container">
-      <div className="flex-1 p-4 md:p-6">
-        <div className="mx-auto max-w-6xl">
-          <EventHeader
-            alt={event.name as string}
-            image={event.bannerUrl || ""}
-          />
+    <div className="container-sm">
+      <div>
+        <EventHeader alt={event.name as string} image={event.bannerUrl || ""} />
 
-          <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <div className="mb-4">
-                <Badge
-                  variant="secondary"
-                  className="mb-2 w-full align-center justify-center text-sm font-light"
-                >
-                  {formatDateWithoutYear(event.startDate as string)} •{" "}
-                  {formatHour(event.startDate as string)}
-                </Badge>
-                <h1 className="text-2xl font-bold italic">{event.name}</h1>
-                <div className="flex items-center text-xs my-1 ">
-                  {event.type && (
-                    <div className="flex items-center gap-2">
-                      <EventIcon className="text-gray-400" />
-                      <span className="text-gray-600">
-                        {translateEventType(event.type)}
-                      </span>
-                      <span className="mr-1 text-gray-600">•</span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-1">
-                    <LuMedal size={12} className="text-gray-400" />
-                    <span className={`text-gray-600`}>
-                      {"Diversas Categorias"}
+        <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <div className="mb-4">
+              <Badge
+                variant="secondary"
+                className="mb-2 w-full align-center justify-center text-sm font-light"
+              >
+                {formatDateWithoutYear(event.startDate as string)} •{" "}
+                {formatHour(event.startDate as string)}
+              </Badge>
+              <h1 className="text-2xl font-bold italic">{event.name}</h1>
+              <div className="flex items-center text-xs my-1 ">
+                {event.type && (
+                  <div className="flex items-center gap-2">
+                    <EventIcon className="text-gray-400" />
+                    <span className="text-gray-600">
+                      {translateEventType(event.type)}
                     </span>
                     <span className="mr-1 text-gray-600">•</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <IoPin size={14} className="text-gray-400" />
-                    <span className="text-gray-600">
-                      {event.address?.street}, {event.address?.state}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center mt-2 text-xs text-sporticket-green-500 font-semibold">
-                  <span className="">
-                    {translateEventStatus(event.status) || "ABERTO"}
+                )}
+
+                <div className="flex items-center gap-1">
+                  <LuMedal size={12} className="text-gray-400" />
+                  <span className={`text-gray-600`}>
+                    {translateEventLevel(event.level || "GERAL")}
                   </span>
-                  <span className="mx-1">•</span>
-                  <span className="">{"Vagas não informadas"}</span>
+                  <span className="mr-1 text-gray-600">•</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <IoPin size={14} className="text-gray-400" />
+                  <span className="text-gray-600">
+                    {event.address?.street}, {event.address?.city} -{" "}
+                    {event.address?.state}
+                  </span>
                 </div>
               </div>
-
-              <EventLocation
-                address={event.address as Address}
-                place={event.place as string}
-              />
-
-              <div className="block lg:hidden order-last">
-                <RegistrationSummary ticketTypes={event.ticketTypes} />
+              <div className="flex items-center mt-2 text-xs text-sporticket-green-500 font-semibold">
+                <span className="">
+                  {translateEventStatus(event.status) || "ABERTO"}
+                </span>
+                <span className="mx-1">•</span>
+                <span className="">{"Vagas não informadas"}</span>
               </div>
-
-              <EventDescription description={event.description as string} />
-
-              <EventPolicy regulation={event.regulation as string} />
-
-              <EventRanking />
             </div>
 
-            <div className="hidden lg:block lg:col-span-1 order-none">
+            <EventLocation
+              address={event.address as Address}
+              place={event.place as string}
+            />
+
+            <div className="block lg:hidden order-last">
               <RegistrationSummary ticketTypes={event.ticketTypes} />
             </div>
+
+            <EventDescription description={event.description as string} />
+
+            <EventPolicy regulation={event.regulation as string} />
+
+            <EventRanking rankings={event.ranking} />
+
+            <EventBracket brackets={event.bracket} />
+
+            <EventAditionalInfo
+              additionalInfo={event.additionalInfo as string}
+            />
+          </div>
+
+          <div className="hidden lg:block lg:col-span-1 order-none">
+            <RegistrationSummary ticketTypes={event.ticketTypes} />
           </div>
         </div>
       </div>

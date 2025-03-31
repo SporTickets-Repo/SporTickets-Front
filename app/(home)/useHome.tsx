@@ -106,7 +106,9 @@ export default function useHome() {
       try {
         const events = await eventService.getAllEvents(1, 10, "name");
         const filtered = events.filter(
-          (event) => event.status !== EventStatus.DRAFT
+          (event) =>
+            event.status !== EventStatus.DRAFT &&
+            event.status !== EventStatus.CANCELLED
         );
         setEvents(filtered);
         const now = new Date();

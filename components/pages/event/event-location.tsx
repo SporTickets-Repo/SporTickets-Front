@@ -2,29 +2,59 @@
 
 import { Address } from "@/interface/address";
 import { MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface EventLocationProps {
   address: Address;
   place: string;
 }
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_GOOGLE_MAPS_API_KEY;
 
 export default function EventLocation({ address, place }: EventLocationProps) {
-  const mapsQuery = `${address.city}, ${address.neighborhood}, ${address.state}, ${address.street}, ${address.complement}, ${address.zipCode}, Brasil`;
-  const mapsURL = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(
-    mapsQuery
-  )}`;
+  const [mapsURL, setMapsURL] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMapCoordinates = async () => {
+      const query = `${address.city}, ${address.neighborhood}, ${address.state}, ${address.street}, ${address.complement}, ${address.zipCode}, Brasil`;
+
+      try {
+        const res = await fetch(
+          `/api/maps/proxy?q=${encodeURIComponent(query)}`
+        );
+        const data = await res.json();
+
+        const location = data.results?.[0]?.geometry?.location;
+        if (location) {
+          const url = `https://maps.google.com/maps?q=${location.lat},${location.lng}&z=15&output=embed`;
+          setMapsURL(url);
+        } else {
+          throw new Error("Localização não encontrada.");
+        }
+      } catch (err) {
+        console.error("Erro ao buscar localização no Google Maps:", err);
+        const fallbackQuery = `${address.street}, ${address.city}, ${address.state}`;
+        setMapsURL(
+          `https://maps.google.com/maps?q=${encodeURIComponent(
+            fallbackQuery
+          )}&z=15&output=embed`
+        );
+      }
+    };
+
+    fetchMapCoordinates();
+  }, [address]);
 
   return (
-    <div className="mb-4 overflow-hidden  ">
-      <iframe
-        width="100%"
-        height="200"
-        loading="lazy"
-        className="border-0 rounded-lg bg-zinc-400"
-        allowFullScreen
-        src={mapsURL}
-      ></iframe>
+    <div className="mb-4 overflow-hidden">
+      {mapsURL && (
+        <iframe
+          width="100%"
+          height="200"
+          loading="lazy"
+          className="border-0 rounded-lg bg-zinc-400"
+          allowFullScreen
+          src={mapsURL}
+        ></iframe>
+      )}
 
       <div className="flex p-3 gap-2 items-center">
         <MapPin size={14} />

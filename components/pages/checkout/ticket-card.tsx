@@ -1,15 +1,15 @@
 "use client";
 
-import { TicketProps } from "@/interface/tickets";
+import { TicketResponse } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { FaRegCircle } from "react-icons/fa6";
 import { HiTicket } from "react-icons/hi2";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 
 interface TicketCardProps {
-  ticket: TicketProps;
+  ticket: TicketResponse;
   isSelected: boolean;
-  onSelect: (ticket: TicketProps) => void;
+  onSelect: (ticket: TicketResponse) => void;
 }
 
 export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
@@ -36,7 +36,7 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
 
   return (
     <div
-      className={`p-4 mb-4 cursor-pointer rounded-xl shadow-md ${
+      className={`px-4 py-2 mb-4 cursor-pointer rounded-xl shadow-md ${
         isSelected ? "bg-sporticket-purple-50" : ""
       }`}
       onClick={handleSelectTicket}
@@ -49,7 +49,7 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
             <p className="text-sm text-muted-foreground mb-3">
               {ticket.ticketType.description}
             </p>
-            <div className="space-y-2">
+            <div className="">
               {Array.from({ length: maxPlayers }, (_, index) => {
                 const player = ticket?.players[index];
                 return (
@@ -65,7 +65,7 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
         </div>
         <div className="text-right flex items-center gap-4">
           <p className="font-semibold">
-            {formatMoneyBR(ticket.ticketLot.price)}
+            {formatMoneyBR(Number(ticket.ticketLot.price) * maxPlayers)}
           </p>
 
           {completedTicket() ? (

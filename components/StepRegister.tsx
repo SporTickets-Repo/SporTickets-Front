@@ -70,6 +70,9 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
     try {
       await registration(body);
       setSuccess(true);
+      setTimeout(() => {
+        nextStep(AuthStep.ENTER_EMAIL);
+      }, 4000);
     } catch (error: any) {
       console.error("Failed to register:", error.response.data.message);
       if (error.response.data.message === "CPF already exists") {
@@ -144,7 +147,7 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
             <div className="bg-green-100 p-4 rounded-md text-green-600">
               <p>
                 Cadastro realizado com sucesso! Você será redirecionado para a
-                página inicial.
+                tela de login.
               </p>
             </div>
           )}

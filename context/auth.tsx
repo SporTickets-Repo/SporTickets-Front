@@ -76,12 +76,7 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const registration = async (userData: RegisterBody) => {
     try {
-      const response = await authService.register(userData);
-
-      Cookies.set("user", JSON.stringify(response), {
-        expires: cookiesExpirationDays,
-        secure: true,
-      });
+      await authService.register(userData);
     } catch (error: any) {
       throw error;
     }
@@ -100,19 +95,21 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
       });
       setUser(response);
     } catch (error) {
-      logout();
+      logout(false);
       throw error;
     }
   };
 
-  const logout = () => {
+  const logout = (returnHome: boolean = true) => {
     Cookies.remove("token");
     Cookies.remove("user");
 
     setToken(null);
     setUser(null);
 
-    router.push("/");
+    if (returnHome) {
+      router.push("/");
+    }
   };
 
   useEffect(() => {

@@ -1,6 +1,8 @@
 import { Address } from "./address";
 import { Bracket } from "./bracket";
-import { TicketType } from "./tickets";
+import { Coupon } from "./coupons";
+import { Ranking } from "./ranking";
+import { EventDashboardAccess, TicketType } from "./tickets";
 
 export interface Event {
   id: string;
@@ -22,8 +24,11 @@ export interface Event {
   updatedAt: string;
   ticketTypes: TicketType[];
   bracket: Bracket[];
+  ranking: Ranking[];
   address: Address | null;
   paymentMethods: PaymentMethod[];
+  coupons: Coupon[];
+  eventDashboardAccess: EventDashboardAccess[];
 }
 
 export interface EventSummary {

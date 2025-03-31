@@ -44,4 +44,13 @@ export const userService = {
       throw error;
     }
   },
+
+  userByIdentifier: async (identifier: string): Promise<any> => {
+    try {
+      const response = await api.get(`/user/collaborators/${identifier}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

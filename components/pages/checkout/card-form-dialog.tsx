@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -14,30 +13,57 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useEvent } from "@/context/event";
+import {
+  detectCardType,
+  formatCardNumber,
+  formatCVV,
+  formatExpiryDate,
+  isFutureExpiryDate,
+  isValidCardNumber,
+  isValidName,
+} from "@/utils/creditCardValidation";
+import { formatCPF } from "@/utils/format";
+import { isValidCPF } from "@/utils/validate";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const cardFormSchema = z.object({
   cardNumber: z
     .string()
-    .min(16, { message: "O número do cartão deve ter no mínimo 16 dígitos." })
-    .max(19, { message: "O número do cartão deve ter no máximo 19 dígitos." }),
-  expiryDate: z.string().regex(/^\d{2}\/\d{2}$/, {
-    message: "A data de expiração deve estar no formato MM/AA.",
-  }),
-  cvv: z.string().length(3, {
-    message: "O CVV deve ter exatamente 3 dígitos.",
-  }),
-  cardholderName: z.string().min(3, {
-    message: "O nome no cartão deve ter no mínimo 3 caracteres.",
-  }),
-  paymentType: z.enum(["credit", "debit"], {
-    message: "Selecione uma forma de pagamento válida.",
-  }),
-  allowDebitFallback: z.boolean().optional(),
+    .min(19, { message: "O número do cartão deve estar completo." })
+    .refine((val) => isValidCardNumber(val), {
+      message: "Número de cartão inválido.",
+    }),
+  expiryDate: z
+    .string()
+    .regex(/^\d{2}\/\d{2}$/, {
+      message: "A data de expiração deve estar no formato MM/AA.",
+    })
+    .refine((val) => isFutureExpiryDate(val), {
+      message: "O cartão está vencido.",
+    }),
+  cvv: z
+    .string()
+    .min(3, { message: "O CVV deve ter no mínimo 3 dígitos." })
+    .max(4, { message: "O CVV deve ter no máximo 4 dígitos." }),
+  cardholderName: z
+    .string()
+    .min(3, { message: "O nome no cartão deve ter no mínimo 3 caracteres." })
+    .refine((val) => isValidName(val), {
+      message: "O nome deve conter apenas letras e espaços.",
+    }),
+  cardHolderDocument: z
+    .string()
+    .min(1, { message: "O CPF é obrigatório." })
+    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, {
+      message: "O CPF deve estar no formato 000.000.000-00.",
+    })
+    .refine((val) => isValidCPF(val), {
+      message: "CPF inválido.",
+    }),
 });
 
 type CardFormValues = z.infer<typeof cardFormSchema>;
@@ -45,28 +71,56 @@ type CardFormValues = z.infer<typeof cardFormSchema>;
 interface CardFormDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: CardFormValues) => void;
 }
 
-export function CardFormDialog({
-  open,
-  onClose,
-  onSubmit,
-}: CardFormDialogProps) {
+export function CardFormDialog({ open, onClose }: CardFormDialogProps) {
+  const [cardType, setCardType] = useState<string | null>(null);
+
+  const { selectedTickets, setSelectedTickets } = useEvent();
+
   const form = useForm<CardFormValues>({
     resolver: zodResolver(cardFormSchema),
+    mode: "onChange",
     defaultValues: {
       cardNumber: "",
       expiryDate: "",
       cvv: "",
       cardholderName: "",
-      paymentType: "credit",
-      allowDebitFallback: false,
+      cardHolderDocument: "",
     },
   });
 
+  const cardIconSrc = useMemo(() => {
+    if (!cardType) return null;
+    return `/assets/icons/${cardType}.svg`;
+  }, [cardType]);
+
   function onFormSubmit(data: CardFormValues) {
-    onSubmit(data);
+    const newSelectedTickets = selectedTickets.map((ticket) => {
+      return {
+        ...ticket,
+        paymentData: {
+          paymentMethod: "CREDIT_CARD",
+          cardData: {
+            cardNumber: data.cardNumber.replace(/\D/g, ""),
+            expirationMonth: Number(data.expiryDate.split("/")[0]),
+            expirationYear: Number(data.expiryDate.split("/")[1]),
+            securityCode: data.cvv,
+            installments: 1,
+            cardBrand: cardType,
+            cardHolder: {
+              name: data.cardholderName,
+              identification: {
+                type: "CPF",
+                number: data.cardHolderDocument.replace(/\D/g, ""),
+              },
+            },
+          },
+        },
+      };
+    });
+    setSelectedTickets(newSelectedTickets);
+    onClose();
   }
 
   return (
@@ -107,11 +161,30 @@ export function CardFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      placeholder="Número do Cartão"
-                      {...field}
-                      className="bg-muted"
-                    />
+                    <div className="relative">
+                      <Input
+                        placeholder="Número do Cartão"
+                        value={field.value}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          const formatted = formatCardNumber(raw).substring(
+                            0,
+                            19
+                          );
+                          const brand = detectCardType(formatted);
+                          setCardType(brand);
+                          field.onChange(formatted);
+                        }}
+                        className="bg-muted pr-12"
+                      />
+                      {cardIconSrc && (
+                        <img
+                          src={cardIconSrc}
+                          alt={cardType ?? ""}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 h-6"
+                        />
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -126,8 +199,11 @@ export function CardFormDialog({
                   <FormItem>
                     <FormControl>
                       <Input
-                        placeholder="Data Expiração"
-                        {...field}
+                        placeholder="Data Expiração (MM/AA)"
+                        value={field.value}
+                        onChange={(e) => {
+                          field.onChange(formatExpiryDate(e.target.value));
+                        }}
                         className="bg-muted"
                       />
                     </FormControl>
@@ -144,7 +220,10 @@ export function CardFormDialog({
                     <FormControl>
                       <Input
                         placeholder="CVV"
-                        {...field}
+                        value={field.value}
+                        onChange={(e) => {
+                          field.onChange(formatCVV(e.target.value));
+                        }}
                         className="bg-muted"
                       />
                     </FormControl>
@@ -171,54 +250,22 @@ export function CardFormDialog({
               )}
             />
 
-            <div className="space-y-4">
-              <Label className="text-sm font-medium">
-                Forma de pagamento preferida
-              </Label>
-              <FormField
-                control={form.control}
-                name="paymentType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="grid grid-cols-2 gap-4"
-                      >
-                        <div className="flex items-center space-x-2 border rounded-md p-4">
-                          <RadioGroupItem value="credit" id="credit" />
-                          <Label htmlFor="credit">Crédito</Label>
-                        </div>
-                        <div className="flex items-center space-x-2 border rounded-md p-4">
-                          <RadioGroupItem value="debit" id="debit" />
-                          <Label htmlFor="debit">Débito</Label>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
             <FormField
               control={form.control}
-              name="allowDebitFallback"
+              name="cardHolderDocument"
               render={({ field }) => (
-                <FormItem className="flex items-start space-x-3 space-y-0">
+                <FormItem>
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+                    <Input
+                      placeholder="CPF do Titular"
+                      value={field.value}
+                      onChange={(e) => {
+                        field.onChange(formatCPF(e.target.value));
+                      }}
+                      className="bg-muted"
                     />
                   </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <Label>
-                      Se a cobrança no crédito falhar, você nos autoriza a
-                      tentar no débito (caso seu cartão tenha esta opção).
-                    </Label>
-                  </div>
+                  <FormMessage />
                 </FormItem>
               )}
             />

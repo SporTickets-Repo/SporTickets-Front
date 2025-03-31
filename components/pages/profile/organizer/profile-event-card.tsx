@@ -1,6 +1,10 @@
 "use client";
-import { Event } from "@/interface/event";
-import { translateEventType } from "@/utils/eventTranslations";
+import { Badge } from "@/components/ui/badge";
+import { Event, EventStatus } from "@/interface/event";
+import {
+  translateEventStatus,
+  translateEventType,
+} from "@/utils/eventTranslations";
 import Image from "next/image";
 import { FC } from "react";
 
@@ -35,6 +39,11 @@ export const ProfileEventCard: FC<ProfileEventCardProps> = ({ event }) => {
             {event?.slug ? `/${event.slug}` : "Evento sem slug"}
           </p>
         </div>
+      </div>
+      <div className="justify-center flex items-center text-center">
+        <Badge className="" variant="default">
+          {translateEventStatus(event?.status as EventStatus)}
+        </Badge>
       </div>
     </div>
   );

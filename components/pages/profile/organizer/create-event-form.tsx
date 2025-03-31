@@ -8,32 +8,65 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
+  AlertCircle,
+  ArrowUpIcon,
   ChevronLeft,
+  ChevronRight,
   ClipboardList,
+  Link,
+  Loader2,
   Ticket,
   TicketPercent,
+  Trash2Icon,
   Users2,
 } from "lucide-react";
 
-import { useCreateEventContext } from "@/context/create-event";
-import { EventLevel, EventType } from "@/interface/event";
 import {
-  CreateEventFormValues,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useCreateEventContext } from "@/context/create-event";
+import { EventLevel, EventStatus, EventType } from "@/interface/event";
+import type { UserType } from "@/interface/tickets";
+import {
+  type CreateEventFormValues,
   createEventFormValuesSchema,
+  eventFormValuesSchema,
 } from "@/schemas/createEventSchema";
+import { eventService } from "@/service/event";
+import { translateEventStatusOrganizer } from "@/utils/eventTranslations";
 import { useRouter } from "next/navigation";
+import { mutate } from "swr";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
 import { InfoTab } from "./create-form-tabs/info-tab";
+import { IntegrationsTab } from "./create-form-tabs/integrations-tab";
 import { TicketsTab } from "./create-form-tabs/tickets-tab";
 
-type TabType = "info" | "tickets" | "coupons" | "collaborators";
+type TabType =
+  | "info"
+  | "tickets"
+  | "coupons"
+  | "collaborators"
+  | "integrations";
 
 const tabLabels = {
   info: "Informações",
   tickets: "Ingressos",
   coupons: "Cupons",
   collaborators: "Colaboradores",
+  integrations: "Integrações",
 };
 
 interface CreateEventFormProps {
@@ -43,6 +76,7 @@ interface CreateEventFormProps {
 export function CreateEventForm({ eventId }: CreateEventFormProps) {
   const {
     event: eventData,
+    eventLoading,
     eventTypes,
     eventLevels,
     setEventId,
@@ -76,7 +110,6 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         smallImageFile: undefined,
       },
       ticketTypes: [],
-      collaborators: [],
     },
   });
 
@@ -112,12 +145,80 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           place: eventData.place ?? "",
           regulation: eventData.regulation ?? "",
           paymentMethods: eventData.paymentMethods || [],
-
           bannerImageFile: undefined,
           smallImageFile: undefined,
         },
-        // ticketTypes: eventData.ticketTypes || [],
-        collaborators: [],
+
+        coupons: eventData.coupons
+          ? eventData.coupons.map((c) => ({
+              id: c.id,
+              name: c.name,
+              percentage: Number(c.percentage) * 100,
+              quantity: c.quantity ?? 0,
+              isActive: true,
+            }))
+          : [],
+
+        ticketTypes: eventData.ticketTypes
+          ? eventData.ticketTypes.map((t) => ({
+              id: t.id,
+              eventId: t.eventId,
+              name: t.name,
+              description: t.description,
+              userType: t.userType as UserType,
+              teamSize: t.teamSize,
+              ticketLots:
+                t.ticketLots?.map((lot) => ({
+                  id: lot.id,
+                  ticketTypeId: lot.ticketTypeId,
+                  name: lot.name,
+                  price: Number.parseFloat(lot.price),
+                  quantity: lot.quantity,
+                  startDate: lot.startDate,
+                  endDate: lot.endDate,
+                  isActive: lot.isActive,
+                  createdAt: lot.createdAt,
+                  updatedAt: lot.updatedAt,
+                  deletedAt: lot.deletedAt || null,
+                })) || [],
+              categories:
+                t.categories?.map((c) => ({
+                  id: c.id,
+                  ticketTypeId: c.ticketTypeId,
+                  title: c.title,
+                  restriction: c.restriction,
+                  quantity: c.quantity,
+                  deletedAt: c.deletedAt || null,
+                })) || [],
+              personalizedFields:
+                t.personalizedFields?.map((pf) => ({
+                  id: pf.id,
+                  ticketTypeId: pf.ticketTypeId,
+                  type: pf.type,
+                  requestTitle: pf.requestTitle,
+                  optionsList: pf.optionsList,
+                  deletedAt: pf.deletedAt || null,
+                })) || [],
+            }))
+          : [],
+
+        bracket: eventData.bracket
+          ? eventData.bracket.map((b) => ({
+              id: b.id,
+              name: b.name,
+              url: b.url,
+              isActive: true,
+            }))
+          : [],
+
+        ranking: eventData.ranking
+          ? eventData.ranking.map((r) => ({
+              id: r.id,
+              name: r.name,
+              url: r.url,
+              isActive: true,
+            }))
+          : [],
       });
 
       if (eventData.bannerUrl) {
@@ -133,13 +234,22 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     if (eventId) {
       setEventId(eventId);
     }
-  }, [eventId]);
+  }, [eventId, setEventId]);
 
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("info");
   const [tabErrors, setTabErrors] = useState<TabType[]>([]);
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showFinishDialog, setShowFinishDialog] = useState(false);
 
-  const tabOrder: TabType[] = ["info", "tickets", "coupons", "collaborators"];
+  const tabOrder: TabType[] = [
+    "info",
+    "tickets",
+    "coupons",
+    "collaborators",
+    "integrations",
+  ];
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -151,6 +261,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         return <CouponsTab />;
       case "collaborators":
         return <CollaboratorsTab />;
+      case "integrations":
+        return <IntegrationsTab />;
       default:
         return null;
     }
@@ -194,16 +306,110 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     setTabErrors(getTabErrors(errors));
   };
 
+  const handlePublishEvent = async () => {
+    try {
+      await eventService.setEventStatus(eventId, EventStatus.REGISTRATION);
+      console.log("Event published successfully!");
+      setShowPublishDialog(false);
+      await mutate(`/events/${eventId}`);
+    } catch (error) {
+      console.error("Failed to publish event:", error);
+    }
+  };
+
+  const handleDeleteEvent = async () => {
+    try {
+      await eventService.setEventStatus(eventId, EventStatus.CANCELLED);
+      console.log("Event canceled/deleted successfully!");
+      setShowDeleteDialog(false);
+      await mutate(`/events/${eventId}`);
+      router.push("/perfil");
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+    }
+  };
+
+  const handleFinishEvent = async () => {
+    try {
+      await eventService.setEventStatus(eventId, EventStatus.FINISHED);
+      console.log("Event finished successfully!");
+      await mutate(`/events/${eventId}`);
+      setShowFinishDialog(false);
+    } catch (error) {
+      console.error("Failed to finish event:", error);
+    }
+  };
+
+  function getPublishRequirementsErrors(event: typeof eventData) {
+    const errors: string[] = [];
+
+    if (!event) return ["Dados do evento não carregados."];
+
+    const eventCheck = eventFormValuesSchema.safeParse({
+      name: event.name,
+      slug: event.slug,
+      type: event.type,
+      level: event.level,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      description: event.description,
+      additionalInfo: event.additionalInfo,
+      cep: event.address?.zipCode,
+      city: event.address?.city,
+      state: event.address?.state,
+      street: event.address?.street,
+      addressNumber: event.address?.number,
+      complement: event.address?.complement,
+      neighborhood: event.address?.neighborhood,
+      place: event.place,
+      regulation: event.regulation,
+    });
+
+    if (!eventCheck.success) {
+      errors.push(
+        "Preencha todos os campos obrigatórios nas informações do evento."
+      );
+    }
+
+    if (!event.ticketTypes || event.ticketTypes.length === 0) {
+      errors.push("Adicione pelo menos um tipo de ingresso.");
+    } else {
+      const hasValidTicket = event.ticketTypes.some((ticket) => {
+        const hasValidCategory =
+          ticket.categories && ticket.categories.length > 0;
+        const hasValidLot = ticket.ticketLots && ticket.ticketLots.length > 0;
+        return hasValidCategory && hasValidLot;
+      });
+
+      if (!hasValidTicket) {
+        errors.push(
+          "Cada tipo de ingresso precisa ter ao menos uma categoria e um lote."
+        );
+      }
+    }
+
+    return errors;
+  }
+
+  const [publishErrors, setPublishErrors] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (eventData) {
+      const errors = getPublishRequirementsErrors(eventData);
+      setPublishErrors(errors);
+    }
+  }, [eventData]);
+
   return (
     <div className="container max-w-7xl pb-10">
       <div className="flex items-center space-x-4 mt-2 mb-4">
         <Button
           variant="tertiary"
-          className="rounded-full"
+          className="rounded-full p-4"
           size="icon"
           onClick={handleGoBack}
         >
-          <ChevronLeft size={16} className="text-zinc-500" />
+          <ChevronLeft size={20} className="text-zinc-500" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold">Configuração do evento</h1>
@@ -224,21 +430,109 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                   {tab === "tickets" && <Ticket className="w-4 h-4" />}
                   {tab === "coupons" && <TicketPercent className="w-4 h-4" />}
                   {tab === "collaborators" && <Users2 className="w-4 h-4" />}
+                  {tab === "integrations" && <Link className="w-4 h-4" />}
                   {tabLabels[tab]}
                 </Button>
               ))}
             </nav>
             <Separator orientation="horizontal" className="w-full" />
 
-            <Button disabled type="button" className="w-full">
-              Publicar evento
-            </Button>
+            <div className="flex flex-col flex-1 justify-center text-center w-full bg-muted rounded-xl">
+              <Label>Status</Label>
+              {eventLoading || !eventData?.status ? (
+                <Loader2 className="animate-spin mr-2 h-6 w-6 self-center" />
+              ) : (
+                <h2 className="text-lg font-medium text-center">
+                  {translateEventStatusOrganizer(
+                    eventData?.status as EventStatus
+                  )}
+                </h2>
+              )}
+            </div>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {eventData?.status !== EventStatus.FINISHED &&
+                    eventData?.status !== EventStatus.REGISTRATION && (
+                      <div className="w-full">
+                        {eventData?.status === EventStatus.PROGRESS ? (
+                          <Button
+                            variant="select"
+                            type="button"
+                            className="w-full justify-start gap-2 h-10"
+                            onClick={() => setShowFinishDialog(true)}
+                          >
+                            <ArrowUpIcon className="w-4 h-4" />
+                            Finalizar evento
+                          </Button>
+                        ) : (
+                          <Button
+                            variant={
+                              publishErrors.length > 0 ? "outline" : "select"
+                            }
+                            type="button"
+                            className={`w-full justify-start gap-2 h-10 ${
+                              publishErrors.length > 0
+                                ? "border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800"
+                                : ""
+                            }`}
+                            onClick={() =>
+                              publishErrors.length === 0 &&
+                              setShowPublishDialog(true)
+                            }
+                            disabled={publishErrors.length > 0}
+                          >
+                            {publishErrors.length > 0 ? (
+                              <AlertCircle className="w-4 h-4" />
+                            ) : (
+                              <ArrowUpIcon className="w-4 h-4" />
+                            )}
+                            {publishErrors.length > 0
+                              ? "Pendências para publicar"
+                              : "Publicar evento"}
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                </TooltipTrigger>
+                {publishErrors.length > 0 && (
+                  <TooltipContent
+                    side="right"
+                    align="start"
+                    className="max-w-xs p-0 overflow-hidden border border-red-200 text-black"
+                  >
+                    <div className="bg-red-50 p-3 border-b border-red-200">
+                      <h3 className="font-semibold text-red-700 flex items-center gap-2">
+                        <AlertCircle size={16} />
+                        Campos obrigatórios pendentes
+                      </h3>
+                    </div>
+                    <div className="p-3 bg-white">
+                      <ul className="space-y-2">
+                        {publishErrors.map((error, i) => (
+                          <li
+                            key={i}
+                            className="flex items-start gap-2 text-sm"
+                          >
+                            <span className="text-red-500 mt-0.5">•</span>
+                            <span>{error}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+
             <Button
-              disabled
               type="button"
               variant="destructive"
-              className="w-full"
+              className="w-full justify-start gap-2 h-10"
+              onClick={() => setShowDeleteDialog(true)}
             >
+              <Trash2Icon className="w-4 h-4" />
               Apagar evento
             </Button>
           </div>
@@ -259,22 +553,24 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                     <Button
                       variant="default-inverse"
                       size={"sm"}
-                      className="text-sm p-5"
+                      className="text-sm p-5 items-center [&_svg]:size-5"
                       type="button"
                       onClick={handlePreviousTab}
                     >
+                      <ChevronLeft />
                       Anterior
                     </Button>
                   )}
-                  {activeTab !== "collaborators" && (
+                  {activeTab !== "integrations" && (
                     <Button
                       type="button"
                       size={"sm"}
                       variant={"default-inverse"}
-                      className="text-sm p-5"
+                      className="text-sm p-5 items-center [&_svg]:size-5"
                       onClick={handleNextTab}
                     >
-                      Próximo
+                      Próximo Passo
+                      <ChevronRight />
                     </Button>
                   )}
                 </div>
@@ -283,6 +579,106 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           </div>
         </div>
       </Card>
+
+      <Dialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
+        <DialogContent className="pt-10">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-center text-xl">
+              Publicar evento
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              O Evento está em{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatusOrganizer(
+                  eventData?.status as EventStatus
+                )}
+              </span>
+              , você realmente deseja alterar o status para{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatusOrganizer(EventStatus.REGISTRATION)}
+              </span>
+              ? <br /> Após publicado, o evento estará visível para todos os
+              usuários.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowPublishDialog(false)}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handlePublishEvent}>Confirmar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="pt-10">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-center text-xl">
+              Apagar evento
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              O Evento está em{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatusOrganizer(
+                  eventData?.status as EventStatus
+                )}
+              </span>
+              , você realmente deseja alterar o status para{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatusOrganizer(EventStatus.CANCELLED)}
+              </span>
+              ? <br /> Tem certeza que deseja apagar este evento? Esta ação não
+              pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteEvent}>
+              Apagar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showFinishDialog} onOpenChange={setShowFinishDialog}>
+        <DialogContent className="pt-10">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-center text-xl">
+              Finalizar evento
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              O Evento está em{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatusOrganizer(
+                  eventData?.status as EventStatus
+                )}
+              </span>
+              , você realmente deseja alterar o status para{" "}
+              <span className="text-sporticket-orange font-medium">
+                {translateEventStatusOrganizer(EventStatus.FINISHED)}
+              </span>
+              ?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowFinishDialog(false)}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handleFinishEvent}>Confirmar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

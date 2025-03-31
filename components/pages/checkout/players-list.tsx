@@ -3,8 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEvent } from "@/context/event";
-import type { Player, TicketProps } from "@/interface/tickets";
-import { Search } from "lucide-react";
+import type { Player, TicketResponse } from "@/interface/tickets";
+import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa6";
 import { FiUserPlus } from "react-icons/fi";
@@ -14,7 +14,7 @@ interface PlayersListProps {
   players: Player[];
   onSelectPlayer: (player: Player) => void;
   onAddPlayer: () => void;
-  currentTicket: TicketProps;
+  currentTicket: TicketResponse;
 }
 
 export function PlayersList({
@@ -38,7 +38,7 @@ export function PlayersList({
         ticket.id === currentTicket.id
           ? {
               ...ticket,
-              players: ticket.players.filter((p) => p.Userid !== playerId),
+              players: ticket.players.filter((p) => p.userId !== playerId),
             }
           : ticket
       )
@@ -55,12 +55,13 @@ export function PlayersList({
           </p>
         </div>
         <Button
-          variant="outline"
+          variant="linkPurple"
           size="sm"
-          className="text-md text-sporticket-purple border-sporticket-purple hover:bg-sporticket-purple-50"
+          className="text-md"
           onClick={onAddPlayer}
           disabled={players.length === currentTicket.ticketType.teamSize}
         >
+          <Plus />
           Novo Jogador
         </Button>
       </div>
@@ -88,7 +89,7 @@ export function PlayersList({
                 }
               />
               <Button
-                onClick={() => handleRemovePlayer(player.Userid)}
+                onClick={() => handleRemovePlayer(player.userId)}
                 variant={"destructive"}
                 className="[&_svg]:size-5 h-[80px] px-4 rounded-md bg-zinc-50 hover:bg-zinc-100 shadow-sm"
               >

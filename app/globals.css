@@ -90,6 +90,12 @@ body {
   }
 }
 
+.container-sm {
+  @apply mx-auto px-4;
+  width: 100%;
+  max-width: 1300px;
+}
+
 .tiptap-container {
   background-color: white;
   border-radius: 0.5rem;
@@ -110,6 +116,11 @@ body {
 
 .tiptap :first-child {
   margin-top: 0;
+}
+.tiptap p:empty::before {
+  content: " ";
+  display: inline-block;
+  height: 1em;
 }
 .tiptap ul,
 .tiptap ol {

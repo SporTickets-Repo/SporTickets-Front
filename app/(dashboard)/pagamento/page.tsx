@@ -9,20 +9,23 @@ import { CouponDialog } from "@/components/pages/checkout/coupon-dialog";
 import { EventHeader } from "@/components/pages/checkout/event-header";
 import { PaymentMethodDialog } from "@/components/pages/checkout/payment-method-dialog";
 
+import { PaymentMethodDisplay } from "@/components/pages/checkout/payment-method-display";
 import { PlayerForm } from "@/components/pages/checkout/player-form/index";
 import { PlayersEmptyList } from "@/components/pages/checkout/players-empty-list";
 import { PlayersList } from "@/components/pages/checkout/players-list";
 import { TicketCard } from "@/components/pages/checkout/ticket-card";
 import { useEvent } from "@/context/event";
-import { Player, TicketProps } from "@/interface/tickets";
+import type { Player, TicketResponse } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function PaymentPage() {
-  const { selectedTickets } = useEvent();
+  const { selectedTickets, submitCheckout, event } = useEvent();
   const router = useRouter();
 
-  const [currentTicket, setCurrentTicket] = useState<TicketProps | null>(null);
+  const [currentTicket, setCurrentTicket] = useState<TicketResponse | null>(
+    null
+  );
   const [playerFormOpen, setPlayerFormOpen] = useState(false);
   const [couponDialogOpen, setCouponDialogOpen] = useState(false);
   const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = useState(false);
@@ -30,7 +33,8 @@ export default function PaymentPage() {
 
   useEffect(() => {
     if (!selectedTickets || selectedTickets.length === 0) {
-      router.push("/");
+      router.push(event?.slug ? `/evento/${event?.slug}` : "/");
+      return;
     } else {
       setCurrentTicket((prev) => {
         return (
@@ -41,7 +45,7 @@ export default function PaymentPage() {
     }
   }, [selectedTickets]);
 
-  const handleSelectTicket = (ticket: TicketProps) => {
+  const handleSelectTicket = (ticket: TicketResponse) => {
     setCurrentTicket(ticket);
   };
 
@@ -57,19 +61,23 @@ export default function PaymentPage() {
 
   const total =
     selectedTickets?.reduce((acc, ticket) => {
-      return acc + parseFloat(ticket.ticketLot.price);
+      const teamSize = ticket.ticketType.teamSize;
+      const price = parseFloat(ticket.ticketLot.price);
+      return acc + price * teamSize;
     }, 0) || 0;
 
   const totalDiscount =
     selectedTickets?.reduce((acc, ticket) => {
+      const teamSize = ticket.ticketType.teamSize;
+      const price = parseFloat(ticket.ticketLot.price);
+      const teamPrice = price * teamSize;
+
       if (ticket.coupon?.id) {
-        return (
-          acc +
-          parseFloat(ticket.ticketLot.price) -
-          ticket.coupon.percentage * parseFloat(ticket.ticketLot.price)
-        );
+        const discountAmount = teamPrice * ticket.coupon.percentage;
+        return acc + teamPrice - discountAmount;
       }
-      return acc;
+
+      return acc + teamPrice;
     }, 0) || 0;
 
   if (!selectedTickets || selectedTickets.length === 0 || !currentTicket) {
@@ -77,13 +85,15 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen container px-24">
+    <div className="min-h-screen container-sm">
       <div className="flex items-center space-x-4 mt-2 mb-4 ">
         <Button
           variant="tertiary"
           className="rounded-full"
           size="icon"
-          onClick={() => router.push("/")}
+          onClick={() =>
+            router.push(event?.slug ? `/evento/${event?.slug}` : "/")
+          }
         >
           <ChevronLeft size={16} className="text-zinc-500" />
         </Button>
@@ -153,7 +163,14 @@ export default function PaymentPage() {
                 size="outline"
                 onClick={() => setPaymentMethodDialogOpen(true)}
               >
-                {"Selecionar opção"}
+                {currentTicket?.paymentData?.paymentMethod ? (
+                  <PaymentMethodDisplay
+                    key={currentTicket?.paymentData?.paymentMethod}
+                    paymentData={currentTicket.paymentData}
+                  />
+                ) : (
+                  "Selecionar opção"
+                )}
                 <ChevronRight size={16} className="text-zinc-800/80" />
               </Button>
             </div>
@@ -176,7 +193,11 @@ export default function PaymentPage() {
               )}
             </div>
             <div>
-              <Button variant="destructive" className="w-full mt-10">
+              <Button
+                onClick={submitCheckout}
+                variant="destructive"
+                className="w-full mt-10"
+              >
                 Realizar inscrição
                 <ArrowRight size={16} className="text-white ml-2" />
               </Button>
@@ -219,7 +240,6 @@ export default function PaymentPage() {
       <PaymentMethodDialog
         open={paymentMethodDialogOpen}
         onClose={() => setPaymentMethodDialogOpen(false)}
-        onSelect={(method) => console.log(method)}
       />
     </div>
   );

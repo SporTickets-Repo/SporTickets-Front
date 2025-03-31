@@ -29,7 +29,7 @@ export default function EventPolicy({ regulation }: EventPolicyProps) {
               }`}
             >
               <div
-                className="text-sm text-gray-700"
+                className="text-sm text-gray-700 tiptap whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: regulation }}
               />
               {!expanded && (
@@ -39,7 +39,7 @@ export default function EventPolicy({ regulation }: EventPolicyProps) {
 
             <Button
               variant="link"
-              className="mt-1 h-auto p-0 text-sm font-medium"
+              className="mt-1 h-auto p-0 text-sm font-medium underline"
               onClick={() => setExpanded(!expanded)}
             >
               {expanded ? "Ver menos" : "Ver mais"}

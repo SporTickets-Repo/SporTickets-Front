@@ -1,4 +1,4 @@
-export interface Bracket {
+export interface Ranking {
   id: string;
   eventId: string;
   name: string;
@@ -6,7 +6,7 @@ export interface Bracket {
   isActive: boolean;
 }
 
-export interface BracketUpdate {
+export interface RankingUpdate {
   id?: string;
   name?: string;
   url?: string;
