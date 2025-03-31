@@ -112,7 +112,7 @@ export function PlayerForm({
                 onClose={onClose}
                 onRegistered={(newPlayer) => {
                   handleAdd(newPlayer);
-                  if (hasPersonalizedFields) {
+                  if (hasPersonalizedFields || hasCategoryFields) {
                     setStep("fields");
                   } else {
                     onClose();
