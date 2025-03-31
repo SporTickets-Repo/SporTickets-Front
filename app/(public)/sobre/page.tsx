@@ -135,12 +135,14 @@ export default function About() {
             </div>
           </div>
           <div className="text-center mt-12">
-            <Button
-              variant="secondary"
-              className="px-10 md:px-40 w-full md:w-auto"
-            >
-              Começar agora
-            </Button>
+            <a href="https://wa.me/5561998604155">
+              <Button
+                variant="secondary"
+                className="px-10 md:px-40 w-full md:w-auto"
+              >
+                Começar agora
+              </Button>
+            </a>
           </div>
         </div>
       </section>
@@ -226,9 +228,11 @@ export default function About() {
           <p className="mb-8 text-gray-300">
             Junte-se a mais de 500 empresas que já estão crescendo conosco
           </p>
-          <Button size="lg" variant="secondary">
-            Começar agora
-          </Button>
+          <a href="https://wa.me/5561998604155">
+            <Button size="lg" variant="secondary">
+              Começar agora
+            </Button>
+          </a>
         </div>
       </section>
     </div>

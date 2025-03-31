@@ -66,8 +66,8 @@ function App() {
                     <ArrowRight size={16} />
                   </Button>
                 </div>
-                {upcomingEvents.length > 0 || true ? (
-                  <CarouselEvents events={eventsMock} max={5} dark />
+                {upcomingEvents.length > 0 ? (
+                  <CarouselEvents events={upcomingEvents} max={5} dark />
                 ) : (
                   <div className="container mb-10">
                     <EmptyEventCard dark />
@@ -87,7 +87,7 @@ function App() {
               </Button>
             </div>
             {recentEvents.length > 0 ? (
-              <CarouselEvents events={events} max={8} />
+              <CarouselEvents events={recentEvents} max={8} />
             ) : (
               <div className="container mb-10">
                 <EmptyEventCard />
@@ -104,8 +104,8 @@ function App() {
                 <ArrowRight size={16} />
               </Button>
             </div>
-            {registrationEvents.length > 0 || true ? (
-              <CarouselEvents events={eventsMock} max={4} />
+            {registrationEvents.length > 0 ? (
+              <CarouselEvents events={registrationEvents} max={4} />
             ) : (
               <div className="container mb-10">
                 <EmptyEventCard />
@@ -150,9 +150,15 @@ function App() {
                   gente!
                 </p>
               </div>
-              <Button variant="secondary" className="text-sm md:text-sm">
-                Sou produtor
-              </Button>
+              <Link href="/sobre">
+                <Button
+                  variant="secondary"
+                  className="text-sm md:text-sm"
+                  type="button"
+                >
+                  Sou produtor
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -165,8 +171,8 @@ function App() {
                 <ArrowRight size={16} />
               </Button>
             </div>
-            {finishedEvents.length > 0 || true ? (
-              <CarouselEvents events={eventsMock} max={10} />
+            {finishedEvents.length > 0 ? (
+              <CarouselEvents events={finishedEvents} max={10} />
             ) : (
               <div className="container mb-10">
                 <EmptyEventCard />

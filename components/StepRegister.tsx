@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { registerSchema } from "@/utils/validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -37,7 +36,6 @@ interface StepRegisterProps {
 }
 
 const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
-  const router = useRouter();
   const { registration } = useAuth();
   const [success, setSuccess] = useState(false);
   const {

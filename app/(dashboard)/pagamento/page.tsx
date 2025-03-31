@@ -84,6 +84,23 @@ export default function PaymentPage() {
     return null;
   }
 
+  const formCompleted = selectedTickets.every((ticket) => {
+    const players = ticket.players || [];
+    if (
+      players.length === ticket.ticketType.teamSize &&
+      players.every(
+        (player) =>
+          player.personalizedField?.length ===
+          ticket.ticketType.personalizedFields?.length
+      ) &&
+      players.every((player) => player.category.id !== "")
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
   return (
     <div className="min-h-screen container-sm">
       <div className="flex items-center space-x-4 mt-2 mb-4 ">
@@ -105,21 +122,8 @@ export default function PaymentPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div className="w-full">
-          {currentTicket?.players?.length === 0 ? (
-            <PlayersEmptyList onAddPlayer={() => setPlayerFormOpen(true)} />
-          ) : (
-            <PlayersList
-              players={currentTicket?.players}
-              onSelectPlayer={handleSelectPlayer}
-              onAddPlayer={() => setPlayerFormOpen(true)}
-              currentTicket={currentTicket}
-            />
-          )}
-        </div>
-
-        <div className="space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 ">
+        <div className="space-y-2 md:order-2">
           <EventHeader />
 
           <div className="p-3 bg-zinc-50 rounded-lg">
@@ -197,6 +201,7 @@ export default function PaymentPage() {
                 onClick={submitCheckout}
                 variant="destructive"
                 className="w-full mt-10"
+                disabled={!formCompleted}
               >
                 Realizar inscrição
                 <ArrowRight size={16} className="text-white ml-2" />
@@ -218,6 +223,19 @@ export default function PaymentPage() {
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="w-full md:order-1">
+          {currentTicket?.players?.length === 0 ? (
+            <PlayersEmptyList onAddPlayer={() => setPlayerFormOpen(true)} />
+          ) : (
+            <PlayersList
+              players={currentTicket?.players}
+              onSelectPlayer={handleSelectPlayer}
+              onAddPlayer={() => setPlayerFormOpen(true)}
+              currentTicket={currentTicket}
+            />
+          )}
         </div>
       </div>
 

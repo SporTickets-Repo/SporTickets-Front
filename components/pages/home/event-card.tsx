@@ -5,6 +5,7 @@ import { EventSummary } from "@/interface/event";
 import { formatDateWithoutYear, formatHour } from "@/utils/dateTime";
 import { getEventIcon } from "@/utils/eventIcons";
 import {
+  translateEventLevel,
   translateEventStatus,
   translateEventType,
 } from "@/utils/eventTranslations";
@@ -69,7 +70,7 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
             <div className="flex items-center gap-1">
               <LuMedal size={12} className="text-gray-400" />
               <span className={`${dark ? "text-white" : "text-gray-600"}`}>
-                {"Diversas Categorias"}
+                {translateEventLevel(event.level) || "Nível não informado"}
               </span>
             </div>
           </div>
@@ -87,8 +88,8 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
             <span className="">
               {translateEventStatus(event.status) || "ABERTO"}
             </span>
-            <span className="mx-1">•</span>
-            <span className="">{"Vagas não informadas"}</span>
+            {/* <span className="mx-1">•</span>
+            <span className="">{"Vagas não informadas"}</span> */}
           </div>
         </CardContent>
       </Card>

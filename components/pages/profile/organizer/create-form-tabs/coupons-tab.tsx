@@ -79,8 +79,8 @@ export function CouponsTab() {
   }
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div className="space-y-4 max-w-full px-0 sm:px-6">
+      <div className="flex flex-row items-center justify-between gap-4 mb-6">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold">Cupons</h2>
           <p className="text-sm text-muted-foreground">
@@ -150,7 +150,7 @@ export function CouponsTab() {
               value={`coupon-${index}`}
               className="border-0 rounded-md"
             >
-              <AccordionTrigger className="flex items-center justify-between">
+              <AccordionTrigger className="flex items-center justify-between bg-gray-50">
                 <div className="flex items-center justify-between w-full">
                   <div>
                     <h3 className="font-medium">
@@ -180,18 +180,15 @@ export function CouponsTab() {
                       )}
                     />
 
-                    <Button
-                      variant="default-inverse"
-                      type="button"
-                      size="icon"
-                      className="p-[10px] [&_svg]:size-4 rounded-sm"
+                    <span
+                      className="p-[10px] [&_svg]:size-4 rounded-sm bg-sporticket-purple-100 text-sporticket-purple-800 shadow hover:bg-sporticket-purple-100/60"
                       onClick={(e) => {
                         e.stopPropagation();
                         remove(index);
                       }}
                     >
                       <Trash2Icon />
-                    </Button>
+                    </span>
                   </div>
                 </div>
               </AccordionTrigger>
