@@ -93,34 +93,46 @@ const personalizedFieldSchema = z.object({
   optionsList: z.array(z.string()).optional(),
 });
 
-const ticketLotSchema = z.object({
-  name: z
-    .string()
-    .nonempty({ message: "O nome do lote de ingressos é obrigatório" }),
-  price: z.number().nonnegative({ message: "O preço deve ser não negativo" }),
-  quantity: z.number().int().nonnegative({
-    message: "A quantidade deve ser um número inteiro não negativo",
-  }),
-  startDate: z.preprocess(
-    (arg) => {
-      if (arg instanceof Date) return arg.toISOString();
-      return arg;
+const ticketLotSchema = z
+  .object({
+    name: z
+      .string()
+      .nonempty({ message: "O nome do lote de ingressos é obrigatório" }),
+    price: z.number().nonnegative({ message: "O preço deve ser não negativo" }),
+    quantity: z.number().int().nonnegative({
+      message: "A quantidade deve ser um número inteiro não negativo",
+    }),
+    startDate: z.preprocess(
+      (arg) => {
+        if (arg instanceof Date) return arg.toISOString();
+        return arg;
+      },
+      z.string().nonempty({
+        message: "A data de início do lote de ingressos é obrigatória",
+      })
+    ),
+    endDate: z.preprocess(
+      (arg) => {
+        if (arg instanceof Date) return arg.toISOString();
+        return arg;
+      },
+      z.string().nonempty({
+        message: "A data de término do lote de ingressos é obrigatória",
+      })
+    ),
+    isActive: z.boolean(),
+  })
+  .refine(
+    (data) => {
+      const start = new Date(data.startDate);
+      const end = new Date(data.endDate);
+      return start < end;
     },
-    z.string().nonempty({
-      message: "A data de início do lote de ingressos é obrigatória",
-    })
-  ),
-  endDate: z.preprocess(
-    (arg) => {
-      if (arg instanceof Date) return arg.toISOString();
-      return arg;
-    },
-    z.string().nonempty({
-      message: "A data de término do lote de ingressos é obrigatória",
-    })
-  ),
-  isActive: z.boolean(),
-});
+    {
+      message: "A data de término deve ser posterior à data de início",
+      path: ["endDate"],
+    }
+  );
 
 const ticketTypeSchema = z.object({
   id: z.string().optional(),

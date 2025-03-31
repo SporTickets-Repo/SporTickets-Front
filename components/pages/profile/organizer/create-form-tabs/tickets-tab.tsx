@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -52,7 +52,7 @@ interface TicketItemProps {
 }
 
 function TicketItem({ index, removeTicket }: TicketItemProps) {
-  const { control, watch } = useFormContext();
+  const { control, watch, trigger } = useFormContext();
   const currentUserType = watch(`ticketTypes.${index}.userType`);
   const [openLots, setOpenLots] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState<string[]>([`ticket-${index}`]);
@@ -78,6 +78,8 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
       minimumFractionDigits: 2,
     }).format(val);
   }, []);
+
+  useSyncNextLotStartDate(index);
 
   return (
     <Accordion
@@ -514,23 +516,34 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                               <FormField
                                 control={control}
                                 name={`ticketTypes.${index}.ticketLots.${lotIndex}.startDate`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Data e hora de início</FormLabel>
-                                    <FormControl>
-                                      <DatePicker
-                                        date={
-                                          field?.value
-                                            ? new Date(field.value)
-                                            : undefined
-                                        }
-                                        setDate={field.onChange}
-                                        showTime
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
+                                render={({ field }) => {
+                                  const isFirstLot = lotIndex === 0;
+
+                                  return (
+                                    <FormItem>
+                                      <FormLabel>
+                                        Data e hora de início
+                                      </FormLabel>
+                                      <FormControl>
+                                        <DatePicker
+                                          date={
+                                            field?.value
+                                              ? new Date(field.value)
+                                              : undefined
+                                          }
+                                          setDate={
+                                            isFirstLot
+                                              ? field.onChange
+                                              : () => {}
+                                          }
+                                          showTime
+                                          disabled={!isFirstLot}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  );
+                                }}
                               />
 
                               <FormField
@@ -622,16 +635,36 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                       type="button"
                       size="sm"
                       className="gap-2"
-                      onClick={() => {
+                      onClick={async () => {
                         const newIndex = lotsArray.fields.length;
+                        const prevIndex = newIndex - 1;
+
+                        if (prevIndex >= 0) {
+                          const isPrevValid = await trigger(
+                            `ticketTypes.${index}.ticketLots.${prevIndex}`
+                          );
+
+                          if (!isPrevValid) {
+                            toast.warning(
+                              "Complete corretamente o lote anterior antes de adicionar um novo."
+                            );
+                            return;
+                          }
+                        }
+
+                        const lots = watch(`ticketTypes.${index}.ticketLots`);
+                        const previousEndDate =
+                          lots?.[prevIndex]?.endDate ?? "";
+
                         lotsArray.append({
                           name: "",
                           price: 0,
-                          startDate: "",
+                          startDate: previousEndDate,
                           endDate: "",
                           quantity: 0,
                           isActive: true,
                         });
+
                         setOpenLots((prev) => [...prev, `lot-${newIndex}`]);
                       }}
                     >
@@ -913,4 +946,36 @@ export function TicketsTab() {
       </div>
     </div>
   );
+}
+
+function useSyncNextLotStartDate(index: number) {
+  const { watch, setValue } = useFormContext();
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      const regex = new RegExp(
+        `^ticketTypes\\.${index}\\.ticketLots\\.(\\d+)\\.endDate$`
+      );
+      const match = name?.match(regex);
+
+      if (!match) return;
+
+      const currentIndex = Number(match[1]);
+      const nextIndex = currentIndex + 1;
+
+      const currentEndDate =
+        value.ticketTypes?.[index]?.ticketLots?.[currentIndex]?.endDate;
+      const nextStartDate =
+        value.ticketTypes?.[index]?.ticketLots?.[nextIndex]?.startDate;
+
+      if (currentEndDate && nextStartDate !== currentEndDate) {
+        setValue(
+          `ticketTypes.${index}.ticketLots.${nextIndex}.startDate`,
+          currentEndDate
+        );
+      }
+    });
+
+    return () => subscription.unsubscribe?.();
+  }, [watch, index, setValue]);
 }

@@ -23,6 +23,7 @@ interface DateTimePickerProps {
   setDate: (date: Date | undefined) => void;
   placeholder?: string;
   showTime?: boolean;
+  disabled?: boolean;
 }
 
 export function DatePicker({
@@ -30,6 +31,7 @@ export function DatePicker({
   setDate,
   placeholder,
   showTime = false,
+  disabled = false,
 }: DateTimePickerProps) {
   const [month, setMonth] = useState<number>(
     date ? date.getMonth() : new Date().getMonth()
@@ -145,6 +147,7 @@ export function DatePicker({
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          disabled={disabled}
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal bg-neutral-100 border",
