@@ -25,9 +25,9 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
     <Link href={`/evento/${event.slug}`}>
       <Card className="overflow-hidden bg-transparent border-0 shadow-none">
         <div className="relative">
-          {event.bannerUrl ? (
+          {event.smallImageUrl ? (
             <Image
-              src={event.bannerUrl}
+              src={event.smallImageUrl}
               alt={event.name || "Evento sem nome"}
               width={600}
               height={400}
