@@ -6,6 +6,15 @@ export function EventHeader() {
   const { event } = useEvent();
   if (!event) return null;
 
+  const numberOfTickets = event.ticketTypes.reduce((acc, ticket) => {
+    return (
+      acc +
+      ticket.ticketLots.reduce((acc, lot) => {
+        return acc + (lot.isActive ? lot.quantity : 0);
+      }, 0)
+    );
+  }, 0);
+
   return (
     <div className="bg-zinc-50 p-3 rounded-lg flex items-center gap-4">
       <Image
@@ -28,7 +37,9 @@ export function EventHeader() {
         <p className="text-sm text-muted-foreground">
           {event.place}, {event.address?.neighborhood}
         </p>
-        <p className="text-sm text-sporticket-green-500">7 vagas restantes</p>
+        <p className="text-sm text-sporticket-green-500">
+          {numberOfTickets} vagas restantes
+        </p>
       </div>
     </div>
   );

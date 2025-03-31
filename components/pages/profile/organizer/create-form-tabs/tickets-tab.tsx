@@ -97,18 +97,15 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
               >
                 {currentUserType === "ATHLETE" ? "Atleta" : "Espectador"}
               </Badge>
-              <Button
-                variant="default-inverse"
-                type="button"
-                size="icon"
-                className="p-[10px] [&_svg]:size-4 rounded-sm"
+              <span
+                className="p-[10px] [&_svg]:size-4 rounded-sm bg-sporticket-purple-100 text-sporticket-purple-800 shadow hover:bg-sporticket-purple-100/80"
                 onClick={(e) => {
                   e.stopPropagation();
                   removeTicket(index);
                 }}
               >
                 <Trash2Icon />
-              </Button>
+              </span>
             </div>
           </div>
         </AccordionTrigger>
@@ -410,7 +407,7 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                         value={`lot-${lotIndex}`}
                         className="overflow-hidden"
                       >
-                        <AccordionTrigger className="px-4 py-3 bg-muted/50 hover:bg-muted">
+                        <AccordionTrigger className="px-4 py-3 ">
                           <div className="flex items-center justify-between w-full">
                             <span className="font-medium">
                               {watch(
@@ -436,18 +433,15 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
                                   </FormItem>
                                 )}
                               />
-                              <Button
-                                variant="default-inverse"
-                                type="button"
-                                size="icon"
-                                className="p-[10px] [&_svg]:size-4 rounded-sm"
+                              <span
+                                className="p-[10px] [&_svg]:size-4 rounded-sm bg-sporticket-purple-100 text-sporticket-purple-800 shadow hover:bg-sporticket-purple-100/60"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   lotsArray.remove(lotIndex);
                                 }}
                               >
                                 <Trash2Icon />
-                              </Button>
+                              </span>
                             </div>
                           </div>
                         </AccordionTrigger>
@@ -835,8 +829,6 @@ export function TicketsTab() {
 
     const isValid = await trigger("ticketTypes");
 
-    console.log("isValid", isValid);
-
     if (!isValid) {
       toast.error("Corrija os erros nos tickets antes de salvar.");
       const firstErrorElement = document.querySelector(
@@ -869,8 +861,8 @@ export function TicketsTab() {
   };
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div className="space-y-4 max-w-full px-0 sm:px-6">
+      <div className="flex flex-row items-center justify-between gap-2 mb-6">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold">Ingressos</h2>
           <p className="text-sm text-muted-foreground">

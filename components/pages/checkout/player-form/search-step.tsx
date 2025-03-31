@@ -19,7 +19,9 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 const emailFormSchema = z.object({
-  email: z.string().email("E-mail inválido"),
+  email: z.string().min(1, {
+    message: "O e-mail ou CPF é obrigatório.",
+  }),
 });
 
 interface Props {
@@ -81,9 +83,9 @@ export function SearchStep({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Email ou CPF</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Digite o e-mail" />
+                <Input {...field} placeholder="Digite o e-mail ou CPF" />
               </FormControl>
               <FormMessage />
               {customError && (

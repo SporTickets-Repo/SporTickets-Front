@@ -104,7 +104,7 @@ export default function useHome() {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const events = await eventService.getAllEvents(1, 10, "name");
+        const events = await eventService.getAllEvents(1, 30, "name");
         const filtered = events.filter(
           (event) =>
             event.status !== EventStatus.DRAFT &&

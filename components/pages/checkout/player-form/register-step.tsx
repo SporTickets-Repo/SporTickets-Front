@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Player } from "@/interface/tickets";
 import { userService } from "@/service/user";
+import { formatCEP, formatCPF, formatPhone } from "@/utils/format";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -48,8 +49,54 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
   });
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
-    const response = await userService.registerWithoutPassword(data);
-    onRegistered(response);
+    try {
+      const response = await userService.registerWithoutPassword(data);
+      onRegistered(response);
+    } catch (error: any) {
+      console.error("Failed to register:", error.response.data.message);
+      if (error.response.data.message === "Email already exists") {
+        form.setError("email", {
+          type: "manual",
+          message: "Esse e-mail já está cadastrado.",
+        });
+      }
+      if (error.response.data.message === "Phone already exists") {
+        form.setError("phone", {
+          type: "manual",
+          message: "Esse telefone já está cadastrado.",
+        });
+      }
+      if (error.response.data.message === "CPF already exists") {
+        form.setError("document", {
+          type: "manual",
+          message: "Esse CPF já está cadastrado.",
+        });
+      }
+      if (error.response.data.message === "User already exists") {
+        form.setError("email", {
+          type: "manual",
+          message: "Esse usuário já existe.",
+        });
+      }
+      if (error.response.data.message === "Invalid CPF") {
+        form.setError("document", {
+          type: "manual",
+          message: "Esse CPF é inválido.",
+        });
+      }
+      if (error.response.data.message === "Invalid email") {
+        form.setError("email", {
+          type: "manual",
+          message: "Esse e-mail é inválido.",
+        });
+      }
+      if (error.response.data.message === "Invalid phone") {
+        form.setError("phone", {
+          type: "manual",
+          message: "Esse telefone é inválido.",
+        });
+      }
+    }
   };
 
   return (
@@ -62,7 +109,7 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input {...field} disabled />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -89,7 +136,14 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
             <FormItem>
               <FormLabel>CPF</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  placeholder="000.000.000-00"
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(formatCPF(e.target.value));
+                  }}
+                  className="bg-muted"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -102,7 +156,12 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
             <FormItem>
               <FormLabel>CEP</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  placeholder="00000-000"
+                  value={field.value}
+                  onChange={(e) => field.onChange(formatCEP(e.target.value))}
+                  className="bg-muted"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -115,7 +174,12 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
             <FormItem>
               <FormLabel>Telefone</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  placeholder="(00) 00000-0000"
+                  value={field.value}
+                  onChange={(e) => field.onChange(formatPhone(e.target.value))}
+                  className="bg-muted"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

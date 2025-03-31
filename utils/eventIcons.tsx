@@ -3,6 +3,7 @@ import { IconType } from "react-icons";
 import { BiTennisBall } from "react-icons/bi";
 import { FaFutbol, FaVolleyballBall } from "react-icons/fa";
 import { GiBeachBall } from "react-icons/gi";
+import { IoMdTrophy } from "react-icons/io";
 import { MdSportsHandball, MdSportsSoccer } from "react-icons/md";
 
 export const getEventIcon = (type: EventType): IconType => {
@@ -14,7 +15,7 @@ export const getEventIcon = (type: EventType): IconType => {
     [EventType.FUTEBOL_ARREIA]: MdSportsSoccer,
     [EventType.FUTSAL]: MdSportsSoccer,
     [EventType.VOLEI]: MdSportsHandball,
-    [EventType.GENERAL]: FaFutbol,
+    [EventType.GENERAL]: IoMdTrophy,
   };
 
   return icons[type] || FaFutbol;

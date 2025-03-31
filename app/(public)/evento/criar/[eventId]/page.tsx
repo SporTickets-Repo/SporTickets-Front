@@ -9,10 +9,8 @@ export default async function CreateEventPage({
   const { eventId } = await params;
 
   return (
-    <div className="container">
-      <CreateEventProvider>
-        <CreateEventForm eventId={eventId} />
-      </CreateEventProvider>
-    </div>
+    <CreateEventProvider>
+      <CreateEventForm eventId={eventId} />
+    </CreateEventProvider>
   );
 }

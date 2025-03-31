@@ -332,7 +332,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
   const handleFinishEvent = async () => {
     try {
       await eventService.setEventStatus(eventId, EventStatus.FINISHED);
-      console.log("Event finished successfully!");
+      //console.log("Event finished successfully!");
       await mutate(`/events/${eventId}`);
       setShowFinishDialog(false);
     } catch (error) {
@@ -401,7 +401,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
   }, [eventData]);
 
   return (
-    <div className="container max-w-7xl pb-10">
+    <div className="container-sm">
       <div className="flex items-center space-x-4 mt-2 mb-4">
         <Button
           variant="tertiary"
@@ -415,7 +415,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           <h1 className="text-2xl font-bold">Configuração do evento</h1>
         </div>
       </div>
-      <Card className="p-6 space-y-6 h-full">
+      <Card className="md:p-6 py-6 px-2 space-y-6 h-full">
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-1/4 space-y-2 ">
             <nav className="space-y-2">
@@ -437,8 +437,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             </nav>
             <Separator orientation="horizontal" className="w-full" />
 
-            <div className="flex flex-col flex-1 justify-center text-center w-full bg-muted rounded-xl">
-              <Label>Status</Label>
+            <div className="flex flex-row flex-1 ml-2 text-center w-full rounded-xl justify-start pt-2 gap-2 items-center">
+              <Label>Status:</Label>
               {eventLoading || !eventData?.status ? (
                 <Loader2 className="animate-spin mr-2 h-6 w-6 self-center" />
               ) : (
@@ -581,8 +581,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
       </Card>
 
       <Dialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
-        <DialogContent className="pt-10">
-          <DialogHeader className="space-y-4">
+        <DialogContent className="">
+          <DialogHeader className="items-center mb-4 space-y-8">
             <DialogTitle className="text-center text-xl">
               Publicar evento
             </DialogTitle>
@@ -597,8 +597,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               <span className="text-sporticket-orange font-medium">
                 {translateEventStatusOrganizer(EventStatus.REGISTRATION)}
               </span>
-              ? <br /> Após publicado, o evento estará visível para todos os
-              usuários.
+              ? <br /> <br /> Após publicado, o evento estará visível para todos
+              os usuários.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
