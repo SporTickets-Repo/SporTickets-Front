@@ -862,7 +862,7 @@ export function TicketsTab() {
 
   return (
     <div className="space-y-4 max-w-full px-0 sm:px-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-row items-center justify-between gap-2 mb-6">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold">Ingressos</h2>
           <p className="text-sm text-muted-foreground">
