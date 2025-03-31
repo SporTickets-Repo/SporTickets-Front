@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { isValidCPF } from "./validate";
 
 export const emailSchema = Yup.object().shape({
   email: Yup.string().email("E-mail inválido").required("E-mail obrigatório"),
@@ -16,7 +17,11 @@ export const registerSchema = Yup.object().shape({
   name: Yup.string().required("Nome obrigatório"),
   document: Yup.string()
     .required("Documento obrigatório")
-    .matches(/^\d{11}$/, "CPF inválido"),
+    .test(
+      "is-valid-cpf",
+      "CPF inválido",
+      (value) => !!value && isValidCPF(value)
+    ),
   bornAt: Yup.date().required("Data de nascimento obrigatória"),
   phone: Yup.string()
     .required("Telefone obrigatório")

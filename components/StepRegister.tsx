@@ -13,6 +13,7 @@ import { Input } from "./ui/input";
 import { useAuth } from "@/context/auth";
 import { RegisterBody } from "@/interface/auth";
 import { cn } from "@/lib/utils";
+import { formatCEP, formatCPF, formatPhone } from "@/utils/format";
 import { DatePicker } from "./ui/datePicker";
 import PasswordStrengthMeter from "./ui/passwordStrengthMeter";
 import { SelectItem } from "./ui/select";
@@ -99,30 +100,6 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
   useEffect(() => {
     setValue("email", email);
   }, [email]);
-
-  function formatCPF(value: string) {
-    return value
-      .replace(/\D/g, "")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-  }
-
-  function formatCEP(value: string) {
-    return value.replace(/\D/g, "").replace(/^(\d{5})(\d{1,3})/, "$1-$2");
-  }
-
-  function formatPhone(value: string) {
-    const cleaned = value.replace(/\D/g, "");
-    if (cleaned.length <= 10) {
-      return cleaned
-        .replace(/(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{4})(\d{4})$/, "$1-$2");
-    }
-    return cleaned
-      .replace(/(\d{2})(\d)/, "($1) $2")
-      .replace(/(\d{5})(\d{4})$/, "$1-$2");
-  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
