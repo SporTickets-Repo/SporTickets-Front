@@ -5,7 +5,7 @@ import {
   PaymentData,
   Player,
   TicketCheckoutPayload,
-  TicketResponse,
+  TicketForm,
 } from "@/interface/tickets";
 import { eventService } from "@/service/event";
 import React, { createContext, useContext, useEffect, useState } from "react";
@@ -16,8 +16,8 @@ interface EventContextProps {
   loading: boolean;
   error: string | null;
   setSlug: (slug: string) => void;
-  selectedTickets: TicketResponse[];
-  setSelectedTickets: React.Dispatch<React.SetStateAction<TicketResponse[]>>;
+  selectedTickets: TicketForm[];
+  setSelectedTickets: React.Dispatch<React.SetStateAction<TicketForm[]>>;
   addTicket: (ticketTypeId: string) => void;
   removeTicket: (ticketTypeId: string) => void;
   submitCheckout: () => Promise<void>;
@@ -42,7 +42,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [slug, setSlug] = useState<string>("");
-  const [selectedTickets, setSelectedTickets] = useState<TicketResponse[]>([]);
+  const [selectedTickets, setSelectedTickets] = useState<TicketForm[]>([]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -74,7 +74,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       const activeLot = ticketType.ticketLots.find((lot) => lot.isActive);
       if (!activeLot) return prev;
 
-      const newTicket: TicketResponse = {
+      const newTicket: TicketForm = {
         id: uuidv4(),
         ticketType,
         ticketLot: activeLot,

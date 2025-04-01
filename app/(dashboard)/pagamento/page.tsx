@@ -15,7 +15,7 @@ import { PlayersEmptyList } from "@/components/pages/checkout/players-empty-list
 import { PlayersList } from "@/components/pages/checkout/players-list";
 import { TicketCard } from "@/components/pages/checkout/ticket-card";
 import { useEvent } from "@/context/event";
-import type { Player, TicketResponse } from "@/interface/tickets";
+import type { Player, TicketForm } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -23,9 +23,7 @@ export default function PaymentPage() {
   const { selectedTickets, submitCheckout, event } = useEvent();
   const router = useRouter();
 
-  const [currentTicket, setCurrentTicket] = useState<TicketResponse | null>(
-    null
-  );
+  const [currentTicket, setCurrentTicket] = useState<TicketForm | null>(null);
   const [playerFormOpen, setPlayerFormOpen] = useState(false);
   const [couponDialogOpen, setCouponDialogOpen] = useState(false);
   const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = useState(false);
@@ -45,7 +43,7 @@ export default function PaymentPage() {
     }
   }, [selectedTickets]);
 
-  const handleSelectTicket = (ticket: TicketResponse) => {
+  const handleSelectTicket = (ticket: TicketForm) => {
     setCurrentTicket(ticket);
   };
 

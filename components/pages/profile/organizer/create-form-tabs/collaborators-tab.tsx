@@ -26,7 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useCreateEventContext } from "@/context/create-event";
-import { Collaborator, EventDashboardAccess } from "@/interface/tickets";
+import { Collaborator, EventDashboardAccess } from "@/interface/collaborator";
 import { dashboardService } from "@/service/dashboard";
 import { userService } from "@/service/user";
 import { zodResolver } from "@hookform/resolvers/zod";

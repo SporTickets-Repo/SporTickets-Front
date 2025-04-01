@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Player, TicketResponse } from "@/interface/tickets";
+import { Player, TicketForm } from "@/interface/tickets";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -31,7 +31,7 @@ const fieldSchema = z
 
 interface Props {
   player: Player;
-  currentTicket: TicketResponse;
+  currentTicket: TicketForm;
   onSave: (updated: Player) => void;
   onClose: () => void;
 }

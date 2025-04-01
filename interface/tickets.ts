@@ -1,19 +1,22 @@
+import { Category } from "./category";
 import { Coupon } from "./coupons";
-import { UserRole, UserSex } from "./user";
+import { UserSex } from "./user";
 
-export interface EventDashboardAccess {
+export interface Ticket {
   id: string;
-  userId: string;
   eventId: string;
-  user: Collaborator;
-}
-export interface Collaborator {
-  id: string;
   name: string;
-  email: string;
-  role: UserRole;
-  profileImageUrl: string | null;
+  description: string;
+  userType: UserType;
+  teamSize: number;
+  categories: Category[];
+  personalizedFields: PersonalizedField[];
+  ticketLots: TicketLot[];
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
 }
+
 export interface TicketLot {
   id: string;
   ticketTypeId: string;
@@ -26,6 +29,7 @@ export interface TicketLot {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
+  ticketType: TicketType;
 }
 
 export interface TicketType {
@@ -50,18 +54,7 @@ export interface PersonalizedField {
   deletedAt?: string | null;
 }
 
-export type Restriction = "NONE" | "SAME_CATEGORY";
-
-export interface Category {
-  id: string;
-  ticketTypeId: string;
-  title: string;
-  restriction: Restriction;
-  quantity: number;
-  deletedAt?: string | null;
-}
-
-export interface TicketResponse {
+export interface TicketForm {
   id: string;
   ticketType: TicketType;
   ticketLot: TicketLot;
@@ -130,35 +123,6 @@ export interface Identification {
 
 export type UserType = "ATHLETE" | "VIEWER";
 
-export interface CategoryProps {
-  id: string;
-  ticketTypeId: string;
-  title: string;
-  restriction: Restriction;
-  quantity: number;
-}
-
-export interface PersonalizedFieldProps {
-  id: string;
-  ticketTypeId: string;
-  type: string;
-  requestTitle: string;
-  optionsList: string[];
-}
-
-export interface TicketLotProps {
-  id: string;
-  ticketTypeId: string;
-  name: string;
-  price: string;
-  quantity: number;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface TicketProps {
   id: string;
   eventId: string;
@@ -166,7 +130,7 @@ export interface TicketProps {
   description: string;
   userType: UserType;
   teamSize: number;
-  categories: CategoryProps[];
-  personalizedFields: PersonalizedFieldProps[];
-  ticketLots: TicketLotProps[];
+  categories: Category[];
+  personalizedFields: PersonalizedField[];
+  ticketLots: TicketLot[];
 }

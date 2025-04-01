@@ -1,15 +1,15 @@
 "use client";
 
-import { TicketResponse } from "@/interface/tickets";
+import { TicketForm } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { FaRegCircle } from "react-icons/fa6";
 import { HiTicket } from "react-icons/hi2";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 
 interface TicketCardProps {
-  ticket: TicketResponse;
+  ticket: TicketForm;
   isSelected: boolean;
-  onSelect: (ticket: TicketResponse) => void;
+  onSelect: (ticket: TicketForm) => void;
 }
 
 export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
