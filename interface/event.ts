@@ -29,6 +29,7 @@ export interface Event {
   paymentMethods: PaymentMethod[];
   coupons: Coupon[];
   eventDashboardAccess: EventDashboardAccess[];
+  eventFee?: number;
 }
 
 export interface EventSummary {
