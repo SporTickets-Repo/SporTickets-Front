@@ -1,3 +1,4 @@
+import { Category } from "./category";
 import { Coupon } from "./coupons";
 import { UserSex } from "./user";
 
@@ -43,7 +44,7 @@ export interface Ticket {
   teamId: string;
   ticketLot: TicketLotDetails;
   user: TicketUserDetails;
-  category: TicketCategory;
+  category: Category;
   personalizedFieldAnswers: PersonalizedFieldAnswer[];
   coupon: Coupon | null;
 }
@@ -84,15 +85,6 @@ export interface TicketUserDetails {
   documentType: string;
   document: string;
   bornAt: string;
-}
-
-export interface TicketCategory {
-  id: string;
-  ticketTypeId: string;
-  title: string;
-  restriction: string;
-  quantity: number;
-  deletedAt: string | null;
 }
 
 export interface PersonalizedFieldAnswer {
