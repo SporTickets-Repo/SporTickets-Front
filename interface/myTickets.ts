@@ -23,6 +23,9 @@ export interface MyTicket {
   personalizedFieldAnswers: PersonalizedFieldAnswer[];
   coupon: Coupon;
   user: TicketUserDetails;
+  team: {
+    id: string;
+  };
 }
 
 interface TicketLotDetails {

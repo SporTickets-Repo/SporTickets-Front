@@ -37,4 +37,13 @@ export const ticketService = {
       throw error;
     }
   },
+
+  allTickets: async (): Promise<MyTicket[]> => {
+    try {
+      const response = await api.get<MyTicket[]>(`/tickets/all`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
