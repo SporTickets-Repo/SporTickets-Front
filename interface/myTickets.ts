@@ -1,13 +1,18 @@
 import { Category } from "./category";
 import { Coupon } from "./coupons";
-import { PersonalizedFieldAnswer, TransactionStatus } from "./transaction";
+import {
+  PersonalizedFieldAnswer,
+  TicketUserDetails,
+  TransactionStatus,
+} from "./transaction";
 
-export interface MyTickets {
+export interface MyTicket {
   id: string;
   price: string;
   code: string;
   createdAt: string;
   updatedAt: string;
+  codeBase64: string;
   transaction: {
     id: string;
     status: TransactionStatus;
@@ -17,6 +22,7 @@ export interface MyTickets {
   category: Category;
   personalizedFieldAnswers: PersonalizedFieldAnswer[];
   coupon: Coupon;
+  user: TicketUserDetails;
 }
 
 interface TicketLotDetails {
@@ -55,6 +61,7 @@ interface EventDetails {
   description: string;
   place: string;
   bannerUrl: string;
+  smallImageUrl: string;
   type: string;
   status: string;
 }

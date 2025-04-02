@@ -7,6 +7,7 @@ import { eventService } from "@/service/event";
 import { Loader2 } from "lucide-react";
 import useSWR from "swr";
 import { MetricDashboard } from "./metrics/metrics-dashboard";
+import { MyTicketsList } from "./my-tickets/my-tickets-list";
 import { ProfileEventList } from "./organizer/profile-event-list";
 
 export function OrganizerProfile() {
@@ -33,7 +34,7 @@ export function OrganizerProfile() {
         <TabsList className="w-full justify-start">
           <TabsTrigger value="events">Eventos</TabsTrigger>
           <TabsTrigger value="metrics">Métricas</TabsTrigger>
-          <TabsTrigger value="tickets">Ingressos</TabsTrigger>
+          <TabsTrigger value="tickets">Meus Ingressos</TabsTrigger>
         </TabsList>
         <Separator className="my-4" />
         <TabsContent value="events">
@@ -49,7 +50,7 @@ export function OrganizerProfile() {
           <MetricDashboard />
         </TabsContent>
         <TabsContent value="tickets">
-          <p>Ingressos</p>
+          <MyTicketsList />
         </TabsContent>
       </Tabs>
     </div>

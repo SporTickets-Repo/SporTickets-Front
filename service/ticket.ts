@@ -1,4 +1,4 @@
-import { MyTickets } from "@/interface/myTickets";
+import { MyTicket } from "@/interface/myTickets";
 import { TicketProps } from "@/interface/tickets";
 import { api } from "./api";
 
@@ -29,9 +29,9 @@ export const ticketService = {
     }
   },
 
-  myTickets: async (): Promise<MyTickets[]> => {
+  myTickets: async (): Promise<MyTicket[]> => {
     try {
-      const response = await api.get<MyTickets[]>(`/tickets/my-tickets`);
+      const response = await api.get<MyTicket[]>(`/tickets/my-tickets`);
       return response.data;
     } catch (error) {
       throw error;
