@@ -17,9 +17,9 @@ export interface Transaction {
   id: string;
   createdAt: string;
   updatedAt: string;
-  status: "PENDING" | "PAID" | "CANCELLED";
+  status: TransactionStatus;
   createdById: string;
-  paymentMethod: TransactionStatus;
+  paymentMethod: string;
   externalPaymentId: string;
   externalStatus: string;
   pixQRCode: string | null;
