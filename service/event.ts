@@ -125,4 +125,15 @@ export const eventService = {
       throw error;
     }
   },
+
+  eventFee: async (eventId: string, eventFee: number): Promise<Event> => {
+    try {
+      const response = await api.put<Event>(`/events/${eventId}/event-fee`, {
+        eventFee,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
