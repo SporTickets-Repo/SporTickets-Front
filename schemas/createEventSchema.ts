@@ -196,6 +196,7 @@ export const createEventFormValuesSchema = z.object({
   coupons: z.array(couponSchema),
   bracket: z.array(bracketSchema),
   ranking: z.array(rankingSchema),
+  eventFee: z.number().optional(),
 });
 
 export type CreateEventFormValues = z.infer<typeof createEventFormValuesSchema>;

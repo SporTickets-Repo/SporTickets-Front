@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
+  DollarSign,
   Link,
   Loader2,
   Ticket,
@@ -36,6 +37,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAuth } from "@/context/auth";
 import { useCreateEventContext } from "@/context/create-event";
 import { EventLevel, EventStatus, EventType } from "@/interface/event";
 import type { UserType } from "@/interface/tickets";
@@ -52,6 +54,7 @@ import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
 import { InfoTab } from "./create-form-tabs/info-tab";
 import { IntegrationsTab } from "./create-form-tabs/integrations-tab";
+import { TaxesTab } from "./create-form-tabs/taxes-tab";
 import { TicketsTab } from "./create-form-tabs/tickets-tab";
 
 type TabType =
@@ -59,7 +62,8 @@ type TabType =
   | "tickets"
   | "coupons"
   | "collaborators"
-  | "integrations";
+  | "integrations"
+  | "taxes";
 
 const tabLabels = {
   info: "Informações",
@@ -67,6 +71,7 @@ const tabLabels = {
   coupons: "Cupons",
   collaborators: "Colaboradores",
   integrations: "Integrações",
+  taxes: "Taxas",
 };
 
 interface CreateEventFormProps {
@@ -74,6 +79,10 @@ interface CreateEventFormProps {
 }
 
 export function CreateEventForm({ eventId }: CreateEventFormProps) {
+  const { user } = useAuth();
+
+  const isMaster = user?.role === "MASTER";
+
   const {
     event: eventData,
     eventLoading,
@@ -219,6 +228,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               isActive: true,
             }))
           : [],
+        eventFee: eventData.eventFee,
       });
 
       if (eventData.bannerUrl) {
@@ -243,13 +253,14 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
 
-  const tabOrder: TabType[] = [
+  const baseTabs: TabType[] = [
     "info",
     "tickets",
     "coupons",
     "collaborators",
     "integrations",
   ];
+  const tabOrder: TabType[] = isMaster ? [...baseTabs, "taxes"] : baseTabs;
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -263,6 +274,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         return <CollaboratorsTab />;
       case "integrations":
         return <IntegrationsTab />;
+      case "taxes":
+        return <TaxesTab />;
       default:
         return null;
     }
@@ -431,6 +444,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                   {tab === "coupons" && <TicketPercent className="w-4 h-4" />}
                   {tab === "collaborators" && <Users2 className="w-4 h-4" />}
                   {tab === "integrations" && <Link className="w-4 h-4" />}
+                  {tab === "taxes" && <DollarSign className="w-4 h-4" />}
                   {tabLabels[tab]}
                 </Button>
               ))}
@@ -555,10 +569,10 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                 {renderActiveTab()}
 
                 <div className="flex justify-end gap-4 px-4 sm:px-6">
-                  {activeTab !== "info" && (
+                  {tabOrder.indexOf(activeTab) > 0 && (
                     <Button
                       variant="default-inverse"
-                      size={"sm"}
+                      size="sm"
                       className="text-sm p-5 items-center [&_svg]:size-5"
                       type="button"
                       onClick={handlePreviousTab}
@@ -567,11 +581,11 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                       Anterior
                     </Button>
                   )}
-                  {activeTab !== "integrations" && (
+                  {tabOrder.indexOf(activeTab) < tabOrder.length - 1 && (
                     <Button
                       type="button"
-                      size={"sm"}
-                      variant={"default-inverse"}
+                      size="sm"
+                      variant="default-inverse"
                       className="text-sm p-5 items-center [&_svg]:size-5"
                       onClick={handleNextTab}
                     >
