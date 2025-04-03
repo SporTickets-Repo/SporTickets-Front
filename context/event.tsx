@@ -7,8 +7,11 @@ import {
   TicketCheckoutPayload,
   TicketForm,
 } from "@/interface/tickets";
+import { checkoutService } from "@/service/checkout";
 import { eventService } from "@/service/event";
+import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
 interface EventContextProps {
@@ -38,6 +41,7 @@ const EventContext = createContext<EventContextProps>({
 export const useEvent = () => useContext(EventContext);
 
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter(); // Hook de navegação
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -120,10 +124,14 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     try {
-      // Exemplo de envio: await ticketService.submitCheckout(payload);
-      console.log("Payload pronto para envio:", payload);
+      const response = await checkoutService.checkout(payload);
+      const transactionId = response.transactionId;
+      router.push(`/pagamento/${transactionId}`);
     } catch (err) {
       console.error("Erro ao enviar checkout:", err);
+      toast.error(
+        "Ocorreu um erro ao processar o pagamento. Tente novamente mais tarde."
+      );
     }
   };
 
