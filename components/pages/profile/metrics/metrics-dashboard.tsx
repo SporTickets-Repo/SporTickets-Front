@@ -205,8 +205,8 @@ export function MetricDashboard() {
   return (
     <div className="space-y-2">
       {/* Filtros de data e botão de filtro por evento */}
-      <div className="flex flex-1 justify-between items-center">
-        <div className="flex gap-2">
+      <div className="flex flex-1 justify-start md:justify-between md:items-center md:flex-row flex-col gap-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
           {dateFilters.map((filter) => (
             <Badge
               key={filter}

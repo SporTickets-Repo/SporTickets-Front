@@ -33,20 +33,27 @@ export function OrganizerProfile() {
   return (
     <div className="mt-10">
       <Tabs defaultValue="events" className="w-full">
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="events">
-            <TbSoccerField />
-            Eventos
+        <TabsList className="w-full justify-start flex flex-wrap gap-2 md:gap-4">
+          <TabsTrigger
+            value="events"
+            className="flex items-center gap-2 text-sm md:text-base"
+          >
+            <TbSoccerField className="w-5 h-5 md:w-6 md:h-6" />
+            <span>Eventos</span>
           </TabsTrigger>
-          <TabsTrigger value="metrics">
-            {" "}
-            <FaRegChartBar />
-            Métricas
+          <TabsTrigger
+            value="metrics"
+            className="flex items-center gap-2 text-sm md:text-base"
+          >
+            <FaRegChartBar className="w-5 h-5 md:w-6 md:h-6" />
+            <span>Métricas</span>
           </TabsTrigger>
-          <TabsTrigger value="tickets">
-            {" "}
-            <TbTicket />
-            Meus Ingressos
+          <TabsTrigger
+            value="tickets"
+            className="flex items-center gap-2 text-sm md:text-base"
+          >
+            <TbTicket className="w-5 h-5 md:w-6 md:h-6" />
+            <span>Meus Ingressos</span>
           </TabsTrigger>
         </TabsList>
         <Separator className="my-4 border-sporticket-gray" />

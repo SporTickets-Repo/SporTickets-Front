@@ -30,18 +30,19 @@ export function UserProfile() {
   return (
     <div className="mt-10">
       <Tabs defaultValue="tickets" className="w-full">
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="tickets">
+        {/* Tornar os TabsList roláveis horizontalmente */}
+        <TabsList className="w-full flex justify-start gap-2 overflow-x-auto scrollbar-hide">
+          <TabsTrigger value="tickets" className="flex-shrink-0">
             <TbTicket />
             Meus Ingressos
           </TabsTrigger>
           {showevents && (
             <>
-              <TabsTrigger value="metrics">
+              <TabsTrigger value="metrics" className="flex-shrink-0">
                 <FaRegChartBar />
                 Métricas
               </TabsTrigger>
-              <TabsTrigger value="events">
+              <TabsTrigger value="events" className="flex-shrink-0">
                 <TbSoccerField />
                 Eventos
               </TabsTrigger>

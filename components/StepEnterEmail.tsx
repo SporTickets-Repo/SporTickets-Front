@@ -79,8 +79,14 @@ const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
           type="submit"
           disabled={isSubmitting}
         >
-          Continuar
-          <ArrowRight className="ml-1 text-cyan-400" />
+          {isSubmitting ? (
+            "Carregando..."
+          ) : (
+            <>
+              Continuar
+              <ArrowRight className="ml-1 text-cyan-400" />
+            </>
+          )}
         </Button>
       </div>
     </form>
