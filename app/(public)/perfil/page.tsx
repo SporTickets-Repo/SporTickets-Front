@@ -26,7 +26,7 @@ export default function UserPage() {
   return (
     <section className="container py-4">
       {/* Header Image */}
-      <div className="relative h-80 w-full rounded-3xl">
+      <div className="relative h-40 md:h-80 w-full rounded-3xl">
         <Image
           src={bannerImageUrl}
           alt="Cover"
@@ -38,30 +38,30 @@ export default function UserPage() {
         />
 
         {/* Profile Image and Edit Button */}
-        <div className="absolute -bottom-44 md:-bottom-52 left-1/2 transform -translate-y-1/2 -translate-x-1/2 md:left-48 flex items-end">
+        <div className="absolute -bottom-32 md:-bottom-52 left-1/2 transform -translate-y-1/2 -translate-x-1/2 md:left-48 flex items-end">
           <Image
             src={profileImageUrl}
             alt={user?.name || "Profile"}
-            width={240}
-            height={240}
-            className="rounded-full border-4 border-white h-[180px] w-[180px] md:h-[240px] md:w-[240px] object-cover min-w-[180px] min-h-[180px]"
+            width={120}
+            height={120}
+            className="rounded-full border-4 border-white h-[120px] w-[120px] md:h-[240px] md:w-[240px] object-cover min-w-[120px] min-h-[120px]"
             unoptimized
           />
         </div>
 
         {/* Edit Profile Button */}
-        <div className="flex justify-end absolute right-5 top-5">
+        <div className="flex justify-end absolute right-3 top-3 md:right-5 md:top-5">
           <EditProfileDialog />
         </div>
       </div>
 
       {/* Profile Section */}
       <div className="flex flex-1 flex-col gap-4 py-6">
-        <div className="flex flex-1 flex-col md:pl-[20rem] pt-20 md:pt-0 items-center md:items-start">
-          <h1 className="text-3xl font-bold">
+        <div className="flex flex-1 flex-col md:pl-[20rem] pt-10 md:pt-0 items-center md:items-start text-center md:text-left">
+          <h1 className="text-2xl md:text-3xl font-bold">
             {user?.name || "Nome de Exibição"}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground">
             {user?.email || "Email de Exibição"}
           </p>
         </div>

@@ -573,7 +573,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                     <Button
                       variant="default-inverse"
                       size="sm"
-                      className="text-sm p-5 items-center [&_svg]:size-5"
+                      className="text-sm px-4 py-2items-center [&_svg]:size-5"
                       type="button"
                       onClick={handlePreviousTab}
                     >
@@ -586,7 +586,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                       type="button"
                       size="sm"
                       variant="default-inverse"
-                      className="text-sm p-5 items-center [&_svg]:size-5"
+                      className="text-sm px-4 py-2 items-center [&_svg]:size-5"
                       onClick={handleNextTab}
                     >
                       Próximo Passo
