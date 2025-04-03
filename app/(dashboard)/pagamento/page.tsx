@@ -213,9 +213,9 @@ export default function PaymentPage() {
 
                 <hr className="border-zinc-300" />
 
-                <div className="flex justify-between items-center">
-                  <p className="text-zinc-800/80">Total</p>
-                  <p className="text-zinc-800 font-semibold">
+                <div className="flex justify-between items-center pt-4">
+                  <p className="text-zinc-800 font-semibold text-2xl">Total</p>
+                  <p className="text-zinc-800 font-semibold text-2xl">
                     {formatMoneyBR(finalTotal)}
                   </p>
                 </div>
