@@ -16,7 +16,10 @@ import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
 import { MyTicket } from "@/interface/myTickets";
 import { ticketService } from "@/service/ticket";
+import { formatMoneyBR } from "@/utils/formatMoney";
+import { BiFilterAlt } from "react-icons/bi";
 import { EventFilterDialog } from "./filter-dialog";
+import { TicketsTable } from "./tickets-table";
 
 // Filtros de data (adicionei "Todos" para representar sem filtro)
 const dateFilters = [
@@ -191,7 +194,7 @@ export function MetricDashboard() {
   }, [tickets]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Filtros de data e botão de filtro por evento */}
       <div className="flex flex-1 justify-between items-center">
         <div className="flex gap-2">
@@ -202,7 +205,7 @@ export function MetricDashboard() {
               onClick={() => setSelectedDateFilter(filter)}
               className={cn(
                 selectedDateFilter === filter
-                  ? "text-primary"
+                  ? "text-primary bg-sporticket-purple-100"
                   : "text-muted-foreground"
               )}
             >
@@ -211,17 +214,20 @@ export function MetricDashboard() {
           ))}
         </div>
         <Button
-          variant="default-inverse"
+          variant="outline"
+          className="bg-neutral-200 px-5 py-1 h-10 [&_svg]:size-5 text-gray-700 font-semibold rounded-sm"
           onClick={() => setShowEventModal(true)}
         >
-          Filtros
+          Filtros <BiFilterAlt />
         </Button>
       </div>
 
       {/* Cartão com as métricas principais */}
-      <Card className="bg-muted p-6">
+      <Card className="bg-sporticket-offWhite shadow-none border-0 p-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Métricas Principais</h2>
+          <h2 className="text-xl font-semibold text-gray-600">
+            Métricas Principais
+          </h2>
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground">
               {selectedDateFilter === "Todos"
@@ -231,50 +237,54 @@ export function MetricDashboard() {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-          <Card className="p-4">
+          <Card className="p-4 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between p-0">
-              <CardDescription className="text-lg font-medium">
+              <CardDescription className="text-sm font-medium">
                 Total de ingressos vendidos
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex items-baseline gap-2 p-0">
-              <div className="text-2xl font-bold">{totalTicketsSold || 0}</div>
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="text-2xl font-medium text-gray-700">
+                {totalTicketsSold || 0}
+              </div>
               <Badge variant="success">+0%</Badge>
             </CardContent>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between p-0">
-              <CardDescription className="text-lg font-medium">
+              <CardDescription className="text-sm font-medium">
                 Eventos criados
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex items-baseline gap-2 p-0">
-              <div className="text-2xl font-bold">
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="text-2xl font-medium text-gray-700">
                 {totalEventsCreated || 0}
               </div>
               <Badge variant="warning">+0%</Badge>
             </CardContent>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between p-0">
-              <CardDescription className="text-lg font-medium">
+              <CardDescription className="text-sm font-medium">
                 Total de cupons utilizados
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex items-baseline gap-2 p-0">
-              <div className="text-2xl font-bold">{totalCouponsUsed || 0}</div>
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="text-2xl font-medium text-gray-700">
+                {totalCouponsUsed || 0}
+              </div>
               <Badge variant="success">+0%</Badge>
             </CardContent>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 shadow-none">
             <CardHeader className="flex flex-row items-center justify-between p-0">
-              <CardDescription className="text-lg font-medium">
+              <CardDescription className="text-sm font-medium">
                 Faturamento (R$)
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex items-baseline gap-2 p-0">
-              <div className="text-2xl font-bold">
-                {totalRevenue.toFixed(2)}
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="text-2xl font-medium text-gray-700">
+                {formatMoneyBR(totalRevenue)}
               </div>
               <Badge variant="success">+0%</Badge>
             </CardContent>
@@ -283,10 +293,10 @@ export function MetricDashboard() {
       </Card>
 
       {/* Cartão com gráfico de faturamento */}
-      <Card className="bg-muted">
-        <CardHeader className="flex flex-row flex-1 items-center justify-between">
-          <CardTitle className="text-2xl">Faturamento</CardTitle>
-          <p className="text-sm text-muted-foreground">
+      <Card className="bg-sporticket-offWhite shadow-none border-0">
+        <CardHeader className="flex flex-row flex-1 items-center justify-between py-3">
+          <CardTitle className="text-xl text-gray-600">Faturamento</CardTitle>
+          <p className="text-sm text-muted-foreground text-light">
             {selectedDateFilter === "Todos"
               ? "Todos os períodos"
               : `Período: ${selectedDateFilter}`}
@@ -301,7 +311,7 @@ export function MetricDashboard() {
                 <Line
                   type="monotone"
                   dataKey="value"
-                  stroke="#8884d8"
+                  stroke="#9661F1"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -311,11 +321,12 @@ export function MetricDashboard() {
         </CardContent>
       </Card>
 
-      {/* Cartões de Principais Eventos e Cupons */}
-      <div className="grid grid-cols-2 gap-4">
-        <Card className="bg-muted/40">
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-2">
+        <Card className="bg-sporticket-offWhite shadow-none border-0">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-2xl">Principais Eventos</CardTitle>
+            <CardTitle className="text-xl text-gray-600">
+              Principais Eventos
+            </CardTitle>
             <CardDescription>
               {selectedDateFilter === "Todos"
                 ? "Todos os períodos"
@@ -338,21 +349,23 @@ export function MetricDashboard() {
                       />
                       <div className="flex justify-between text-sm text-muted-foreground">
                         <span>Faturamento</span>
-                        <span>R$ {event.revenue.toFixed(2)}</span>
+                        <span>{formatMoneyBR(event.revenue)}</span>
                       </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">Sem dados</p>
+                <p className="text-sm text-muted-foreground text-center mt-2">
+                  Sem dados
+                </p>
               )}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-muted/40">
+        <Card className="bg-sporticket-offWhite shadow-none border-0">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-2xl">Cupons</CardTitle>
+            <CardTitle className="text-xl text-gray-600">Cupons</CardTitle>
             <CardDescription>
               {selectedDateFilter === "Todos"
                 ? "Todos os períodos"
@@ -381,70 +394,17 @@ export function MetricDashboard() {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">Sem dados</p>
+                <p className="text-sm text-muted-foreground text-center mt-2">
+                  Sem dados
+                </p>
               )}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Lista de inscritos */}
-      <Card className="bg-muted/40">
-        <CardHeader>
-          <div>
-            <CardTitle className="text-2xl">Inscritos</CardTitle>
-            <CardDescription>Lista de inscritos nos eventos</CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent className="max-h-[600px] overflow-auto">
-          <div className="flex flex-1 flex-col gap-6">
-            {subscribers.length > 0 ? (
-              subscribers.map((subscriber) => (
-                <div
-                  key={subscriber.id}
-                  className="flex flex-1 flex-row !items-center justify-between"
-                >
-                  <div className="flex items-center gap-3 w-[20em]">
-                    {/* Aqui você pode utilizar seu componente Avatar */}
-                    <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-                      {subscriber.avatar ? (
-                        <img
-                          src={subscriber.avatar}
-                          alt={subscriber.name}
-                          className="rounded-full"
-                        />
-                      ) : (
-                        <span>{subscriber.name[0]}</span>
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium leading-none">
-                        {subscriber.name}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {subscriber.email}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-sm text-muted-foreground w-fit">
-                    {subscriber.date}
-                  </div>
-                  <div className="text-sm font-medium text-end w-[20em]">
-                    {subscriber.event}
-                  </div>
-                  <div className="text-sm font-medium text-end w-[20em]">
-                    {subscriber.category}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground">Sem inscritos</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <TicketsTable tickets={filteredTickets} />
 
-      {/* Modal de filtro por evento */}
       <EventFilterDialog
         isOpen={showEventModal}
         onOpenChange={setShowEventModal}

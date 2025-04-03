@@ -32,6 +32,7 @@ export default {
           "purple-800": "#6426B1",
           "orange-700": "#C62308",
           "orange-50": "#FFF4ED",
+          offWhite: "#FAFAFA",
         },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
