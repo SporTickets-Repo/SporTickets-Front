@@ -15,7 +15,7 @@ import { PlayersEmptyList } from "@/components/pages/checkout/players-empty-list
 import { PlayersList } from "@/components/pages/checkout/players-list";
 import { TicketCard } from "@/components/pages/checkout/ticket-card";
 import { useEvent } from "@/context/event";
-import type { Player, TicketResponse } from "@/interface/tickets";
+import type { Player, TicketForm } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -23,9 +23,7 @@ export default function PaymentPage() {
   const { selectedTickets, submitCheckout, event } = useEvent();
   const router = useRouter();
 
-  const [currentTicket, setCurrentTicket] = useState<TicketResponse | null>(
-    null
-  );
+  const [currentTicket, setCurrentTicket] = useState<TicketForm | null>(null);
   const [playerFormOpen, setPlayerFormOpen] = useState(false);
   const [couponDialogOpen, setCouponDialogOpen] = useState(false);
   const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = useState(false);
@@ -45,7 +43,7 @@ export default function PaymentPage() {
     }
   }, [selectedTickets]);
 
-  const handleSelectTicket = (ticket: TicketResponse) => {
+  const handleSelectTicket = (ticket: TicketForm) => {
     setCurrentTicket(ticket);
   };
 
@@ -74,11 +72,16 @@ export default function PaymentPage() {
 
       if (ticket.coupon?.id) {
         const discountAmount = teamPrice * ticket.coupon.percentage;
-        return acc + teamPrice - discountAmount;
+        return acc + (teamPrice - discountAmount);
       }
 
       return acc + teamPrice;
     }, 0) || 0;
+
+  const subTotal = totalDiscount;
+  const feeAmount =
+    event?.eventFee !== undefined ? subTotal * event.eventFee : 0;
+  const finalTotal = subTotal + feeAmount;
 
   if (!selectedTickets || selectedTickets.length === 0 || !currentTicket) {
     return null;
@@ -179,23 +182,64 @@ export default function PaymentPage() {
               </Button>
             </div>
             <hr className="border-zinc-300" />
-            <div className="flex justify-between items-center">
-              <p className="text-zinc-800/80">Total</p>
-              {currentTicket?.coupon?.id ? (
-                <div className="flex items-center gap-3">
-                  <div className="text-zinc-400 text-xs line-through">
-                    {formatMoneyBR(total)}
-                  </div>
-                  <div className="text-sporticket-green-700 font-semibold">
-                    {formatMoneyBR(totalDiscount)}
-                  </div>
+            {event?.eventFee !== undefined ? (
+              <>
+                <div className="flex justify-between items-center">
+                  <p className="text-zinc-800/80">Subtotal</p>
+                  {currentTicket?.coupon?.id ? (
+                    <div className="flex items-center gap-3">
+                      <div className="text-zinc-400 text-xs line-through">
+                        {formatMoneyBR(total)}
+                      </div>
+                      <div className="text-sporticket-green-700 font-semibold">
+                        {formatMoneyBR(totalDiscount)}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-zinc-800 font-semibold">
+                      {formatMoneyBR(total)}
+                    </p>
+                  )}
                 </div>
-              ) : (
-                <p className="text-zinc-800 font-semibold">
-                  {formatMoneyBR(total)}
-                </p>
-              )}
-            </div>
+
+                <hr className="border-zinc-300" />
+
+                <div className="flex justify-between items-center">
+                  <p className="text-zinc-800/80">Taxa do Evento</p>
+                  <p className="text-sporticket-green-700 font-semibold">
+                    {feeAmount === 0 ? "Gratuito" : formatMoneyBR(feeAmount)}
+                  </p>
+                </div>
+
+                <hr className="border-zinc-300" />
+
+                <div className="flex justify-between items-center pt-4">
+                  <p className="text-zinc-800 font-semibold text-2xl">Total</p>
+                  <p className="text-zinc-800 font-semibold text-2xl">
+                    {formatMoneyBR(finalTotal)}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-between items-center">
+                <p className="text-zinc-800/80">Total</p>
+                {currentTicket?.coupon?.id ? (
+                  <div className="flex items-center gap-3">
+                    <div className="text-zinc-400 text-xs line-through">
+                      {formatMoneyBR(total)}
+                    </div>
+                    <div className="text-sporticket-green-700 font-semibold">
+                      {formatMoneyBR(totalDiscount)}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-zinc-800 font-semibold">
+                    {formatMoneyBR(total)}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div>
               <Button
                 onClick={submitCheckout}

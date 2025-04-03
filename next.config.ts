@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "t96kpt9nk5xvwlvg.public.blob.vercel-storage.com",
+        hostname: "sportickets-bucket.s3.amazonaws.com",
       },
     ],
   },

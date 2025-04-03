@@ -16,11 +16,11 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
         filter:
-          "bg-muted text-primary w-20 h-fit py-2 cursor-pointer text-center justify-center rounded-full",
+          "bg-neutral-200 text-primary w-20 h-fit py-1 cursor-pointer text-center justify-center rounded-full border-0",
         success:
-          "bg-success-foreground text-success border-none font-semibold ",
+          "bg-success-foreground text-success border-none font-light rounded-full text-xs",
         warning:
-          "bg-warning-foreground text-warning border-none font-semibold text-sm",
+          "bg-warning-foreground text-warning border-none font-light rounded-full text-xs",
       },
     },
     defaultVariants: {

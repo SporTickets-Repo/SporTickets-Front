@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useEvent } from "@/context/event";
-import { Player, TicketResponse } from "@/interface/tickets";
+import { Player, TicketForm } from "@/interface/tickets";
 import { useEffect, useState } from "react";
 import { FieldsStep } from "./fields-step";
 import { RegisterStep } from "./register-step";
@@ -17,7 +17,7 @@ import { SearchStep } from "./search-step";
 interface PlayerFormProps {
   open: boolean;
   onClose: () => void;
-  currentTicket: TicketResponse;
+  currentTicket: TicketForm;
   player: Player | null;
 }
 

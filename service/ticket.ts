@@ -1,3 +1,4 @@
+import { MyTicket } from "@/interface/myTickets";
 import { TicketProps } from "@/interface/tickets";
 import { api } from "./api";
 
@@ -22,6 +23,24 @@ export const ticketService = {
         `/ticket-types/upsert/${eventId}`,
         data
       );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  myTickets: async (): Promise<MyTicket[]> => {
+    try {
+      const response = await api.get<MyTicket[]>(`/tickets/my-tickets`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  allTickets: async (): Promise<MyTicket[]> => {
+    try {
+      const response = await api.get<MyTicket[]>(`/tickets/all`);
       return response.data;
     } catch (error) {
       throw error;

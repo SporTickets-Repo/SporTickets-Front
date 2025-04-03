@@ -5,10 +5,13 @@ import {
   PaymentData,
   Player,
   TicketCheckoutPayload,
-  TicketResponse,
+  TicketForm,
 } from "@/interface/tickets";
+import { checkoutService } from "@/service/checkout";
 import { eventService } from "@/service/event";
+import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
 interface EventContextProps {
@@ -16,8 +19,8 @@ interface EventContextProps {
   loading: boolean;
   error: string | null;
   setSlug: (slug: string) => void;
-  selectedTickets: TicketResponse[];
-  setSelectedTickets: React.Dispatch<React.SetStateAction<TicketResponse[]>>;
+  selectedTickets: TicketForm[];
+  setSelectedTickets: React.Dispatch<React.SetStateAction<TicketForm[]>>;
   addTicket: (ticketTypeId: string) => void;
   removeTicket: (ticketTypeId: string) => void;
   submitCheckout: () => Promise<void>;
@@ -38,11 +41,12 @@ const EventContext = createContext<EventContextProps>({
 export const useEvent = () => useContext(EventContext);
 
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter(); // Hook de navegação
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [slug, setSlug] = useState<string>("");
-  const [selectedTickets, setSelectedTickets] = useState<TicketResponse[]>([]);
+  const [selectedTickets, setSelectedTickets] = useState<TicketForm[]>([]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -74,7 +78,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       const activeLot = ticketType.ticketLots.find((lot) => lot.isActive);
       if (!activeLot) return prev;
 
-      const newTicket: TicketResponse = {
+      const newTicket: TicketForm = {
         id: uuidv4(),
         ticketType,
         ticketLot: activeLot,
@@ -120,10 +124,14 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     try {
-      // Exemplo de envio: await ticketService.submitCheckout(payload);
-      console.log("Payload pronto para envio:", payload);
+      const response = await checkoutService.checkout(payload);
+      const transactionId = response.transactionId;
+      router.push(`/pagamento/${transactionId}`);
     } catch (err) {
       console.error("Erro ao enviar checkout:", err);
+      toast.error(
+        "Ocorreu um erro ao processar o pagamento. Tente novamente mais tarde."
+      );
     }
   };
 

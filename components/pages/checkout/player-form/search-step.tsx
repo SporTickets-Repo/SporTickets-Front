@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/auth";
-import { Player, TicketResponse } from "@/interface/tickets";
+import { Player, TicketForm } from "@/interface/tickets";
 import { userService } from "@/service/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -29,7 +29,7 @@ interface Props {
   onNotFound: (email: string) => void;
   onClose: () => void;
   initialEmail?: string;
-  currentTicket: TicketResponse;
+  currentTicket: TicketForm;
 }
 
 export function SearchStep({

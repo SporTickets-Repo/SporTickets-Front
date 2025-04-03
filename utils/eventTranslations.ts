@@ -1,4 +1,5 @@
 import { EventLevel, EventStatus, EventType } from "@/interface/event";
+import { TransactionStatus } from "@/interface/transaction";
 
 export const translateEventStatusOrganizer = (status: EventStatus): string => {
   const translations: Record<EventStatus, string> = {
@@ -49,4 +50,20 @@ export const translateEventLevel = (level: EventLevel): string => {
   };
 
   return translations[level] || "Desconhecido";
+};
+
+export const translatePaymentStatus = (status: TransactionStatus): string => {
+  const translations: Record<TransactionStatus, string> = {
+    PENDING: "Pendente",
+    APPROVED: "Aprovado",
+    AUTHORIZED: "Autorizado",
+    IN_PROCESS: "Em processo",
+    IN_MEDIATION: "Em mediação",
+    REJECTED: "Rejeitado",
+    CANCELLED: "Cancelado",
+    REFUNDED: "Reembolsado",
+    CHARGED_BACK: "Estornado",
+  };
+
+  return translations[status] || "Desconhecido";
 };

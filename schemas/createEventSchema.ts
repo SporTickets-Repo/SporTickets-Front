@@ -1,4 +1,4 @@
-import { stripHtml } from "@/utils/format";
+import { formatCEP, stripHtml } from "@/utils/format";
 import * as z from "zod";
 
 export const eventFormValuesSchema = z
@@ -36,10 +36,11 @@ export const eventFormValuesSchema = z
     }),
     cep: z
       .string()
-      .regex(/^\d{5}-\d{3}$/, {
-        message: "O CEP deve estar no formato 12345-678",
+      .transform((val) => val.replace(/\D/g, "").slice(0, 8))
+      .refine((val) => /^\d{8}$/.test(val), {
+        message: "O CEP deve conter 8 dígitos numéricos",
       })
-      .nonempty({ message: "O CEP é obrigatório" }),
+      .transform(formatCEP),
     city: z.string().nonempty({ message: "A cidade é obrigatória" }),
     state: z.string().nonempty({ message: "O estado é obrigatório" }),
     street: z.string().nonempty({ message: "A rua é obrigatória" }),
@@ -92,34 +93,46 @@ const personalizedFieldSchema = z.object({
   optionsList: z.array(z.string()).optional(),
 });
 
-const ticketLotSchema = z.object({
-  name: z
-    .string()
-    .nonempty({ message: "O nome do lote de ingressos é obrigatório" }),
-  price: z.number().nonnegative({ message: "O preço deve ser não negativo" }),
-  quantity: z.number().int().nonnegative({
-    message: "A quantidade deve ser um número inteiro não negativo",
-  }),
-  startDate: z.preprocess(
-    (arg) => {
-      if (arg instanceof Date) return arg.toISOString();
-      return arg;
+const ticketLotSchema = z
+  .object({
+    name: z
+      .string()
+      .nonempty({ message: "O nome do lote de ingressos é obrigatório" }),
+    price: z.number().nonnegative({ message: "O preço deve ser não negativo" }),
+    quantity: z.number().int().nonnegative({
+      message: "A quantidade deve ser um número inteiro não negativo",
+    }),
+    startDate: z.preprocess(
+      (arg) => {
+        if (arg instanceof Date) return arg.toISOString();
+        return arg;
+      },
+      z.string().nonempty({
+        message: "A data de início do lote de ingressos é obrigatória",
+      })
+    ),
+    endDate: z.preprocess(
+      (arg) => {
+        if (arg instanceof Date) return arg.toISOString();
+        return arg;
+      },
+      z.string().nonempty({
+        message: "A data de término do lote de ingressos é obrigatória",
+      })
+    ),
+    isActive: z.boolean(),
+  })
+  .refine(
+    (data) => {
+      const start = new Date(data.startDate);
+      const end = new Date(data.endDate);
+      return start < end;
     },
-    z.string().nonempty({
-      message: "A data de início do lote de ingressos é obrigatória",
-    })
-  ),
-  endDate: z.preprocess(
-    (arg) => {
-      if (arg instanceof Date) return arg.toISOString();
-      return arg;
-    },
-    z.string().nonempty({
-      message: "A data de término do lote de ingressos é obrigatória",
-    })
-  ),
-  isActive: z.boolean(),
-});
+    {
+      message: "A data de término deve ser posterior à data de início",
+      path: ["endDate"],
+    }
+  );
 
 const ticketTypeSchema = z.object({
   id: z.string().optional(),
@@ -183,6 +196,7 @@ export const createEventFormValuesSchema = z.object({
   coupons: z.array(couponSchema),
   bracket: z.array(bracketSchema),
   ranking: z.array(rankingSchema),
+  eventFee: z.number().optional(),
 });
 
 export type CreateEventFormValues = z.infer<typeof createEventFormValuesSchema>;

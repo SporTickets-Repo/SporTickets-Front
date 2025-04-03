@@ -11,11 +11,14 @@ export function formatCPF(value: string) {
 }
 
 export function formatCEP(value: string) {
-  return value.replace(/\D/g, "").replace(/^(\d{5})(\d{1,3})/, "$1-$2");
+  return value
+    .replace(/\D/g, "")
+    .slice(0, 8)
+    .replace(/(\d{5})(\d)/, "$1-$2");
 }
 
 export function formatPhone(value: string) {
-  const cleaned = value.replace(/\D/g, "");
+  const cleaned = value.replace(/\D/g, "").slice(0, 11);
   if (cleaned.length <= 10) {
     return cleaned
       .replace(/(\d{2})(\d)/, "($1) $2")

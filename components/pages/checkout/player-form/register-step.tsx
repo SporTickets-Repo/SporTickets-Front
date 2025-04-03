@@ -14,13 +14,19 @@ import { Input } from "@/components/ui/input";
 import { Player } from "@/interface/tickets";
 import { userService } from "@/service/user";
 import { formatCEP, formatCPF, formatPhone } from "@/utils/format";
+import { isValidCPF } from "@/utils/validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
   name: z.string().min(2),
-  document: z.string().min(11),
+  document: z
+    .string()
+    .min(11)
+    .refine((value) => !!value && isValidCPF(value), {
+      message: "CPF inválido",
+    }),
   email: z.string().email(),
   cep: z.string().min(8),
   phone: z.string().min(10),

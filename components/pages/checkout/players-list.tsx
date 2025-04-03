@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEvent } from "@/context/event";
-import type { Player, TicketResponse } from "@/interface/tickets";
+import type { Player, TicketForm } from "@/interface/tickets";
 import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa6";
@@ -14,7 +14,7 @@ interface PlayersListProps {
   players: Player[];
   onSelectPlayer: (player: Player) => void;
   onAddPlayer: () => void;
-  currentTicket: TicketResponse;
+  currentTicket: TicketForm;
 }
 
 export function PlayersList({

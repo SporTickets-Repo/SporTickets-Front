@@ -14,8 +14,6 @@ import useHome from "./useHome";
 
 function App() {
   const {
-    events,
-    eventsMock,
     eventTypes,
     recentEvents,
     finishedEvents,
@@ -62,7 +60,7 @@ function App() {
                   <h2 className="text-md md:text-lg font-bold">
                     Tendências da semana
                   </h2>
-                  <Button variant="tertiary" size="icon">
+                  <Button variant="tertiary" size="sm">
                     <ArrowRight size={16} />
                   </Button>
                 </div>
@@ -82,7 +80,7 @@ function App() {
               <h2 className="text-md md:text-lg font-bold">
                 Eventos disponíveis
               </h2>
-              <Button variant="tertiary" size="icon">
+              <Button variant="tertiary" size="sm">
                 <ArrowRight size={16} />
               </Button>
             </div>
@@ -100,7 +98,7 @@ function App() {
               <h2 className="text-md md:text-lg font-bold">
                 Inscrições abertas
               </h2>
-              <Button variant="tertiary" size="icon">
+              <Button variant="tertiary" size="sm">
                 <ArrowRight size={16} />
               </Button>
             </div>
@@ -167,7 +165,7 @@ function App() {
               <h2 className="text-md md:text-lg font-bold">
                 Eventos acontecendo e finalizados
               </h2>
-              <Button variant="tertiary" size="icon">
+              <Button variant="tertiary" size="sm">
                 <ArrowRight size={16} />
               </Button>
             </div>

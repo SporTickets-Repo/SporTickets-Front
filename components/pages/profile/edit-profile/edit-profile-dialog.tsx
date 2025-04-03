@@ -33,24 +33,34 @@ import {
 import { useAuth } from "@/context/auth";
 import { UserSex } from "@/interface/user";
 import { userService } from "@/service/user";
+import { formatCEP, formatCPF, formatPhone } from "@/utils/format";
 import { Plus } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 
 const profileSchema = z.object({
   name: z.string().min(3, "Nome obrigatório"),
+
   document: z
     .string()
-    .min(1, "Documento obrigatório")
-    .regex(/^\d{11}$/, "Documento deve conter 11 dígitos numéricos"),
+    .transform((val) => val.replace(/\D/g, ""))
+    .refine((val) => val.length === 11, {
+      message: "Documento deve conter 11 dígitos numéricos",
+    }),
+
   email: z.string().min(3, "Email obrigatório").email("Email inválido"),
+
   phone: z
     .string()
-    .min(1, "Telefone obrigatório")
-    .regex(/^\d{10,11}$/, "Telefone deve conter 10 ou 11 dígitos numéricos"),
+    .transform((val) => val.replace(/\D/g, ""))
+    .refine((val) => val.length >= 10 && val.length <= 11, {
+      message: "Telefone deve conter 10 ou 11 dígitos numéricos",
+    }),
+
   sex: z.enum(Object.values(UserSex) as [string, ...string[]], {
     invalid_type_error: "Sexo obrigatório",
   }),
+
   bornAt: z
     .string()
     .min(1, "Data de nascimento obrigatória")
@@ -70,10 +80,10 @@ const profileSchema = z.object({
 
   cep: z
     .string()
-    .min(1, "CEP obrigatório")
-    .refine((value) => {
-      return /^\d{8}$/.test(value);
-    }, "CEP deve conter 8 dígitos numéricos"),
+    .transform((val) => val.replace(/\D/g, ""))
+    .refine((val) => val.length === 8, {
+      message: "CEP deve conter 8 dígitos numéricos",
+    }),
 
   imageFile: z.instanceof(File).optional(),
 });
@@ -87,6 +97,7 @@ export function EditProfileDialog() {
     user?.profileImageUrl ?? null
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(profileSchema),
@@ -116,9 +127,9 @@ export function EditProfileDialog() {
   }, [user, form]);
 
   const onSubmit = async (data: FormData) => {
-    console.log(data.imageFile);
-
+    setIsSubmitting(true);
     const formData = new FormData();
+
     formData.append("name", data.name);
     formData.append("document", data.document);
     formData.append("email", data.email);
@@ -141,6 +152,8 @@ export function EditProfileDialog() {
     } catch (error) {
       toast.error("Erro ao atualizar perfil");
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -161,9 +174,9 @@ export function EditProfileDialog() {
                 className="absolute right-4 text-[15px] text-primary font-semibold !m-0"
                 type="submit"
                 variant="ghost"
-                disabled={!form.formState.isValid}
+                disabled={!form.formState.isValid || isSubmitting}
               >
-                Salvar
+                {isSubmitting ? "Salvando..." : "Salvar"}
               </Button>
             </DialogHeader>
 
@@ -237,7 +250,16 @@ export function EditProfileDialog() {
                 <FormItem>
                   <FormLabel>Documento</FormLabel>
                   <FormControl>
-                    <Input placeholder="Documento" {...field} />
+                    <Input
+                      placeholder="CPF"
+                      value={formatCPF(field.value)}
+                      onChange={(e) => {
+                        const raw = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 11);
+                        field.onChange(raw);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -267,7 +289,16 @@ export function EditProfileDialog() {
                 <FormItem>
                   <FormLabel>Telefone</FormLabel>
                   <FormControl>
-                    <Input placeholder="Telefone" {...field} />
+                    <Input
+                      placeholder="Telefone"
+                      value={formatPhone(field.value)}
+                      onChange={(e) => {
+                        const raw = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 11);
+                        field.onChange(raw);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -323,7 +354,16 @@ export function EditProfileDialog() {
                 <FormItem>
                   <FormLabel>CEP</FormLabel>
                   <FormControl>
-                    <Input placeholder="CEP" {...field} />
+                    <Input
+                      placeholder="CEP"
+                      value={formatCEP(field.value)}
+                      onChange={(e) => {
+                        const raw = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 8);
+                        field.onChange(raw);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
