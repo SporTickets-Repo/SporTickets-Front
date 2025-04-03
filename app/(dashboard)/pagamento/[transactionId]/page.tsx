@@ -31,6 +31,19 @@ export default function TransactionPage() {
 
   useEffect(() => {
     fetchTransaction();
+
+    const intervalId = setInterval(() => {
+      fetchTransaction();
+    }, 15000);
+
+    const timeoutId = setTimeout(() => {
+      clearInterval(intervalId);
+    }, 15 * 60 * 1000);
+
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+    };
   }, [transactionId]);
 
   if (loading) {
