@@ -57,30 +57,37 @@ export function EventFilterDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[400px]">
         <DialogHeader className="flex flex-col items-center">
           <DialogTitle>Filtrar por Evento</DialogTitle>
         </DialogHeader>
-        <div className="p-4 space-y-2">
+        <div className="py-4 space-y-2">
           {availableEvents.map((event) => (
-            <div key={event.id} className="flex items-center">
-              <Checkbox
-                checked={localSelected.includes(event.id)}
-                onCheckedChange={() => toggleEvent(event.id)}
-              />
-              <span className="ml-2">{event.name}</span>
+            <div
+              key={event.id}
+              className="flex items-center justify-between p-2 border rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={localSelected.includes(event.id)}
+                  onCheckedChange={() => toggleEvent(event.id)}
+                />
+                <span className="font-medium text-gray-700">{event.name}</span>
+              </div>
             </div>
           ))}
         </div>
         <DialogFooter>
           <Button
             variant="outline"
-            className="bg-neutral-200 px-2 py-1"
+            className="bg-neutral-200 px-2 py-1 h-10"
             onClick={handleSelectAll}
           >
             Selecionar Todos
           </Button>
-          <Button onClick={handleApply}>Aplicar</Button>
+          <Button onClick={handleApply} className="h-10">
+            Aplicar
+          </Button>
         </DialogFooter>
         <DialogClose />
       </DialogContent>

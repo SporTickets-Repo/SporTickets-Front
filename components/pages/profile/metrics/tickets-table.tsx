@@ -19,21 +19,33 @@ interface TicketsTableProps {
 }
 
 export function TicketsTable({ tickets }: TicketsTableProps) {
-  // Função para exportar os dados para Excel
   const exportToExcel = () => {
-    const rows = tickets.map((ticket) => ({
-      Usuário: `${ticket.user.name} (${ticket.user.email})`,
-      Categoria: ticket.category?.title || "",
-      Lote: ticket.ticketLot.name,
-      "Campos Personalizados": ticket.personalizedFieldAnswers
-        .map((pfa) => `${pfa.personalizedField.requestTitle}: ${pfa.answer}`)
-        .join("; "),
-      Evento: ticket.ticketLot.ticketType.event.name,
-      "Status da Transação": ticket.transaction.status,
-      "Valor Pago": ticket.price,
-      "Código do Ticket": ticket.code,
-      "Team ID": ticket.team.id,
-    }));
+    const rows = tickets.map((ticket) => {
+      const personalizedFields = ticket.personalizedFieldAnswers.reduce(
+        (acc, pfa) => {
+          acc[`${pfa.personalizedField.requestTitle}`] = pfa.answer;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+
+      return {
+        Usuário: `${ticket.user.name}`,
+        Email: ticket.user.email,
+        Categoria: ticket.category?.title || "",
+        Lote: ticket.ticketLot.name,
+        "Valor Pago": ticket.price,
+        Evento: ticket.ticketLot.ticketType.event.name,
+        "Status da Transação": ticket.transaction.status,
+        "Código do Ticket": ticket.code,
+        "Team Name": ticket.team.tickets.map((t) => t.user.name).join(", "),
+        "Team Document": ticket.team.tickets
+          .map((t) => t.user.document)
+          .join(", "),
+        "Team Email": ticket.team.tickets.map((t) => t.user.email).join(", "),
+        ...personalizedFields,
+      };
+    });
 
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
@@ -42,7 +54,7 @@ export function TicketsTable({ tickets }: TicketsTableProps) {
   };
 
   return (
-    <Card className="bg-muted/40">
+    <Card className="bg-sporticket-offWhite shadow-none border-0 p-0">
       <CardHeader className="flex flex-row items-center justify-between w-full">
         <div>
           <CardTitle className="text-2xl">Inscritos</CardTitle>

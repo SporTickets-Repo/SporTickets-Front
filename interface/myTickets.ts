@@ -25,6 +25,16 @@ export interface MyTicket {
   user: TicketUserDetails;
   team: {
     id: string;
+    tickets: UserTeam[];
+  };
+}
+
+export interface UserTeam {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    document: string;
   };
 }
 

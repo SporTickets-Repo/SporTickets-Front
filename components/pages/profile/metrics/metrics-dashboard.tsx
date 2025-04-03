@@ -19,6 +19,7 @@ import { ticketService } from "@/service/ticket";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { BiFilterAlt } from "react-icons/bi";
 import { EventFilterDialog } from "./filter-dialog";
+import { MetricDashboardSkeleton } from "./skeleton-metric";
 import { TicketsTable } from "./tickets-table";
 
 // Filtros de data (adicionei "Todos" para representar sem filtro)
@@ -36,11 +37,13 @@ export function MetricDashboard() {
   const [selectedDateFilter, setSelectedDateFilter] = useState<string>("Todos");
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Buscar tickets na API
   useEffect(() => {
     async function fetchTickets() {
       try {
+        setLoading(true);
         const data = await ticketService.allTickets();
         setTickets(data);
         // Seleciona por padrão todos os eventos disponíveis
@@ -51,6 +54,8 @@ export function MetricDashboard() {
       } catch (error) {
         console.error("Erro ao buscar tickets:", error);
         setTickets([]);
+      } finally {
+        setLoading(false);
       }
     }
     fetchTickets();
@@ -193,8 +198,12 @@ export function MetricDashboard() {
     return Object.values(eventMap);
   }, [tickets]);
 
+  if (loading) {
+    return <MetricDashboardSkeleton />;
+  }
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {/* Filtros de data e botão de filtro por evento */}
       <div className="flex flex-1 justify-between items-center">
         <div className="flex gap-2">
@@ -247,7 +256,6 @@ export function MetricDashboard() {
               <div className="text-2xl font-medium text-gray-700">
                 {totalTicketsSold || 0}
               </div>
-              <Badge variant="success">+0%</Badge>
             </CardContent>
           </Card>
           <Card className="p-4 shadow-none">
@@ -260,7 +268,6 @@ export function MetricDashboard() {
               <div className="text-2xl font-medium text-gray-700">
                 {totalEventsCreated || 0}
               </div>
-              <Badge variant="warning">+0%</Badge>
             </CardContent>
           </Card>
           <Card className="p-4 shadow-none">
@@ -273,7 +280,6 @@ export function MetricDashboard() {
               <div className="text-2xl font-medium text-gray-700">
                 {totalCouponsUsed || 0}
               </div>
-              <Badge variant="success">+0%</Badge>
             </CardContent>
           </Card>
           <Card className="p-4 shadow-none">
@@ -286,7 +292,6 @@ export function MetricDashboard() {
               <div className="text-2xl font-medium text-gray-700">
                 {formatMoneyBR(totalRevenue)}
               </div>
-              <Badge variant="success">+0%</Badge>
             </CardContent>
           </Card>
         </div>
