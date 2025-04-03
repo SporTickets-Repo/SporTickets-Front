@@ -5,6 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Event } from "@/interface/event";
 import { eventService } from "@/service/event";
 import { Loader2 } from "lucide-react";
+import { FaRegChartBar } from "react-icons/fa";
+import { TbSoccerField, TbTicket } from "react-icons/tb";
 import useSWR from "swr";
 import { MetricDashboard } from "./metrics/metrics-dashboard";
 import { MyTicketsList } from "./my-tickets/my-tickets-list";
@@ -32,11 +34,22 @@ export function OrganizerProfile() {
     <div className="mt-10">
       <Tabs defaultValue="events" className="w-full">
         <TabsList className="w-full justify-start">
-          <TabsTrigger value="events">Eventos</TabsTrigger>
-          <TabsTrigger value="metrics">Métricas</TabsTrigger>
-          <TabsTrigger value="tickets">Meus Ingressos</TabsTrigger>
+          <TabsTrigger value="events">
+            <TbSoccerField />
+            Eventos
+          </TabsTrigger>
+          <TabsTrigger value="metrics">
+            {" "}
+            <FaRegChartBar />
+            Métricas
+          </TabsTrigger>
+          <TabsTrigger value="tickets">
+            {" "}
+            <TbTicket />
+            Meus Ingressos
+          </TabsTrigger>
         </TabsList>
-        <Separator className="my-4" />
+        <Separator className="my-4 border-sporticket-gray" />
         <TabsContent value="events">
           {isLoading ? (
             <div className="flex justify-center py-10">

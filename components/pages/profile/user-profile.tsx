@@ -4,6 +4,8 @@ import { Event } from "@/interface/event";
 import { eventService } from "@/service/event";
 import { Separator } from "@radix-ui/react-separator";
 import { useEffect, useState } from "react";
+import { FaRegChartBar } from "react-icons/fa";
+import { TbSoccerField, TbTicket } from "react-icons/tb";
 import useSWR from "swr";
 import { MetricDashboard } from "./metrics/metrics-dashboard";
 import { MyTicketsList } from "./my-tickets/my-tickets-list";
@@ -11,7 +13,6 @@ import { ProfileEventList } from "./organizer/profile-event-list";
 
 export function UserProfile() {
   const [showevents, setShowEvents] = useState(false);
-  console.log("showevents", showevents);
 
   const { data: events } = useSWR<Event[]>(
     "/events/my-events",
@@ -24,22 +25,30 @@ export function UserProfile() {
 
   useEffect(() => {
     setShowEvents(!!events && events.length > 0);
-    console.log("events", events);
   }, [events]);
 
   return (
     <div className="mt-10">
       <Tabs defaultValue="tickets" className="w-full">
         <TabsList className="w-full justify-start">
-          <TabsTrigger value="tickets">Meus Ingressos</TabsTrigger>
+          <TabsTrigger value="tickets">
+            <TbTicket />
+            Meus Ingressos
+          </TabsTrigger>
           {showevents && (
             <>
-              <TabsTrigger value="metrics">Métricas</TabsTrigger>
-              <TabsTrigger value="events">Eventos</TabsTrigger>
+              <TabsTrigger value="metrics">
+                <FaRegChartBar />
+                Métricas
+              </TabsTrigger>
+              <TabsTrigger value="events">
+                <TbSoccerField />
+                Eventos
+              </TabsTrigger>
             </>
           )}
         </TabsList>
-        <Separator className="my-4" />
+        <Separator className="my-2 border-gray-100 border" />
         {showevents && (
           <>
             <TabsContent value="events">
