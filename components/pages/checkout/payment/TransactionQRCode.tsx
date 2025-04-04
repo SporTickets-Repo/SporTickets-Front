@@ -1,15 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
   pixQRCode: string;
-  onRefresh: () => void;
+  onRefresh: (isUserAction: boolean) => Promise<void>;
 }
 
 export function TransactionQRCode({ pixQRCode, onRefresh }: Props) {
+  const [loading, setLoading] = useState(false);
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(pixQRCode);
@@ -17,6 +21,12 @@ export function TransactionQRCode({ pixQRCode, onRefresh }: Props) {
     } catch (err) {
       toast.error("Não foi possível copiar o código.");
     }
+  };
+
+  const handleClick = async () => {
+    setLoading(true);
+    await onRefresh(true);
+    setLoading(false);
   };
 
   return (
@@ -36,8 +46,15 @@ export function TransactionQRCode({ pixQRCode, onRefresh }: Props) {
         <Button onClick={handleCopy} variant="outline">
           Copiar código PIX
         </Button>
-        <Button variant="default" onClick={onRefresh}>
-          Já paguei!
+        <Button variant="default" onClick={handleClick} disabled={loading}>
+          {loading ? (
+            <>
+              Verificando...
+              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+            </>
+          ) : (
+            "Já paguei!"
+          )}
         </Button>
       </div>
     </div>

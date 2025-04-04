@@ -16,34 +16,44 @@ import { toast } from "sonner";
 export default function TransactionPage() {
   const { transactionId } = useParams<{ transactionId: string }>();
   const [transaction, setTransaction] = useState<Transaction | null>(null);
+
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const fetchTransaction = async (isInitial = false) => {
+  const fetchTransaction = async ({
+    isInitial = false,
+    isUserAction = false,
+  } = {}): Promise<void> => {
     try {
-      if (isInitial) setInitialLoading(true);
+      if (isInitial) {
+        setInitialLoading(true);
+      }
 
       const res = await transactionService.getTransactionById(transactionId);
       setTransaction(res);
 
-      if (!isInitial) {
+      if (isUserAction) {
         if (res.status === TransactionStatus.APPROVED) {
           toast.success("Pagamento aprovado com sucesso!");
         } else {
           toast.error(
-            "Pagamento ainda foi não confirmado. Aguarde um instante ou entre em contato com suporte."
+            "Pagamento ainda não foi confirmado. Aguarde mais um pouco ou entre em contato."
           );
         }
       }
     } catch (err) {
       console.error("Erro ao buscar transação", err);
-      toast.error("Erro ao buscar transação. Tente novamente mais tarde.");
+      if (isUserAction) {
+        toast.error("Erro ao buscar transação. Tente novamente mais tarde.");
+      }
     } finally {
-      if (isInitial) setInitialLoading(false);
+      if (isInitial) {
+        setInitialLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    fetchTransaction(true);
+    fetchTransaction({ isInitial: true });
   }, [transactionId]);
 
   useEffect(() => {
@@ -87,10 +97,12 @@ export default function TransactionPage() {
       return transaction.paymentMethod === "PIX" ? (
         <TransactionQRCode
           pixQRCode={transaction.pixQRCode || ""}
-          onRefresh={fetchTransaction}
+          onRefresh={(isUserAction) => fetchTransaction({ isUserAction })}
         />
       ) : (
-        <TransactionAwaiting onRefresh={fetchTransaction} />
+        <TransactionAwaiting
+          onRefresh={(isUserAction) => fetchTransaction({ isUserAction })}
+        />
       );
     }
 
