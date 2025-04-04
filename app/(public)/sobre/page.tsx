@@ -8,10 +8,10 @@ import Image from "next/image";
 import { Calendar, Star, Trophy, Users } from "lucide-react";
 
 const stats = [
-  { number: "150,000+", label: "Negócios ativos", icon: Users },
+  { number: "15,000+", label: "Usuarios ativos", icon: Users },
   { number: "500+", label: "Eventos realizados", icon: Calendar },
-  { number: "500+", label: "Prêmios", icon: Trophy },
-  { number: "500+", label: "Eventos realizados", icon: Calendar },
+  { number: "90,000+", label: "Ingressos emitidos", icon: Trophy },
+  { number: "200,000+", label: "Acessos mensais", icon: Calendar },
 ];
 
 const testimonials = [
@@ -59,11 +59,10 @@ export default function About() {
       <section className="max-w-7xl mx-auto md:px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-            Lorem ipsum
+            Sobre Nós
           </h1>
           <p className="mt-4 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
-            Lorem ipsum dolor sit amet. Non dolores suscipit est necessitatibus
-            minima sed quis eligendi ut quis totam ut.
+            Somos a ponte entre organizadores e apaixonados por esportes.
           </p>
         </div>
 
@@ -109,15 +108,15 @@ export default function About() {
           <div className="grid md:grid-cols-2 grid-cols-1 gap-12">
             <div className="flex flex-col gap-4 items-start">
               <p className="text-gray-800   ">
-                Lorem ipsum dolor sit amet. Non dolores suscipit est
-                necessitatibus minima sed quis eligendi ut quis totam ut. Lorem
-                ipsum dolor sit amet. Non dolores suscipit est necessitatibus
-                minima sed quis eligendi ut optio totam ut similique enim.
+                Na SporTickets, acreditamos no poder do esporte para conectar
+                pessoas e transformar vidas. Nossa missão é facilitar a
+                organização e participação em eventos esportivos por meio de
+                tecnologia acessível e intuitiva, impulsionando o crescimento do
+                esporte em todas as regiões do Brasil.
               </p>
               <p className="text-gray-600   ">
-                Lorem ipsum dolor sit amet. Non dolores suscipit est
-                necessitatibus minima sed quis eligendi ut optio totam ut
-                similique enim.
+                Queremos que cada organizador, atleta e torcedor viva o esporte
+                de forma leve, profissional e sem complicações.
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
@@ -151,9 +150,10 @@ export default function About() {
         <div className="flex flex-col max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-2">
           <h2 className="text-3xl font-bold mb-4">Para organizadores</h2>
           <p className="text-gray-800 text-md ">
-            Nossa plataforma foi criada para simplificar a venda de ingressos,
-            garantindo uma experiência rápida, segura e eficiente para você e
-            seu público.
+            Nossa plataforma foi criada pensando em você, organizador! Com
+            ferramentas completas para gerenciamento de ingressos, divulgação e
+            controle de acesso, facilitamos cada etapa do seu evento, do início
+            ao fim.
           </p>
           <p className="text-gray-500 text-md">
             Venda sem complicação, controle total, segurança garantida e alcance
@@ -170,11 +170,9 @@ export default function About() {
               unoptimized
             />
             <div className="relative p-4 w-[50vw] text-center text-gray-900 border border-black rounded-xl backdrop-blur-sm ">
-              <h1>Lorem ipsum dolor</h1>
               <p>
-                Lorem ipsum dolor sit amet. Non dolores suscipit est
-                necessitatibus minima sed quis eligendi ut optio totam ut
-                similique enim.
+                "Acreditamos no esporte como agente de transformação. Nossa
+                tecnologia é o alicerce que conecta sonhos a realizações."
               </p>
             </div>
           </div>
@@ -223,7 +221,7 @@ export default function About() {
       <section className="py-16 bg-black/80 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-6">
-            Faça parte da maior plataforma de eventos do Brasil
+            Faça parte da melhor plataforma de eventos do Brasil
           </h2>
           <p className="mb-8 text-gray-300">
             Junte-se a mais de 500 empresas que já estão crescendo conosco
