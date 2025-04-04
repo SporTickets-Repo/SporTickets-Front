@@ -10,6 +10,7 @@ import { toPng } from "html-to-image";
 import { CalendarIcon, Download } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { QRCodeSVG } from "qrcode.react";
 import { useRef } from "react";
 
 interface TicketModalProps {
@@ -46,7 +47,7 @@ export function TicketModal({ isOpen, onClose, ticket }: TicketModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-hidden flex flex-col p-0 border-0 rounded-xl">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-auto flex flex-col p-0 border-0 rounded-xl">
         <div ref={ticketRef}>
           <div className="bg-sporticket-green-300 text-white px-4 py-3 relative">
             <DialogTitle className="text-center">
@@ -63,13 +64,8 @@ export function TicketModal({ isOpen, onClose, ticket }: TicketModalProps) {
 
           <div className="overflow-y-auto px-6 py-4 flex-1 bg-white">
             {ticket.codeBase64 && (
-              <div className="bg-gray-100 p-4 rounded-lg mb-4 w-full max-w-[200px]">
-                <Image
-                  src={`data:image/png;base64,${ticket.codeBase64}`}
-                  alt="QR Code"
-                  width={200}
-                  height={200}
-                />
+              <div className="flex flex-1 justify-center mb-4">
+                <QRCodeSVG value={ticket.code} size={200} />
               </div>
             )}
 
