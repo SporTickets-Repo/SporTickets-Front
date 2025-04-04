@@ -11,26 +11,39 @@ import { TransactionSummary } from "@/components/pages/checkout/payment/Transact
 import { Transaction, TransactionStatus } from "@/interface/transaction";
 import { transactionService } from "@/service/transaction";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function TransactionPage() {
   const { transactionId } = useParams<{ transactionId: string }>();
   const [transaction, setTransaction] = useState<Transaction | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  const fetchTransaction = async () => {
+  const fetchTransaction = async (isInitial = false) => {
     try {
-      setLoading(true);
+      if (isInitial) setInitialLoading(true);
+
       const res = await transactionService.getTransactionById(transactionId);
       setTransaction(res);
+
+      if (!isInitial) {
+        if (res.status === TransactionStatus.APPROVED) {
+          toast.success("Pagamento aprovado com sucesso!");
+        } else {
+          toast.error(
+            "Pagamento ainda foi não confirmado. Aguarde um instante ou entre em contato com suporte."
+          );
+        }
+      }
     } catch (err) {
       console.error("Erro ao buscar transação", err);
+      toast.error("Erro ao buscar transação. Tente novamente mais tarde.");
     } finally {
-      setLoading(false);
+      if (isInitial) setInitialLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchTransaction();
+    fetchTransaction(true);
   }, [transactionId]);
 
   useEffect(() => {
@@ -47,7 +60,7 @@ export default function TransactionPage() {
     }
   }, [transaction?.status]);
 
-  if (loading) {
+  if (initialLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="animate-spin h-8 w-8 text-zinc-500" />

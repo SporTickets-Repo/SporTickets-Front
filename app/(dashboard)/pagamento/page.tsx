@@ -28,6 +28,7 @@ export default function PaymentPage() {
   const [couponDialogOpen, setCouponDialogOpen] = useState(false);
   const [paymentMethodDialogOpen, setPaymentMethodDialogOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!selectedTickets || selectedTickets.length === 0) {
@@ -104,6 +105,15 @@ export default function PaymentPage() {
       return false;
     }
   });
+
+  const handleSubmitCheckout = async () => {
+    try {
+      setSubmitting(true);
+      await submitCheckout();
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen container-sm">
@@ -243,14 +253,27 @@ export default function PaymentPage() {
 
             <div>
               <Button
-                onClick={submitCheckout}
+                onClick={handleSubmitCheckout}
                 variant="destructive"
                 className="w-full mt-10"
-                disabled={!formCompleted}
+                disabled={!formCompleted || submitting}
               >
-                Realizar inscrição
-                <ArrowRight size={16} className="text-white ml-2" />
+                {submitting ? (
+                  <>
+                    Processando...
+                    <ArrowRight
+                      size={16}
+                      className="text-white ml-2 animate-spin"
+                    />
+                  </>
+                ) : (
+                  <>
+                    Realizar inscrição
+                    <ArrowRight size={16} className="text-white ml-2" />
+                  </>
+                )}
               </Button>
+
               <p className="text-sm text-center text-muted-foreground mt-4">
                 Ao comprar você concorda com nossos{" "}
                 <a href="#" className="underline">
