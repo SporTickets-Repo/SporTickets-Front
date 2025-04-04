@@ -1,5 +1,7 @@
 "use client";
 
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { rankingService } from "@/service/ranking";
 import Link from "next/link";
@@ -23,41 +25,45 @@ export default function RankingPage() {
     fetchRankingUrl();
   }, [id]);
 
-  if (0) {
-    return (
-      <div className="flex-1 flex flex-col min-h-[calc(80vh_-_81px)] overflow-x-hidden container justify-center items-center text-center gap-4">
-        <h2 className="text-sporticket-purple text-4xl font-bold">
-          Desculpe mas não conseguimos encontrar o ranking
-        </h2>
-        <p className="text-lg">
-          É possível que esse ranking está sendo atualizado
-        </p>
-        <Link href="/">
-          <Button>Voltar para a página inicial</Button>
-        </Link>
-      </div>
-    );
-  }
-
   return (
-    <div className="container pb-4">
-      <div
-        className="rounded-lg overflow-hidden border h-[80vh]"
-        style={{
-          WebkitOverflowScrolling: "touch",
-          overscrollBehavior: "contain",
-          touchAction: "pan-y",
-        }}
-      >
-        <iframe
-          src={"https://challonge.com/pt/951bs87n/module"}
-          title="Ranking"
-          width="100%"
-          height="100%"
-          className="w-full h-full  border-0"
-          allowFullScreen
-        />
+    <>
+      <Header logoImage="/assets/logos/Logo-Horizontal-para-fundo-Branco.png" />
+      <div className="flex-1 flex flex-col min-h-[calc(100vh_-_81px)] overflow-x-hidden pt-[100px]">
+        <div className="container pb-4">
+          {url === null || !url.includes("http") ? (
+            <div className="flex-1 flex flex-col min-h-[calc(80vh_-_81px)] overflow-x-hidden container justify-center items-center text-center gap-4">
+              <h2 className="text-sporticket-purple text-4xl font-bold">
+                Desculpe mas não conseguimos encontrar o ranking
+              </h2>
+              <p className="text-lg">
+                É possível que esse ranking está sendo atualizado
+              </p>
+              <Link href="/">
+                <Button>Voltar para a página inicial</Button>
+              </Link>
+            </div>
+          ) : (
+            <div
+              className="rounded-lg overflow-hidden border h-[80vh]"
+              style={{
+                WebkitOverflowScrolling: "touch",
+                overscrollBehavior: "contain",
+                touchAction: "pan-y",
+              }}
+            >
+              <iframe
+                src={url}
+                title="Ranking"
+                width="100%"
+                height="100%"
+                className="w-full h-full  border-0"
+                allowFullScreen
+              />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }

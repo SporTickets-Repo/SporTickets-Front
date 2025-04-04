@@ -23,23 +23,6 @@ export default function BracketPage() {
     fetchBracketUrl();
   }, [id]);
 
-  if (!url) {
-    return (
-      <div className="flex-1 flex flex-col min-h-[calc(80vh_-_81px)] overflow-x-hidden container justify-center items-center text-center gap-4">
-        <h2 className="text-sporticket-purple text-4xl font-bold">
-          Desculpe mas não conseguimos encontrar o chaveamento
-        </h2>
-        <p className="text-lg">
-          É possível que esse chaveamento está sendo atualizado ou ainda não
-          está disponível
-        </p>
-        <Link href="/">
-          <Button>Voltar para a página inicial</Button>
-        </Link>
-      </div>
-    );
-  }
-
   return (
     <div className="container pb-4">
       <div
@@ -50,14 +33,29 @@ export default function BracketPage() {
           touchAction: "pan-y",
         }}
       >
-        <iframe
-          src={"https://challonge.com/pt/951bs87n/module"}
-          title="Chaveamento"
-          width="100%"
-          height="100%"
-          className="w-full h-full border-0"
-          allowFullScreen
-        />
+        {url === null || !url.includes("http") ? (
+          <div>
+            <h2 className="text-sporticket-purple text-4xl font-bold">
+              Desculpe mas não conseguimos encontrar o chaveamento
+            </h2>
+            <p className="text-lg">
+              É possível que esse chaveamento está sendo atualizado ou ainda não
+              está disponível
+            </p>
+            <Link href="/">
+              <Button>Voltar para a página inicial</Button>
+            </Link>
+          </div>
+        ) : (
+          <iframe
+            src={url}
+            title="Chaveamento"
+            width="100%"
+            height="100%"
+            className="w-full h-full border-0"
+            allowFullScreen
+          />
+        )}
       </div>
     </div>
   );
