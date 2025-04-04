@@ -99,6 +99,8 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
     setValue("email", email);
   }, [email]);
 
+  const isLoading = isSubmitting || success;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
       <div className="w-full space-y-4">
@@ -200,8 +202,12 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
           password
         />
 
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? "Cadastrando..." : "Cadastrar"}
+        <Button type="submit" disabled={isLoading} className="w-full">
+          {isSubmitting
+            ? "Cadastrando..."
+            : success
+            ? "Redirecionando..."
+            : "Cadastrar"}
           <ArrowRight className="ml-1" />
         </Button>
       </div>
