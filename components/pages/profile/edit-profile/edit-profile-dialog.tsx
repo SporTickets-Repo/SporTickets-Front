@@ -36,6 +36,7 @@ import { userService } from "@/service/user";
 import { formatCEP, formatCPF, formatPhone } from "@/utils/format";
 import { Plus } from "lucide-react";
 import Image from "next/image";
+import { HiMiniPencilSquare } from "react-icons/hi2";
 import { toast } from "sonner";
 
 const profileSchema = z.object({
@@ -160,7 +161,10 @@ export function EditProfileDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default-inverse">Editar Perfil</Button>
+        <Button variant="default-inverse" className="[&_svg]:size-5 h-10 px-3">
+          Editar Perfil
+          <HiMiniPencilSquare />
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-auto">
         <Form {...form}>

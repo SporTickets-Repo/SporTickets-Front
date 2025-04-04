@@ -34,7 +34,7 @@ export function MyTicketsList() {
     );
   }
 
-  if (!myTickets) {
+  if (!myTickets || myTickets.length === 0) {
     return (
       <div className="text-center py-20 text-zinc-600">
         Você não possui ingressos.
