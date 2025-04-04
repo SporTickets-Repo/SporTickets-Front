@@ -17,7 +17,11 @@ import React, {
 interface AuthContextProps {
   user: UserProfile | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    redirect: string | null | undefined
+  ) => Promise<void>;
   logout: () => void;
   registration: (userData: RegisterBody) => Promise<void>;
   fetchUser: () => Promise<void>;
@@ -53,7 +57,11 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (
+    email: string,
+    password: string,
+    redirect?: string | null | undefined
+  ) => {
     try {
       const response = await authService.login(email, password);
 
@@ -64,9 +72,6 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
       setToken(response.access_token);
 
       await fetchUser();
-
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get("redirect");
 
       router.push(redirect || "/");
     } catch (error) {
