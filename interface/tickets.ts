@@ -23,6 +23,7 @@ export interface TicketLot {
   name: string;
   price: string;
   quantity: number;
+  soldQuantity: number;
   startDate: string;
   endDate: string;
   isActive: boolean;

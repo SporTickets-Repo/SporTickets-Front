@@ -39,17 +39,28 @@ export default function RegistrationSummary({
           const teamPrice = individualPrice * ticket.teamSize;
           const totalTicketPrice = teamPrice * quantity;
 
+          const availableQuantity = Math.max(
+            activeLot.quantity - activeLot.soldQuantity,
+            0
+          );
+
+          const isSoldOut = availableQuantity === 0;
+
           return (
             <div
               key={ticket.id}
               className={`flex items-center justify-between bg-zinc-100 mb-3 p-4 rounded-lg ${
-                activeLot.quantity === 0 && "opacity-50 pointer-events-none"
+                isSoldOut && "opacity-50 pointer-events-none"
               }`}
             >
               <div>
                 <h3 className="font-medium">{ticket.name}</h3>
                 <p className="text-xs text-gray-500">
-                  Resta {activeLot.quantity} vagas
+                  {isSoldOut
+                    ? "Esgotado"
+                    : `Restam ${availableQuantity} vaga${
+                        availableQuantity > 1 ? "s" : ""
+                      }`}
                 </p>
                 <span className="block text-sm text-sporticket-green-700">
                   Valor por equipe ({ticket.teamSize} pessoas):{" "}
@@ -66,7 +77,7 @@ export default function RegistrationSummary({
                   </span>
                 )}
               </div>
-              {activeLot.quantity > 0 ? (
+              {!isSoldOut ? (
                 <div className="flex items-center gap-2">
                   <div className="flex items-center">
                     <Button
@@ -82,7 +93,11 @@ export default function RegistrationSummary({
                       variant="select"
                       size="icon"
                       className="h-6 w-6 rounded"
-                      onClick={() => addTicket(ticket.id)}
+                      onClick={() => {
+                        if (quantity < availableQuantity) {
+                          addTicket(ticket.id);
+                        }
+                      }}
                     >
                       <Plus />
                     </Button>

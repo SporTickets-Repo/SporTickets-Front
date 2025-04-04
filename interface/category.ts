@@ -6,5 +6,6 @@ export interface Category {
   title: string;
   restriction: Restriction;
   quantity: number;
+  soldQuantity: number;
   deletedAt?: string | null;
 }
