@@ -33,6 +33,20 @@ export default function TransactionPage() {
     fetchTransaction();
   }, [transactionId]);
 
+  useEffect(() => {
+    if (
+      transaction?.status === TransactionStatus.PENDING ||
+      transaction?.status === TransactionStatus.IN_PROCESS ||
+      transaction?.status === TransactionStatus.AUTHORIZED
+    ) {
+      const intervalId = setInterval(() => {
+        fetchTransaction();
+      }, 15000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [transaction?.status]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
