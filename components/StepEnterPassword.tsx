@@ -6,7 +6,6 @@ import { passwordSchema } from "@/utils/validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
@@ -24,9 +23,6 @@ type FormData = {
 
 const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
   const { login } = useAuth();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect");
-
   const {
     register,
     handleSubmit,
@@ -39,7 +35,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await login(data.email, data.password, redirect);
+      await login(data.email, data.password);
     } catch (error: any) {
       setError("password", {
         type: "manual",
