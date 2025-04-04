@@ -7,6 +7,8 @@ import { eventService } from "@/service/event";
 import { Loader2, SaveIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { toast } from "sonner";
+import { mutate } from "swr";
 
 export function TaxesTab() {
   const { register, watch, setValue } = useFormContext();
@@ -29,8 +31,11 @@ export function TaxesTab() {
 
       const normalizedFee = feePercentage / 100;
       await eventService.eventFee(eventId as string, normalizedFee);
+      toast.success("Taxa de ingressos salva com sucesso!");
+      await mutate(`/events/${eventId}`);
     } catch (error) {
       console.error("Error saving ticket fee:", error);
+      toast.error("Erro ao salvar a taxa de ingressos. Tente novamente.");
     } finally {
       setIsSaving(false);
     }
