@@ -63,9 +63,11 @@ export default function RegistrationSummary({
                       }`}
                 </p>
                 <span className="block text-sm text-sporticket-green-700">
-                  Valor por equipe ({ticket.teamSize} pessoas):{" "}
+                  Valor por equipe ({ticket.teamSize}{" "}
+                  {ticket.teamSize > 1 ? "pessoas" : "pessoa"}):{" "}
                   <strong>R$ {teamPrice.toFixed(2)}</strong>
                 </span>
+
                 <div className="flex items-center text-xs text-gray-500">
                   <span>Valor por pessoa:</span>
                   <span className="ml-1">R$ {individualPrice.toFixed(2)}</span>

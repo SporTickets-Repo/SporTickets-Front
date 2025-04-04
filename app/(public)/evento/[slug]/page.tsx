@@ -84,7 +84,36 @@ export default function EventPage() {
                   {translateEventStatus(event.status) || "ABERTO"}
                 </span>
                 <span className="mx-1">•</span>
-                <span className="">{"Vagas não informadas"}</span>
+                {(() => {
+                  const totalAvailable = event.ticketTypes.reduce(
+                    (acc, ticket) => {
+                      const activeLot = ticket.ticketLots.find(
+                        (lot) => lot.isActive
+                      );
+                      if (!activeLot) return acc;
+                      return (
+                        acc +
+                        Math.max(activeLot.quantity - activeLot.soldQuantity, 0)
+                      );
+                    },
+                    0
+                  );
+
+                  if (totalAvailable === 0) {
+                    return (
+                      <span className="text-sporticket-orange-500 font-medium">
+                        ESGOTADO
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <span className="">
+                      {totalAvailable} vaga{totalAvailable > 1 ? "s" : ""}{" "}
+                      disponíveis
+                    </span>
+                  );
+                })()}
               </div>
             </div>
 
