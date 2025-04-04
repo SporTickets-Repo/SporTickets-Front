@@ -63,10 +63,12 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
       });
       setToken(response.access_token);
 
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get("redirect");
+      await fetchUser();
 
-      router.push(redirect || "/");
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect") || "/";
+
+      router.push(redirect);
       router.refresh();
     } catch (error) {
       throw error;
