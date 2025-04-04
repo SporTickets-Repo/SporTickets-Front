@@ -6,17 +6,9 @@ import { UserProfile } from "@/components/pages/profile/user-profile";
 import { useAuth } from "@/context/auth";
 import { UserRole } from "@/interface/user";
 import Image from "next/image";
-import { useState } from "react";
 
 export default function UserPage() {
   const { user } = useAuth();
-  const [profileImageUrl] = useState(
-    user?.profileImageUrl || "/assets/icons/default-profile.png"
-  );
-
-  const [bannerImageUrl] = useState(
-    user?.profileImageUrl || "/assets/icons/default-banner.png"
-  );
 
   const isOrganizer =
     user?.role === UserRole.PARTNER ||
@@ -28,11 +20,11 @@ export default function UserPage() {
       {/* Header Image */}
       <div className="relative h-40 md:h-80 w-full rounded-3xl">
         <Image
-          src={bannerImageUrl}
+          src={user?.profileImageUrl || "/assets/icons/default-banner.png"}
           alt="Cover"
           fill
           className={`rounded-3xl bg-gray-500/30 ${
-            !bannerImageUrl ? "object-contain" : "object-cover"
+            user?.profileImageUrl ? "object-contain" : "object-cover"
           }`}
           unoptimized
         />
@@ -40,7 +32,7 @@ export default function UserPage() {
         {/* Profile Image and Edit Button */}
         <div className="absolute -bottom-32 md:-bottom-52 left-1/2 transform -translate-y-1/2 -translate-x-1/2 md:left-48 flex items-end">
           <Image
-            src={profileImageUrl}
+            src={user?.profileImageUrl || "/assets/icons/default-profile.png"}
             alt={user?.name || "Profile"}
             width={120}
             height={120}
