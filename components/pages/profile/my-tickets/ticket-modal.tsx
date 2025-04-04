@@ -63,7 +63,7 @@ export function TicketModal({ isOpen, onClose, ticket }: TicketModalProps) {
           </div>
 
           <div className="overflow-y-auto px-6 py-4 flex-1 bg-white">
-            {ticket.codeBase64 && (
+            {ticket.code && (
               <div className="flex flex-1 justify-center mb-4">
                 <QRCodeSVG value={ticket.code} size={200} />
               </div>

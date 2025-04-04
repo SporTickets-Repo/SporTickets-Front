@@ -12,7 +12,6 @@ export interface MyTicket {
   code: string;
   createdAt: string;
   updatedAt: string;
-  codeBase64: string;
   transaction: {
     id: string;
     status: TransactionStatus;
