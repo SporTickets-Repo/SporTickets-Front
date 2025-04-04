@@ -96,7 +96,8 @@ export default function PaymentPage() {
           player.personalizedField?.length ===
           ticket.ticketType.personalizedFields?.length
       ) &&
-      players.every((player) => player.category.id !== "")
+      players.every((player) => player.category.id !== "") &&
+      ticket.paymentData?.paymentMethod
     ) {
       return true;
     } else {
