@@ -66,9 +66,8 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
       const params = new URLSearchParams(window.location.search);
       const redirect = params.get("redirect");
 
-      router.refresh();
-
       router.push(redirect || "/");
+      router.refresh();
     } catch (error) {
       throw error;
     }
