@@ -41,6 +41,7 @@ export function SearchStep({
 }: Props) {
   const { user } = useAuth();
   const [customError, setCustomError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof emailFormSchema>>({
     resolver: zodResolver(emailFormSchema),
@@ -58,6 +59,7 @@ export function SearchStep({
 
   const handleFound = async (email: string) => {
     try {
+      setLoading(true);
       const response = await userService.getUserByEmail(email);
       const isDuplicated = currentTicket.players.some(
         (p) => p.userId === response.userId
@@ -69,14 +71,21 @@ export function SearchStep({
       onFound(response);
     } catch {
       onNotFound(email);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <Button onClick={handleAddMe} className="w-full" type="button">
-          Adicionar meu usuário
+        <Button
+          onClick={handleAddMe}
+          className="w-full"
+          type="button"
+          disabled={loading}
+        >
+          {loading ? "Carregando..." : "Adicionar meu usuário"}
         </Button>
         <FormField
           control={form.control}
@@ -97,10 +106,12 @@ export function SearchStep({
           )}
         />
         <div className="flex justify-end space-x-2">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={loading}>
             Cancelar
           </Button>
-          <Button type="submit">Buscar</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Carregando..." : "Adicionar"}
+          </Button>
         </div>
       </form>
     </Form>
