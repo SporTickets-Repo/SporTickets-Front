@@ -17,10 +17,8 @@ export function Footer() {
               className="h-12 w-auto"
             />
             <p className="text-sm md:text-md text-muted-foreground">
-              Lorem ipsum dolor sit amet. Non dolores suscipit est
-              necessitatibus minima sed quis eligendi ut optio totam ut
-              similique enim. Eos iure totam non repudiandae iure vel quis
-              dolores
+              Venda de ingressos e gestão de eventos esportivos em um só lugar.
+              Simples, rápido e feito para quem vive o esporte.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -40,10 +38,10 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="/contato"
+                    href="https://wa.me/5561998604155"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
-                    Contato
+                    WhatsApp
                   </Link>
                 </li>
                 <li>
@@ -73,10 +71,10 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="https://wa.me/5561998604155"
+                    href="https://www.linkedin.com/company/sportickets"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
-                    Telefone
+                    LinkedIn
                   </Link>
                 </li>
               </ul>
