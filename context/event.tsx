@@ -24,6 +24,7 @@ interface EventContextProps {
   addTicket: (ticketTypeId: string) => void;
   removeTicket: (ticketTypeId: string) => void;
   submitCheckout: () => Promise<void>;
+  isHydrated: boolean;
 }
 
 const EventContext = createContext<EventContextProps>({
@@ -36,17 +37,55 @@ const EventContext = createContext<EventContextProps>({
   addTicket: () => {},
   removeTicket: () => {},
   submitCheckout: async () => {},
+  isHydrated: false,
 });
 
 export const useEvent = () => useContext(EventContext);
 
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter(); // Hook de navegação
+  const router = useRouter();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [slug, setSlug] = useState<string>("");
   const [selectedTickets, setSelectedTickets] = useState<TicketForm[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    const storedSlug = localStorage.getItem("eventSlug");
+    const storedTickets = localStorage.getItem("selectedTickets");
+
+    if (storedSlug) {
+      setSlug(storedSlug);
+    }
+
+    if (storedTickets) {
+      try {
+        const parsedTickets: TicketForm[] = JSON.parse(storedTickets);
+        setSelectedTickets(parsedTickets);
+      } catch (e) {
+        console.error("Erro ao restaurar ingressos do localStorage:", e);
+      }
+    }
+
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (slug) {
+      localStorage.setItem("eventSlug", slug);
+    } else {
+      localStorage.removeItem("eventSlug");
+    }
+  }, [slug]);
+
+  useEffect(() => {
+    if (selectedTickets.length > 0) {
+      localStorage.setItem("selectedTickets", JSON.stringify(selectedTickets));
+    } else {
+      localStorage.removeItem("selectedTickets");
+    }
+  }, [selectedTickets]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -54,12 +93,10 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       setError(null);
       try {
         const eventData = await eventService.getEventBySlug(slug);
-        if (event?.slug !== eventData.slug) {
-          setSelectedTickets([]);
-        }
         setEvent(eventData);
       } catch (err) {
         setError("Erro ao carregar evento.");
+        console.error("Erro ao carregar evento:", err);
       } finally {
         setLoading(false);
       }
@@ -126,6 +163,8 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const response = await checkoutService.checkout(payload);
       const transactionId = response.transactionId;
+      localStorage.removeItem("selectedTickets");
+      localStorage.removeItem("eventSlug");
       router.push(`/pagamento/${transactionId}`);
     } catch (err) {
       console.error("Erro ao enviar checkout:", err);
@@ -147,6 +186,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
         addTicket,
         removeTicket,
         submitCheckout,
+        isHydrated,
       }}
     >
       {children}
