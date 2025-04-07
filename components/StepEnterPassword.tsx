@@ -6,7 +6,7 @@ import { passwordSchema } from "@/utils/validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -23,6 +23,7 @@ type FormData = {
 
 const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
   const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -35,7 +36,9 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
 
   const onSubmit = async (data: FormData) => {
     try {
+      setIsLoading(true);
       await login(data.email, data.password);
+      setIsLoading(false);
     } catch (error) {
       setError("password", {
         type: "manual",
@@ -104,7 +107,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
             "w-full h-12 text-base font-normal justify-center px-4"
           )}
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isLoading}
         >
           Continuar
           <ArrowRight className="ml-1 text-cyan-400" />
