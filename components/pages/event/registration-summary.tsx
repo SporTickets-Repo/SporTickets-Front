@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useEvent } from "@/context/event";
 import { TicketType } from "@/interface/tickets";
 import { ArrowRight, Minus, Plus } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface RegistrationSummaryProps {
   ticketTypes: TicketType[];
@@ -14,6 +14,7 @@ export default function RegistrationSummary({
   ticketTypes,
 }: RegistrationSummaryProps) {
   const { addTicket, removeTicket, selectedTickets } = useEvent();
+  const router = useRouter();
 
   const getQuantity = (ticketTypeId: string) => {
     return selectedTickets.filter((t) => t.ticketType.id === ticketTypeId)
@@ -25,6 +26,11 @@ export default function RegistrationSummary({
       acc + parseFloat(ticket.ticketLot.price) * ticket.ticketType.teamSize
     );
   }, 0);
+
+  const handleSubmit = () => {
+    if (total === 0) return;
+    router.push("/pagamento");
+  };
 
   return (
     <div className="overflow-hidden mb-5">
@@ -120,16 +126,15 @@ export default function RegistrationSummary({
           <span className="font-light">Total</span>
           <span className="text-lg font-bold">R$ {total.toFixed(2)}</span>
         </div>
-        <Link href={`/pagamento`}>
-          <Button
-            className="w-full"
-            variant="destructive"
-            disabled={total === 0}
-          >
-            Realizar Inscrição
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </Link>
+        <Button
+          className="w-full"
+          variant="destructive"
+          disabled={total === 0}
+          onClick={handleSubmit}
+        >
+          Realizar Inscrição
+          <ArrowRight className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
