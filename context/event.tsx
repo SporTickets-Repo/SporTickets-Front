@@ -62,10 +62,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     if (storedTickets) {
       try {
         const parsedTickets: TicketForm[] = JSON.parse(storedTickets);
-        if (
-          parsedTickets.length > 0 ||
-          parsedTickets[0].ticketType.eventId == event?.id
-        ) {
+        if (parsedTickets.length > 0) {
           setSelectedTickets(parsedTickets);
         }
       } catch (e) {
@@ -74,7 +71,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     setIsHydrated(true);
-  }, [event]);
+  }, []);
 
   useEffect(() => {
     if (selectedTickets.length > 0) {
@@ -88,8 +85,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       setError(null);
       try {
         const eventData = await eventService.getEventBySlug(slug);
-
-        if (event?.slug !== eventData.slug) {
+        if (eventData.slug !== selectedTickets[0]?.slug) {
           setSelectedTickets([]);
           localStorage.removeItem("selectedTickets");
         }
@@ -127,6 +123,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
         players: [] as Player[],
         coupon: {} as Coupon,
         paymentData: {} as PaymentData,
+        slug: slug,
       };
 
       return [...prev, newTicket];

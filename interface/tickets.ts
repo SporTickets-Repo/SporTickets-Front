@@ -62,6 +62,7 @@ export interface TicketForm {
   players: Player[];
   coupon: Coupon;
   paymentData: PaymentData;
+  slug: string;
 }
 
 export interface Player {

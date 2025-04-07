@@ -32,7 +32,7 @@ export default function PaymentPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!isHydrated) return; // espera hidratar
+    if (!isHydrated) return;
 
     if (!selectedTickets || selectedTickets.length === 0) {
       router.push(event?.slug ? `/evento/${event?.slug}` : "/");
