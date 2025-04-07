@@ -93,6 +93,10 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       setError(null);
       try {
         const eventData = await eventService.getEventBySlug(slug);
+        if (event?.slug !== eventData.slug) {
+          setSelectedTickets([]);
+        }
+
         setEvent(eventData);
       } catch (err) {
         setError("Erro ao carregar evento.");
