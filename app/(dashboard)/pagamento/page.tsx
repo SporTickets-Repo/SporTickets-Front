@@ -20,7 +20,8 @@ import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function PaymentPage() {
-  const { selectedTickets, submitCheckout, event } = useEvent();
+  const { selectedTickets, submitCheckout, event, isHydrated } = useEvent();
+
   const router = useRouter();
 
   const [currentTicket, setCurrentTicket] = useState<TicketForm | null>(null);
@@ -31,9 +32,10 @@ export default function PaymentPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!isHydrated) return;
+
     if (!selectedTickets || selectedTickets.length === 0) {
       router.push(event?.slug ? `/evento/${event?.slug}` : "/");
-      return;
     } else {
       setCurrentTicket((prev) => {
         return (
@@ -42,7 +44,7 @@ export default function PaymentPage() {
         );
       });
     }
-  }, [selectedTickets]);
+  }, [isHydrated, selectedTickets]);
 
   const handleSelectTicket = (ticket: TicketForm) => {
     setCurrentTicket(ticket);

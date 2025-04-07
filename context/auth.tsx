@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import React, {
   createContext,
   FC,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -41,35 +42,29 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const storedToken = Cookies.get("token");
-    const storedUser = Cookies.get("user");
-
-    if (storedToken) {
-      setToken(storedToken);
-    }
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
   const login = async (email: string, password: string) => {
     try {
       const response = await authService.login(email, password);
 
       Cookies.set("token", response.access_token, {
         expires: cookiesExpirationDays,
-        secure: true,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
       });
+
       setToken(response.access_token);
 
       await fetchUser();
 
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get("redirect") || "/";
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
-      router.push(redirect);
-      router.refresh();
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect");
+      const safeRedirect = redirect?.startsWith("/") ? redirect : "/";
+
+      console.log("Redirecionando para:", redirect);
+
+      window.location.href = safeRedirect;
     } catch (error) {
       throw error;
     }
@@ -83,42 +78,65 @@ const AuthProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   };
 
-  const fetchUser = async () => {
+  const logout = useCallback(
+    (returnHome: boolean = true) => {
+      Cookies.remove("token");
+      Cookies.remove("user");
+
+      setToken(null);
+      setUser(null);
+
+      if (returnHome) {
+        router.push("/");
+      }
+    },
+    [router]
+  );
+
+  const fetchUser = useCallback(async () => {
     const storedToken = Cookies.get("token");
     if (!storedToken) return;
 
     try {
       const response = await userService.getMe();
 
-      Cookies.set("user", JSON.stringify(response), {
+      Cookies.set("user", encodeURIComponent(JSON.stringify(response)), {
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
         expires: cookiesExpirationDays,
-        secure: true,
       });
+
       setUser(response);
     } catch (error) {
       logout(false);
       throw error;
     }
-  };
-
-  const logout = (returnHome: boolean = true) => {
-    Cookies.remove("token");
-    Cookies.remove("user");
-
-    setToken(null);
-    setUser(null);
-
-    if (returnHome) {
-      router.push("/");
-    }
-  };
+  }, [logout]);
 
   useEffect(() => {
     if (token) {
       fetchUser();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [fetchUser, token]);
+
+  useEffect(() => {
+    const storedToken = Cookies.get("token");
+    const storedUser = Cookies.get("user");
+
+    if (storedToken) {
+      setToken(storedToken);
+    }
+
+    if (storedUser) {
+      try {
+        const decoded = decodeURIComponent(storedUser);
+        setUser(JSON.parse(decoded));
+      } catch (err) {
+        console.error("Erro ao ler cookie 'user':", err);
+        Cookies.remove("user");
+      }
+    }
+  }, []);
 
   return (
     <AuthContext.Provider
