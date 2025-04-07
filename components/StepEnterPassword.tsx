@@ -36,11 +36,12 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
   const onSubmit = async (data: FormData) => {
     try {
       await login(data.email, data.password);
-    } catch (error: any) {
+    } catch (error) {
       setError("password", {
         type: "manual",
         message: "E-mail ou senha inválidos",
       });
+      console.error("Error logging in:", error);
     }
   };
 

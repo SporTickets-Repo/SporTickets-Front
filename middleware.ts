@@ -4,19 +4,20 @@ const privateRoutes = ["/perfil", "/evento/criar", "/pagamento"];
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value || null;
-  const user = req.cookies.get("user")?.value || null;
+  const { pathname, searchParams } = req.nextUrl;
 
-  const { pathname } = req.nextUrl;
+  if (pathname === "/entrar" && token) {
+    const redirect = searchParams.get("redirect") || "/";
+    return NextResponse.redirect(new URL(redirect, req.url));
+  }
 
   const isPrivateRoute = privateRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  if (isPrivateRoute && (!token || !user)) {
+  if (isPrivateRoute && !token) {
     const loginUrl = new URL("/entrar", req.url);
-
     loginUrl.searchParams.set("redirect", pathname);
-
     return NextResponse.redirect(loginUrl);
   }
 
