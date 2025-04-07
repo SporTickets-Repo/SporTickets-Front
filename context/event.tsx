@@ -62,28 +62,23 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     if (storedTickets) {
       try {
         const parsedTickets: TicketForm[] = JSON.parse(storedTickets);
-        setSelectedTickets(parsedTickets);
+        if (
+          parsedTickets.length > 0 ||
+          parsedTickets[0].ticketType.eventId == event?.id
+        ) {
+          setSelectedTickets(parsedTickets);
+        }
       } catch (e) {
         console.error("Erro ao restaurar ingressos do localStorage:", e);
       }
     }
 
     setIsHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (slug) {
-      localStorage.setItem("eventSlug", slug);
-    } else {
-      localStorage.removeItem("eventSlug");
-    }
-  }, [slug]);
+  }, [event]);
 
   useEffect(() => {
     if (selectedTickets.length > 0) {
       localStorage.setItem("selectedTickets", JSON.stringify(selectedTickets));
-    } else {
-      localStorage.removeItem("selectedTickets");
     }
   }, [selectedTickets]);
 
@@ -93,8 +88,14 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       setError(null);
       try {
         const eventData = await eventService.getEventBySlug(slug);
+
         if (event?.slug !== eventData.slug) {
           setSelectedTickets([]);
+          localStorage.removeItem("selectedTickets");
+        }
+
+        if (eventData.slug) {
+          localStorage.setItem("eventSlug", eventData?.slug);
         }
 
         setEvent(eventData);
