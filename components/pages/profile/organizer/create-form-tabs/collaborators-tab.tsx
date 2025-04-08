@@ -136,7 +136,7 @@ export function CollaboratorsTab() {
     setIsSaving(true);
     try {
       await dashboardService.assignList({
-        userIds: collaborators.map((c) => c.id),
+        userIds: collaborators.map((c) => c.userId),
         eventId,
       });
       toast.success("Colaboradores atualizados com sucesso!");
