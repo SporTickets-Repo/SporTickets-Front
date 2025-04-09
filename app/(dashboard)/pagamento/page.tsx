@@ -138,8 +138,8 @@ export default function PaymentPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 ">
-        <div className="space-y-2 md:order-2">
+      <div className="flex flex-1 flex-col-reverse md:flex-row gap-10 py-10 md:py-0">
+        <div className="space-y-2 w-full md:w-1/2 md:order-2">
           <EventHeader />
 
           <div className="p-3 bg-zinc-50 rounded-lg">
@@ -218,7 +218,7 @@ export default function PaymentPage() {
                 <hr className="border-zinc-300" />
 
                 <div className="flex justify-between items-center">
-                  <p className="text-zinc-800/80">Taxa do Evento</p>
+                  <p className="text-zinc-800/80">Taxa da plataforma</p>
                   <p className="text-sporticket-green-700 font-semibold">
                     {feeAmount === 0 ? "Gratuito" : formatMoneyBR(feeAmount)}
                   </p>
@@ -295,7 +295,7 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        <div className="w-full md:order-1">
+        <div className="w-full md:w-1/2 md:order-1">
           {currentTicket?.players?.length === 0 ? (
             <PlayersEmptyList onAddPlayer={() => setPlayerFormOpen(true)} />
           ) : (
