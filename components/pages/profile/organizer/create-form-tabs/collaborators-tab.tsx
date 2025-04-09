@@ -104,6 +104,14 @@ export function CollaboratorsTab() {
 
   const handleConfirmCollaborator = () => {
     if (foundCollaborator) {
+      const alreadyAdded = collaborators.some(
+        (collab) => collab.userId === foundCollaborator.id
+      );
+      if (alreadyAdded) {
+        toast.error("Colaborador já adicionado.");
+        return;
+      }
+
       if (eventId) {
         setCollaborators((prev) => [
           ...prev,
@@ -281,7 +289,7 @@ export function CollaboratorsTab() {
       <div className="flex justify-end pt-4">
         <Button type="button" onClick={handleSave} disabled={isSaving}>
           {isSaving && (
-            <Loader2 className="animate-spin self-center w-4 h-4 mr-2" />
+            <Loader2 className="animate-spin h-8 w-8 text-zinc-500 mr-2" />
           )}
           Salvar alterações
         </Button>
