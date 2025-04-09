@@ -12,7 +12,7 @@ import { Input } from "./ui/input";
 import { useAuth } from "@/context/auth";
 import { RegisterBody } from "@/interface/auth";
 import { cn } from "@/lib/utils";
-import { formatCEP, formatCPF, formatPhone } from "@/utils/format";
+import { clearMask, formatCEP, formatCPF, formatPhone } from "@/utils/format";
 import { DatePicker } from "./ui/datePicker";
 import PasswordStrengthMeter from "./ui/passwordStrengthMeter";
 import { SelectItem } from "./ui/select";
@@ -57,14 +57,14 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
   const onSubmit = async (data: FormData) => {
     const body = {
       name: data.name,
-      document: data.document,
+      document: clearMask(data.document),
       email: data.email,
       password: data.password,
       confirmPassword: data.confirmPassword,
       bornAt: data.bornAt.toISOString(),
-      cep: data.cep,
+      cep: clearMask(data.cep),
       sex: data.sex,
-      phone: data.phone,
+      phone: clearMask(data.phone),
     } as RegisterBody;
     try {
       await registration(body);

@@ -33,7 +33,7 @@ import {
 import { useAuth } from "@/context/auth";
 import { UserSex } from "@/interface/user";
 import { userService } from "@/service/user";
-import { formatCEP, formatCPF, formatPhone } from "@/utils/format";
+import { clearMask, formatCEP, formatCPF, formatPhone } from "@/utils/format";
 import { Plus } from "lucide-react";
 import Image from "next/image";
 import { HiMiniPencilSquare } from "react-icons/hi2";
@@ -132,12 +132,12 @@ export function EditProfileDialog() {
     const formData = new FormData();
 
     formData.append("name", data.name);
-    formData.append("document", data.document);
+    formData.append("document", clearMask(data.document));
     formData.append("email", data.email);
-    formData.append("phone", data.phone);
+    formData.append("phone", clearMask(data.phone));
     formData.append("sex", data.sex);
     formData.append("bornAt", data.bornAt);
-    formData.append("cep", data.cep);
+    formData.append("cep", clearMask(data.cep));
 
     if (data.imageFile) {
       formData.append("imageFile", data.imageFile);

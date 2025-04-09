@@ -38,13 +38,14 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
     try {
       setIsLoading(true);
       await login(data.email, data.password);
-      setIsLoading(false);
     } catch (error) {
       setError("password", {
         type: "manual",
         message: "E-mail ou senha inválidos",
       });
       console.error("Error logging in:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

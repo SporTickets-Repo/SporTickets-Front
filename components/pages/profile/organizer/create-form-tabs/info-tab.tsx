@@ -26,7 +26,7 @@ import {
   translateEventLevel,
   translateEventType,
 } from "@/utils/eventTranslations";
-import { formatCEP } from "@/utils/format";
+import { clearMask, formatCEP } from "@/utils/format";
 import {
   Circle,
   CircleCheck,
@@ -184,7 +184,12 @@ export function InfoTab() {
       if (key === "address" && value) {
         Object.entries(value).forEach(([addrKey, addrValue]) => {
           if (addrValue) {
-            formData.append(`address[${addrKey}]`, String(addrValue));
+            formData.append(
+              `address[${addrKey}]`,
+              addrKey === "zipCode"
+                ? clearMask(String(addrValue))
+                : String(addrValue)
+            );
           }
         });
       } else if (key === "bannerImageFile" && value) {
