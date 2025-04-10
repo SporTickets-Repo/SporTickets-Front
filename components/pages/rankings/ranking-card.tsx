@@ -19,7 +19,7 @@ export default function RankingCard({ ranking }: rankingCardProps) {
           <p className="text-sm text-muted-foreground font-semibold bg-gray-200 rounded-md px-4 py-[3px]">
             {ranking.isActive ? "Ativo" : "Inativo"}
           </p>
-          <Link href={`/chaveamento/${ranking.id}`}>
+          <Link href={`/ranking/${ranking.id}`}>
             <Button variant="link" className="m-0 underline">
               Visualizar <ArrowRight className="" />
             </Button>

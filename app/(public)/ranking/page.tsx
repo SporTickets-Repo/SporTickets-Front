@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 export default function RankingPage() {
   const { event } = useEvent();
   const router = useRouter();
+
   if (!event || !event?.ranking) {
     return (
       <div className="flex-1 flex flex-col min-h-[calc(80vh_-_81px)] overflow-x-hidden container justify-center items-center text-center gap-4">
@@ -17,8 +18,8 @@ export default function RankingPage() {
           Rankings do Evento
         </h2>
         <p className="text-lg">Nenhum Ranking disponível nesse evento!</p>
-        <Link href="/">
-          <Button>Voltar para a página inicial</Button>
+        <Link href={`/evento/${event?.slug}`}>
+          <Button>Voltar para o evento</Button>
         </Link>
       </div>
     );
@@ -31,7 +32,7 @@ export default function RankingPage() {
           variant="tertiary"
           className="rounded-full"
           size="icon"
-          onClick={() => router.push("/")}
+          onClick={() => router.push(`/evento/${event?.slug}`)}
         >
           <ChevronLeft size={16} className="text-zinc-500" />
         </Button>
@@ -43,7 +44,9 @@ export default function RankingPage() {
             <RankingCard key={ranking.id} ranking={ranking} />
           ))
         ) : (
-          <p className="text-muted-foreground">Nenhum Ranking disponível.</p>
+          <p className="text-muted-foreground text-center mt-10">
+            Nenhum Ranking disponível.
+          </p>
         )}
       </div>
     </div>
