@@ -13,7 +13,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
-  DollarSign,
   Link,
   Loader2,
   Ticket,
@@ -39,6 +38,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useAuth } from "@/context/auth";
 import { useCreateEventContext } from "@/context/create-event";
+import { SendTicketProvider } from "@/context/send-ticket";
 import { EventLevel, EventStatus, EventType } from "@/interface/event";
 import type { UserType } from "@/interface/tickets";
 import {
@@ -49,11 +49,13 @@ import {
 import { eventService } from "@/service/event";
 import { translateEventStatusOrganizer } from "@/utils/eventTranslations";
 import { useRouter } from "next/navigation";
+import { FiPercent } from "react-icons/fi";
 import { mutate } from "swr";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
 import { InfoTab } from "./create-form-tabs/info-tab";
 import { IntegrationsTab } from "./create-form-tabs/integrations-tab";
+import { SendTicketTab } from "./create-form-tabs/send-tickets";
 import { TaxesTab } from "./create-form-tabs/taxes-tab";
 import { TicketsTab } from "./create-form-tabs/tickets-tab";
 
@@ -63,7 +65,8 @@ type TabType =
   | "coupons"
   | "collaborators"
   | "integrations"
-  | "taxes";
+  | "taxes"
+  | "sendTicket";
 
 const tabLabels = {
   info: "Informações",
@@ -72,6 +75,7 @@ const tabLabels = {
   collaborators: "Colaboradores",
   integrations: "Integrações",
   taxes: "Taxas",
+  sendTicket: "Enviar Ingressos",
 };
 
 interface CreateEventFormProps {
@@ -259,6 +263,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     "coupons",
     "collaborators",
     "integrations",
+
+    "sendTicket",
   ];
   const tabOrder: TabType[] = isMaster ? [...baseTabs, "taxes"] : baseTabs;
 
@@ -276,6 +282,12 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         return <IntegrationsTab />;
       case "taxes":
         return <TaxesTab />;
+      case "sendTicket":
+        return (
+          <SendTicketProvider>
+            <SendTicketTab />
+          </SendTicketProvider>
+        );
       default:
         return null;
     }
@@ -444,7 +456,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                   {tab === "coupons" && <TicketPercent className="w-4 h-4" />}
                   {tab === "collaborators" && <Users2 className="w-4 h-4" />}
                   {tab === "integrations" && <Link className="w-4 h-4" />}
-                  {tab === "taxes" && <DollarSign className="w-4 h-4" />}
+                  {tab === "taxes" && <FiPercent className="w-4 h-4" />}
+                  {tab === "sendTicket" && <ArrowUpIcon className="w-4 h-4" />}
                   {tabLabels[tab]}
                 </Button>
               ))}
