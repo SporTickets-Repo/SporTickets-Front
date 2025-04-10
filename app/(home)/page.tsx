@@ -10,6 +10,7 @@ import { translateEventType } from "@/utils/eventTranslations";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import useHome from "./useHome";
 
 function App() {
@@ -21,6 +22,10 @@ function App() {
     registrationEvents,
     loading,
   } = useHome();
+  const router = useRouter();
+  const handleLinkSearch = () => {
+    router.push("/evento/buscar");
+  };
 
   return (
     <>
@@ -60,7 +65,12 @@ function App() {
                   <h2 className="text-md md:text-lg font-bold">
                     Tendências da semana
                   </h2>
-                  <Button variant="tertiary" size="sm">
+                  <Button
+                    variant="tertiary"
+                    size="sm"
+                    type="button"
+                    onClick={() => handleLinkSearch()}
+                  >
                     <ArrowRight size={16} />
                   </Button>
                 </div>
@@ -80,7 +90,12 @@ function App() {
               <h2 className="text-md md:text-lg font-bold">
                 Eventos disponíveis
               </h2>
-              <Button variant="tertiary" size="sm">
+              <Button
+                variant="tertiary"
+                size="sm"
+                type="button"
+                onClick={() => handleLinkSearch()}
+              >
                 <ArrowRight size={16} />
               </Button>
             </div>
@@ -98,7 +113,12 @@ function App() {
               <h2 className="text-md md:text-lg font-bold">
                 Inscrições abertas
               </h2>
-              <Button variant="tertiary" size="sm">
+              <Button
+                variant="tertiary"
+                size="sm"
+                type="button"
+                onClick={() => handleLinkSearch()}
+              >
                 <ArrowRight size={16} />
               </Button>
             </div>
@@ -153,6 +173,7 @@ function App() {
                   variant="secondary"
                   className="text-sm md:text-sm"
                   type="button"
+                  onClick={() => handleLinkSearch()}
                 >
                   Sou produtor
                 </Button>
