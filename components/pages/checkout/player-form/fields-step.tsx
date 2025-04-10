@@ -30,7 +30,7 @@ const getFieldSchema = (hasCategories: boolean) =>
         ? z.string().min(1, "Categoria obrigatória")
         : z.string().optional(),
     })
-    .catchall(z.string().min(1));
+    .catchall(z.string({ message: "Campo requerido" }).min(1));
 
 interface Props {
   player: Player;
