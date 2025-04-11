@@ -6,10 +6,12 @@ import { PlayerCard } from "@/components/pages/checkout/player-card";
 import { Button } from "@/components/ui/button";
 import { useSendTicketContext } from "@/context/send-ticket";
 import { Player, TicketType } from "@/interface/tickets";
+import { checkoutService } from "@/service/checkout";
 import { ArrowUp, Loader2, Plus, Ticket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa6";
 import { FiUserPlus } from "react-icons/fi";
+import { toast } from "sonner";
 import { PlayerForm } from "./player-form";
 
 export function SendTicketTab() {
@@ -40,8 +42,34 @@ export function SendTicketTab() {
     setOnSelectPlayer(player);
   };
 
-  const handleSendTicket = () => {
-    console.log("Sending ticket for player:", selectedTicket);
+  const handleSendTicket = async () => {
+    if (!selectedTicket) return;
+    setIsSaving(true);
+
+    const payload = {
+      team: {
+        ticketTypeId: selectedTicket.ticketType.id,
+        player: selectedTicket.players.map((p) => ({
+          userId: p.userId,
+          categoryId: p.category.id,
+          personalFields: p.personalizedField.map((field) => ({
+            personalizedFieldId: field.personalizedFieldId,
+            answer: field.answer,
+          })),
+        })),
+      },
+    };
+
+    try {
+      const response = await checkoutService.freeCheckout(payload);
+      toast.success("Ingressos enviados com sucesso!");
+      console.log("Free checkout response:", response);
+    } catch (error: any) {
+      toast.error("Erro ao enviar ingressos.");
+      console.error("Erro no freeCheckout:", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const isCompleted =
