@@ -37,8 +37,6 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      // Se o login for bem-sucedido, presume-se que ele redireciona a página
-      // e, portanto, não desativamos o loading.
       await login(data.email, data.password);
     } catch (error) {
       setError("password", {
@@ -46,7 +44,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
         message: "E-mail ou senha inválidos",
       });
       console.error("Error logging in:", error);
-      // Em caso de erro, desativa o loading para permitir nova tentativa.
+
       setIsLoading(false);
     }
   };

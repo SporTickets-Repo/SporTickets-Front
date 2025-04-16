@@ -13,25 +13,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { Player } from "@/interface/tickets";
 import { userService } from "@/service/user";
-import { formatCEP, formatCPF, formatPhone } from "@/utils/format";
+import { clearMask, formatCEP, formatCPF, formatPhone } from "@/utils/format";
 import { isValidCPF } from "@/utils/validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
-  name: z.string().min(2),
+  name: z.string().min(3, "O nome deve ter, no mínimo, 3 caracteres."),
   document: z
     .string()
-    .min(11)
+    .min(11, "O CPF deve conter 11 dígitos.")
     .refine((value) => !!value && isValidCPF(value), {
-      message: "CPF inválido",
+      message: "CPF inválido.",
     }),
-  email: z.string().email(),
-  cep: z.string().min(8),
-  phone: z.string().min(10),
-  sex: z.enum(["MALE", "FEMALE"]),
-  bornAt: z.string(),
+  email: z.string().email("E-mail inválido."),
+  cep: z.string().min(8, "O CEP deve conter 8 dígitos."),
+  phone: z.string().min(10, "O telefone deve conter, no mínimo, 10 dígitos."),
+  sex: z.enum(["MALE", "FEMALE"], {
+    errorMap: () => ({
+      message: "Sexo inválido. Selecione 'Masculino' ou 'Feminino'.",
+    }),
+  }),
+  bornAt: z.string().nonempty("A data de nascimento é obrigatória."),
 });
 
 interface Props {
@@ -56,7 +60,13 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
     try {
-      const response = await userService.registerWithoutPassword(data);
+      const cleanedData = {
+        ...data,
+        document: clearMask(data.document),
+        cep: clearMask(data.cep),
+        phone: clearMask(data.phone),
+      };
+      const response = await userService.registerWithoutPassword(cleanedData);
       onRegistered(response);
     } catch (error: any) {
       console.error("Failed to register:", error.response.data.message);
@@ -155,6 +165,7 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="cep"
@@ -173,6 +184,7 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="phone"
@@ -191,6 +203,7 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="bornAt"
