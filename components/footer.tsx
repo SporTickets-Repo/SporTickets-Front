@@ -33,15 +33,15 @@ export function Footer() {
                     href="/sobre"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
-                    Sobre nós
+                    Fazer evento
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="https://wa.me/5561998604155"
+                    href="https://wa.me/5561996476207"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
-                    WhatsApp
+                    Suporte
                   </Link>
                 </li>
                 <li>
@@ -63,7 +63,7 @@ export function Footer() {
               <ul className="space-y-1">
                 <li>
                   <Link
-                    href="https://instagram.com"
+                    href="https://www.instagram.com/sportickets_br/"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Instagram

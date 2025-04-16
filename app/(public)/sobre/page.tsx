@@ -16,40 +16,40 @@ const stats = [
 
 const testimonials = [
   {
-    name: "Alex Smith",
-    date: "10 de Fev, 2025",
+    name: "Carlos Eduardo",
+    date: "15 de Mar, 2025",
     rating: 5,
     comment:
-      "A compra foi super rápida e segura! Recebi meu ingresso na hora e ainda me avisou que realmente participei. Com certeza comprarei de novo!",
+      "Como gestor de eventos, a Sportickets transformou nossa maneira de trabalhar. A plataforma é intuitiva, segura e facilita muito o controle de ingressos.",
     avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
+      "https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1",
   },
   {
-    name: "Alex Smith",
-    date: "10 de Fev, 2025",
+    name: "Rafael Gomes",
+    date: "22 de Mar, 2025",
     rating: 5,
     comment:
-      "Achei sensacional a plataforma! Tudo digital, sem filas e sem risco de perder meu ingresso. Recomendo demais!",
+      "A eficiência da Sportickets nos permite organizar eventos sem complicações. A tecnologia é moderna e o suporte é sempre rápido e eficaz.",
     avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
+      "https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1",
   },
   {
-    name: "Alex Smith",
-    date: "10 de Fev, 2025",
+    name: "Bruno Oliveira",
+    date: "05 de Abr, 2025",
     rating: 5,
     comment:
-      "A plataforma facilitou muito a venda dos ingressos. O painel é super intuitivo e pude acompanhar toda as vendas em tempo real.",
+      "Utilizar a Sportickets fez toda a diferença para nossa equipe. Agora, gerenciar vendas e acessos se tornou um processo ágil e confiável.",
     avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
+      "https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1",
   },
   {
-    name: "Alex Smith",
-    date: "10 de Fev, 2025",
+    name: "Marcos Pereira",
+    date: "18 de Abr, 2025",
     rating: 5,
     comment:
-      "Além do enviar os ingressos, conseguimos divulgar nosso evento para um público mais legal. Tivemos recorde de vendas!",
+      "A plataforma da Sportickets é essencial para o nosso sucesso. Confiabilidade, praticidade e tecnologia de ponta são evidentes em cada detalhe.",
     avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
+      "https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1",
   },
 ];
 
@@ -134,7 +134,7 @@ export default function About() {
             </div>
           </div>
           <div className="text-center mt-12">
-            <a href="https://wa.me/5561998604155">
+            <a href="https://wa.me/5561996476207">
               <Button
                 variant="secondary"
                 className="px-10 md:px-40 w-full md:w-auto"
@@ -226,7 +226,7 @@ export default function About() {
           <p className="mb-8 text-gray-300">
             Junte-se a mais de 500 empresas que já estão crescendo conosco
           </p>
-          <a href="https://wa.me/5561998604155">
+          <a href="https://wa.me/5561996476207">
             <Button size="lg" variant="secondary">
               Começar agora
             </Button>

@@ -31,10 +31,9 @@ export default function EventLocation({ address, place }: EventLocationProps) {
         }
       } catch (err) {
         console.error("Erro ao buscar localização no Google Maps:", err);
-        const fallbackQuery = `${address.street}, ${address.city}, ${address.state}`;
         setMapsURL(
           `https://maps.google.com/maps?q=${encodeURIComponent(
-            fallbackQuery
+            query
           )}&z=15&output=embed`
         );
       }

@@ -23,11 +23,14 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { PlayerCard } from "../player-card";
 
-const fieldSchema = z
-  .object({
-    categoryId: z.string().min(1, "Categoria obrigatória"),
-  })
-  .catchall(z.string().min(1));
+const getFieldSchema = (hasCategories: boolean) =>
+  z
+    .object({
+      categoryId: hasCategories
+        ? z.string().min(1, "Categoria obrigatória")
+        : z.string().optional(),
+    })
+    .catchall(z.string({ message: "Campo requerido" }).min(1));
 
 interface Props {
   player: Player;
@@ -37,8 +40,10 @@ interface Props {
 }
 
 export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
-  const form = useForm<Record<string, string> & { categoryId: string }>({
-    resolver: zodResolver(fieldSchema),
+  const hasCategories = currentTicket.ticketType.categories.length > 0;
+
+  const form = useForm<Record<string, string> & { categoryId?: string }>({
+    resolver: zodResolver(getFieldSchema(hasCategories)),
     defaultValues: {
       ...(player.personalizedField?.reduce(
         (acc, f) => ({ ...acc, [f.personalizedFieldId]: f.answer }),
@@ -48,7 +53,7 @@ export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
     },
   });
 
-  const onSubmit = (data: Record<string, string> & { categoryId: string }) => {
+  const onSubmit = (data: Record<string, string> & { categoryId?: string }) => {
     const updated: Player = {
       ...player,
       personalizedField: Object.entries(data)
@@ -102,33 +107,35 @@ export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
       <PlayerCard player={player} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
-          <FormField
-            control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Categoria</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma categoria" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categories().map((cat) => (
-                      <SelectItem key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {currentTicket.ticketType.categories.length > 0 && (
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Categoria</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories().map((cat) => (
+                        <SelectItem key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           {currentTicket.ticketType.personalizedFields.map((field) => (
             <FormField
               key={field.id}
