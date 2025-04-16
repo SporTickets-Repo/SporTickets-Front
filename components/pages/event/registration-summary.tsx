@@ -84,6 +84,23 @@ export default function RegistrationSummary({
                     <strong>R$ {totalTicketPrice.toFixed(2)}</strong>
                   </span>
                 )}
+                {ticket.categories.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {ticket.categories.slice(0, 3).map((category) => (
+                      <span
+                        key={category.id}
+                        className="text-xs bg-sporticket-orange/10 text-sporticket-orange px-2 py-0.5 rounded-full font-medium"
+                      >
+                        {category.title}
+                      </span>
+                    ))}
+                    {ticket.categories.length > 3 && (
+                      <span className="text-xs bg-sporticket-orange/10 text-sporticket-orange px-2 py-0.5 rounded-full font-medium">
+                        +{ticket.categories.length - 3}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
               {!isSoldOut ? (
                 <div className="flex items-center gap-2">
