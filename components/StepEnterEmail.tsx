@@ -4,7 +4,9 @@ import { cn } from "@/lib/utils";
 import { authService } from "@/service/auth";
 import { emailSchema } from "@/utils/validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -19,26 +21,35 @@ type FormData = {
 };
 
 const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(emailSchema),
   });
 
   const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
     try {
       const response = await authService.checkEmail(data.email);
       if (response) {
+        setEmail(data.email);
         nextStep(AuthStep.ENTER_PASSWORD);
-        setEmail(data.email);
       } else {
-        nextStep(AuthStep.REGISTER);
         setEmail(data.email);
+        nextStep(AuthStep.REGISTER);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.status === 409) {
+        router.push(`/conta-existente?email=${encodeURIComponent(data.email)}`);
+        return;
+      }
       console.error("Failed to check email:", error);
+      setIsLoading(false);
     }
   };
 
@@ -52,7 +63,7 @@ const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
             className={cn("py-4 mb-4 px-0")}
             onClick={() => nextStep(AuthStep.LOGIN)}
           >
-            <ArrowLeft className="" />
+            <ArrowLeft />
           </Button>
           <h1 className="text-2xl font-semibold tracking-tight">
             Digite seu e-mail
@@ -62,34 +73,35 @@ const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
           </p>
         </div>
 
-        <div className="">
-          <Input
-            type="email"
-            placeholder="E-mail"
-            className={cn("w-full", errors.email && "border-red-500")}
-            {...register("email")}
-            error={errors.email?.message}
-          />
-        </div>
+        <Input
+          type="email"
+          placeholder="E-mail"
+          className={cn("w-full", errors.email && "border-red-500")}
+          {...register("email")}
+          error={errors.email?.message}
+        />
 
         <Button
-          className={cn(
-            "w-full h-12 text-base font-normal justify-center px-4"
-          )}
           type="submit"
-          disabled={isSubmitting}
+          disabled={isLoading}
+          aria-busy={isLoading}
+          className="w-full h-12 text-base font-normal justify-center px-4 transition-all duration-200"
         >
-          {isSubmitting ? (
-            "Carregando..."
+          {isLoading ? (
+            <span className="flex items-center">
+              <Loader2 className="animate-spin h-5 w-5 text-muted-foreground mr-2" />
+              Carregando...
+            </span>
           ) : (
-            <>
+            <span className="flex items-center">
               Continuar
-              <ArrowRight className="ml-1 text-cyan-400" />
-            </>
+              <ArrowRight className="ml-2 text-cyan-400 transition-transform" />
+            </span>
           )}
         </Button>
       </div>
     </form>
   );
 };
+
 export default StepEnterEmail;
