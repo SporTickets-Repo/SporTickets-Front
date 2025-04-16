@@ -1,28 +1,57 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { authService } from "@/service/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 import {
   AlertCircle,
   ArrowRight,
   CheckCircle2,
-  KeyRound,
+  Info,
   Loader2,
   Mail,
 } from "lucide-react";
 import Link from "next/link";
-import type React from "react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-export function ForgotPasswordForm() {
-  const [email, setEmail] = useState("");
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { authService } from "@/service/auth";
+
+const existingAccountSchema = z.object({
+  email: z
+    .string()
+    .nonempty("O e‑mail é obrigatório")
+    .email("Digite um e‑mail válido, ex: nome@dominio.com"),
+});
+
+type ExistingAccountFormData = z.infer<typeof existingAccountSchema>;
+
+export function ExistingAccountForm() {
+  const searchParams = useSearchParams();
+
+  const emailFromUrl = searchParams.get("email") ?? "";
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<ExistingAccountFormData>({
+    resolver: zodResolver(existingAccountSchema),
+    defaultValues: { email: emailFromUrl },
+  });
 
   useEffect(() => {
     const storedTimer = Cookies.get("recoverPasswordTimer");
@@ -45,7 +74,6 @@ export function ForgotPasswordForm() {
 
       return () => clearInterval(timer);
     }
-
     if (timeLeft === 0) {
       Cookies.remove("recoverPasswordTimer");
       setTimeLeft(null);
@@ -53,45 +81,40 @@ export function ForgotPasswordForm() {
     }
   }, [timeLeft]);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    if (timeLeft !== null && timeLeft > 0) {
-      return;
-    }
+  const onSubmit = async (data: ExistingAccountFormData) => {
+    if (timeLeft !== null && timeLeft > 0) return;
 
     setIsLoading(true);
     setError("");
     setSuccess(false);
 
     try {
-      await authService.forgotPassword(email);
+      await authService.forgotPassword(data.email);
 
       const countdownTime = Date.now() + 60 * 1000;
       Cookies.set("recoverPasswordTimer", countdownTime.toString(), {
         expires: 1 / 1440,
       });
       setTimeLeft(60);
-
-      setEmail("");
       setSuccess(true);
+      form.reset({ email: data.email });
     } catch (err: any) {
-      if (err.response?.data?.message === "User not found") {
-        setError("E-mail não encontrado. Verifique o e-mail digitado.");
+      if (err?.response?.data?.message === "User not found") {
+        setError("E‑mail não encontrado. Verifique o e‑mail digitado.");
         return;
       }
-      setError("Erro ao enviar e-mail de recuperação. Tente novamente.");
+      setError("Erro ao enviar e‑mail de recuperação. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
       <div className="w-full max-w-5xl">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
           <div className="flex flex-col lg:flex-row">
-            {/* Left side - Content */}
+            {/* Left side - Conteúdo */}
             <div className="w-full lg:w-3/5 p-8 lg:p-12">
               <div className="flex justify-center lg:justify-start mb-8">
                 <img
@@ -111,15 +134,18 @@ export function ForgotPasswordForm() {
                   <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-teal-500 rounded-full flex items-center justify-center">
                     <CheckCircle2 className="w-10 h-10 text-white" />
                   </div>
-
                   <div className="space-y-4 text-center lg:text-left">
                     <h2 className="text-2xl font-bold text-gray-800">
-                      E-mail enviado com sucesso!
+                      E‑mail enviado com sucesso!
                     </h2>
                     <p className="text-gray-600">
-                      Enviamos um link de recuperação de senha para seu e-mail.
-                      Por favor, verifique sua caixa de entrada e siga as
-                      instruções para redefinir sua senha.
+                      Enviamos um link de recuperação para o seu e‑mail.
+                      Verifique sua caixa de entrada.
+                    </p>
+                    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-4"></div>
+                    <p className="text-gray-600">
+                      Após fazer login, não esqueça de revisar e atualizar seus
+                      dados na página "Meu Perfil".
                     </p>
                     {timeLeft !== null && timeLeft > 0 && (
                       <div className="mt-4 inline-flex items-center px-4 py-2 rounded-full bg-blue-50 text-blue-600">
@@ -129,7 +155,6 @@ export function ForgotPasswordForm() {
                       </div>
                     )}
                   </div>
-
                   <Link href="/entrar" className="w-full max-w-md">
                     <Button
                       variant="outline"
@@ -149,97 +174,107 @@ export function ForgotPasswordForm() {
                 >
                   <div className="space-y-2 text-center lg:text-left">
                     <h1 className="text-3xl font-bold text-gray-800">
-                      Recuperação de senha
+                      Conta já existente
                     </h1>
                     <p className="text-gray-600">
-                      Digite seu e-mail para receber um link de recuperação de
-                      senha.
+                      Identificamos que você já possui uma conta criada
+                      anteriormente.
                     </p>
                   </div>
 
-                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-2xl border border-purple-100">
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
                     <div className="flex">
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                          <KeyRound className="w-6 h-6 text-purple-600" />
+                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                          <Info className="w-6 h-6 text-blue-600" />
                         </div>
                       </div>
                       <div className="ml-4">
                         <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                          Esqueceu sua senha?
+                          Informação importante
                         </h3>
                         <div className="space-y-2 text-gray-600">
                           <p>
-                            Não se preocupe! Acontece com todos. Enviaremos um
-                            link para você redefinir sua senha e recuperar o
-                            acesso à sua conta.
+                            Sua conta foi criada anteriormente por outro usuário
+                            para comprar ingressos. Para acessá-la, você precisa
+                            redefinir sua senha.
+                          </p>
+                          <p>
+                            Após fazer login, recomendamos que você revise e
+                            atualize seus dados pessoais na página "Meu Perfil".
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <form className="space-y-6" onSubmit={handleSubmit}>
-                    {error && (
-                      <div className="flex items-center space-x-2 p-3 bg-red-50 text-red-700 rounded-lg">
-                        <AlertCircle className="h-5 w-5 flex-shrink-0" />
-                        <p className="text-sm">{error}</p>
-                      </div>
-                    )}
-
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Digite seu e-mail
-                      </label>
-                      <div className="relative">
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="contato@sportickets.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                          className="pl-10 py-6 border-gray-300 focus:ring-purple-500 focus:border-purple-500 rounded-xl"
-                        />
-                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      </div>
+                  {error && (
+                    <div className="flex items-center space-x-2 p-3 bg-red-50 text-red-700 rounded-lg">
+                      <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                      <p className="text-sm">{error}</p>
                     </div>
+                  )}
 
-                    <div className="space-y-4">
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-6"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>E-mail</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <Input
+                                  disabled
+                                  {...field}
+                                  placeholder="contato@sportickets.com"
+                                  className="pl-10 py-6 border-gray-300 focus:ring-purple-500 focus:border-purple-500 rounded-xl"
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
                       <Button
-                        disabled={isLoading}
                         type="submit"
                         className="w-full py-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl font-medium text-lg transition-all"
+                        disabled={
+                          (timeLeft !== null && timeLeft > 0) || isLoading
+                        }
                       >
                         {isLoading ? (
                           <>
-                            <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                            Enviando...
+                            {"Enviando..."}{" "}
+                            <Loader2 className="animate-spin mr-2 h-4 w-4" />{" "}
                           </>
                         ) : (
-                          <>Enviar link de recuperação</>
+                          "Enviar e‑mail de recuperação"
                         )}
                       </Button>
+                    </form>
+                  </Form>
 
-                      <Link href="/entrar" className="block w-full">
-                        <Button
-                          variant="outline"
-                          className="w-full group border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition-all"
-                        >
-                          Voltar
-                          <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </form>
+                  <Link href="/entrar" className="block w-full">
+                    <Button
+                      variant="outline"
+                      className="w-full group border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition-all"
+                    >
+                      Voltar
+                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
                 </motion.div>
               )}
             </div>
 
-            {/* Right side - Image */}
+            {/* Right side - Ilustração */}
             <div className="hidden lg:block lg:w-2/5 relative">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-indigo-800">
                 <div
@@ -251,13 +286,13 @@ export function ForgotPasswordForm() {
                 ></div>
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-white">
                   <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-8">
-                    <KeyRound className="w-10 h-10 text-white" />
+                    <Mail className="w-10 h-10 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold mb-4 text-center">
-                    Recupere sua senha em instantes
+                    Recupere sua conta em instantes
                   </h3>
                   <p className="text-center text-white text-opacity-80">
-                    Enviamos um link direto para seu e-mail que permitirá que
+                    Enviamos um link direto para seu e‑mail que permitirá que
                     você defina uma nova senha e acesse sua conta.
                   </p>
                   <div className="mt-12 w-full max-w-xs">

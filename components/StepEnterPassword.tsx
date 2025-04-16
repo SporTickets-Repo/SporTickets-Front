@@ -4,7 +4,7 @@ import { AuthStep } from "@/hooks/useAuthSteps";
 import { cn } from "@/lib/utils";
 import { passwordSchema } from "@/utils/validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -35,8 +35,8 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
   });
 
   const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       await login(data.email, data.password);
     } catch (error) {
       setError("password", {
@@ -44,26 +44,26 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
         message: "E-mail ou senha inválidos",
       });
       console.error("Error logging in:", error);
-    } finally {
+
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
     setValue("email", email);
-  }, [email]);
+  }, [email, setValue]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full  max-w-md">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
       <div className="w-full space-y-4">
-        <div className="space-y-2  mb-6">
+        <div className="space-y-2 mb-6">
           <Button
             type="button"
             variant="outline"
             className={cn("py-4 mb-4 px-0")}
             onClick={() => nextStep(AuthStep.ENTER_EMAIL)}
           >
-            <ArrowLeft className="" />
+            <ArrowLeft />
           </Button>
 
           <h1 className="text-2xl font-semibold tracking-tight">
@@ -74,7 +74,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
           </p>
         </div>
 
-        <div className="">
+        <div>
           <Input
             type="email"
             placeholder="E-mail"
@@ -84,6 +84,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
             readOnly
           />
         </div>
+
         <div>
           <Input
             type="password"
@@ -94,6 +95,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
             password
           />
         </div>
+
         <div>
           <Link
             href="/esqueceu-senha"
@@ -104,17 +106,28 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
         </div>
 
         <Button
-          className={cn(
-            "w-full h-12 text-base font-normal justify-center px-4"
-          )}
           type="submit"
+          aria-busy={isLoading || isSubmitting}
           disabled={isSubmitting || isLoading}
+          className={cn(
+            "w-full h-12 text-base font-normal justify-center px-4 transition-all duration-200"
+          )}
         >
-          Continuar
-          <ArrowRight className="ml-1 text-cyan-400" />
+          {isLoading || isSubmitting ? (
+            <span className="flex items-center">
+              <Loader2 className="animate-spin h-5 w-5 text-muted-foreground mr-2" />
+              Carregando...
+            </span>
+          ) : (
+            <span className="flex items-center">
+              Continuar
+              <ArrowRight className="ml-2 text-cyan-400 transition-transform" />
+            </span>
+          )}
         </Button>
       </div>
     </form>
   );
 };
+
 export default StepEnterPassword;
