@@ -39,7 +39,12 @@ import {
 import { useAuth } from "@/context/auth";
 import { useCreateEventContext } from "@/context/create-event";
 import { SendTicketProvider } from "@/context/send-ticket";
-import { EventLevel, EventStatus, EventType } from "@/interface/event";
+import {
+  EventLevel,
+  EventStatus,
+  EventType,
+  PaymentMethod,
+} from "@/interface/event";
 import type { UserType } from "@/interface/tickets";
 import {
   type CreateEventFormValues,
@@ -157,7 +162,10 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           neighborhood: eventData.address?.neighborhood ?? "",
           place: eventData.place ?? "",
           regulation: eventData.regulation ?? "",
-          paymentMethods: eventData.paymentMethods || [],
+          paymentMethods:
+            eventData.paymentMethods && eventData.paymentMethods.length > 0
+              ? eventData.paymentMethods
+              : [PaymentMethod.PIX],
           bannerImageFile: undefined,
           smallImageFile: undefined,
         },
