@@ -27,7 +27,7 @@ export const translateEventStatus = (status: EventStatus): string => {
 
 export const translateEventType = (type: EventType): string => {
   const translations: Record<EventType, string> = {
-    [EventType.FUTVOLEI]: "Futvôlei",
+    [EventType.FUTVOLEI]: "Futevôlei",
     [EventType.BEACH_TENIS]: "Beach Tênis",
     [EventType.ALTINHA]: "Altinha",
     [EventType.FUTEBOL]: "Futebol",
