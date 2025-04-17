@@ -11,23 +11,22 @@ import { toast } from "sonner";
 import { mutate } from "swr";
 
 export function TaxesTab() {
-  const { register, watch, setValue } = useFormContext();
+  const { watch, setValue, getValues } = useFormContext<{ eventFee: number }>();
   const { eventId } = useCreateEventContext();
   const eventFee = watch("eventFee");
 
   useEffect(() => {
-    if (eventFee !== undefined && eventFee > 0 && eventFee <= 1) {
+    if (eventFee !== undefined && eventFee > 0 && eventFee < 1) {
       setValue("eventFee", eventFee * 100);
     }
-  }, []);
+  }, [eventFee, setValue]);
 
   const [isSaving, setIsSaving] = useState(false);
 
   async function handleSaveTaxes() {
     try {
       setIsSaving(true);
-
-      const feePercentage = watch("eventFee");
+      const feePercentage = getValues("eventFee") ?? 0;
 
       const normalizedFee = feePercentage / 100;
       await eventService.eventFee(eventId as string, normalizedFee);
@@ -46,7 +45,9 @@ export function TaxesTab() {
       <div className="flex flex-row items-center justify-between gap-4 mb-6">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold">Taxa dos ingressos</h2>
-          <p className="text-sm text-muted-foreground">Valor: {eventFee}%</p>
+          <p className="text-sm text-muted-foreground">
+            Valor: {eventFee ?? 0}%
+          </p>
         </div>
       </div>
 
@@ -56,12 +57,13 @@ export function TaxesTab() {
         </label>
         <Input
           className="w-1/2"
-          type="number"
-          step="0.01"
-          min="0"
-          max="100"
           placeholder="Ex: 5"
-          {...register("eventFee", { valueAsNumber: true })}
+          value={eventFee ?? ""}
+          onChange={(e) => {
+            const raw = e.target.value.replace(/\D/g, "");
+            const num = Number(raw);
+            setValue("eventFee", Math.min(100, isNaN(num) ? 0 : num));
+          }}
         />
       </div>
 
