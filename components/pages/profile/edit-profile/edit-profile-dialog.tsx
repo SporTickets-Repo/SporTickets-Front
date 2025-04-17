@@ -170,14 +170,13 @@ export function EditProfileDialog() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 mt-6"
+            className="space-y-6 mt-2"
           >
             <DialogHeader className="items-center justify-center">
               <DialogTitle>Editar Perfil</DialogTitle>
               <Button
-                className="absolute right-4 text-[15px] text-primary font-semibold !m-0"
+                className="absolute right-4 text-[15px] "
                 type="submit"
-                variant="ghost"
                 disabled={!form.formState.isValid || isSubmitting}
               >
                 {isSubmitting ? "Salvando..." : "Salvar"}

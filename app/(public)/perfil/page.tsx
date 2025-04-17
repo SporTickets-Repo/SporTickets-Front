@@ -20,12 +20,10 @@ export default function UserPage() {
       {/* Header Image */}
       <div className="relative h-40 md:h-80 w-full rounded-3xl">
         <Image
-          src={user?.profileImageUrl || "/assets/icons/default-banner.png"}
+          src={"/assets/icons/default-banner.png"}
           alt="Cover"
           fill
-          className={`rounded-3xl bg-gray-500/30 ${
-            user?.profileImageUrl ? "object-contain" : "object-cover"
-          }`}
+          className={`rounded-3xl w-full h-full bg-gray-500/30  object-cover`}
           unoptimized
         />
 
