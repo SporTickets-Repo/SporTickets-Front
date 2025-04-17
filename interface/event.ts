@@ -70,6 +70,7 @@ export enum EventType {
   FUTSAL = "FUTSAL",
   VOLEI = "VOLEI",
   GENERAL = "GENERAL",
+  CORRIDA = "CORRIDA",
 }
 
 export enum EventLevel {

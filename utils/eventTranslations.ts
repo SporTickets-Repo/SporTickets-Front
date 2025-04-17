@@ -35,6 +35,7 @@ export const translateEventType = (type: EventType): string => {
     [EventType.FUTSAL]: "Futsal",
     [EventType.VOLEI]: "Vôlei",
     [EventType.GENERAL]: "Geral",
+    [EventType.CORRIDA]: "Corrida",
   };
 
   return translations[type] || "Desconhecido";
