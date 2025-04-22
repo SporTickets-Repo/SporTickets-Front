@@ -177,7 +177,7 @@ export function ImageCropper({
           <DialogTitle className="text-center">Ajustar imagem</DialogTitle>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="overflow-auto max-h-[60vh]">
+          <div className="overflow-hidden max-h-[60vh]">
             {imageSrc && (
               <ReactCrop
                 crop={crop}
