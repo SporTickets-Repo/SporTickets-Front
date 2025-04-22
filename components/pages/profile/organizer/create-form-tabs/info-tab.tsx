@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/datePicker";
 import {
@@ -9,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { ImageCropper } from "@/components/ui/image-cropper";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -81,6 +84,17 @@ export function InfoTab() {
   const eventImageRef = useRef<HTMLInputElement | null>(null);
   const mainImageRef = useRef<HTMLInputElement | null>(null);
 
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [currentImageFile, setCurrentImageFile] = useState<File | null>(null);
+  const [currentCropField, setCurrentCropField] = useState<
+    "smallImageFile" | "bannerImageFile" | null
+  >(null);
+
+  const BANNER_WIDTH = 1268;
+  const BANNER_HEIGHT = 464;
+  const SMALL_WIDTH = 600;
+  const SMALL_HEIGHT = 400;
+
   useEffect(() => {
     if (smallImageFile instanceof File) {
       const objectUrl = URL.createObjectURL(smallImageFile);
@@ -130,9 +144,21 @@ export function InfoTab() {
     e: React.ChangeEvent<HTMLInputElement>,
     fieldName: "smallImageFile" | "bannerImageFile"
   ) => {
-    const file = e.target.files?.[0];
+    const input = e.target;
+    const file = input.files?.[0];
     if (file) {
-      setValue(`event.${fieldName}`, file, { shouldValidate: true });
+      input.value = "";
+      setCurrentImageFile(file);
+      setCurrentCropField(fieldName);
+      setCropperOpen(true);
+    }
+  };
+
+  const handleCropComplete = (croppedFile: File) => {
+    if (currentCropField) {
+      setValue(`event.${currentCropField}`, croppedFile, {
+        shouldValidate: true,
+      });
     }
   };
 
@@ -261,30 +287,37 @@ export function InfoTab() {
         <h2 className="text-lg font-medium text-muted-foreground">
           Imagens do evento
         </h2>
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 h-auto sm:h-40">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 h-auto">
           <FormField
             control={control}
             name="event.smallImageFile"
             render={({ field, fieldState }) => (
-              <FormItem className="w-full sm:w-1/3">
+              <FormItem className="w-full lg:w-1/3">
                 <div
-                  className="border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
+                  className="border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-40 flex flex-col items-center justify-center gap-2 max-w-[300px]"
                   onClick={() => eventImageRef.current?.click()}
                 >
                   {smallImagePreview ? (
-                    <Image
-                      src={smallImagePreview}
-                      alt="Imagem do evento"
-                      width={600}
-                      height={400}
-                      className="w-full h-full rounded-lg object-cover"
-                    />
+                    <div
+                      className="w-full h-full relative"
+                      style={{ aspectRatio: `${SMALL_WIDTH}/${SMALL_HEIGHT}` }}
+                    >
+                      <Image
+                        src={smallImagePreview || "/placeholder.svg"}
+                        alt="Imagem do evento"
+                        fill
+                        className="rounded-lg object-cover"
+                      />
+                      <div className="absolute bottom-0 right-0 bg-black/70 text-white text-xs px-2 py-1 rounded-tl-md">
+                        {SMALL_WIDTH} x {SMALL_HEIGHT} px
+                      </div>
+                    </div>
                   ) : (
                     <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full text-center">
                       <ImageIcon className="w-4 h-4" />
                       <p className="text-sm">Menor</p>
                       <p className="text-xs text-muted-foreground">
-                        Sugerido: 1200x600 px
+                        Proporção: {SMALL_WIDTH} x {SMALL_HEIGHT} px
                       </p>
                     </div>
                   )}
@@ -309,25 +342,34 @@ export function InfoTab() {
             control={control}
             name="event.bannerImageFile"
             render={({ field, fieldState }) => (
-              <FormItem className="w-full sm:w-2/3">
+              <FormItem className="w-full lg:w-2/3">
                 <div
-                  className="border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-32 sm:h-[90%] flex flex-col items-center justify-center gap-2"
+                  className="border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors h-64 flex flex-col items-center justify-center gap-2"
                   onClick={() => mainImageRef.current?.click()}
                 >
                   {bannerImagePreview ? (
-                    <Image
-                      src={bannerImagePreview}
-                      alt="Imagem maior"
-                      width={1920}
-                      height={1080}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
+                    <div
+                      className="w-full h-full relative"
+                      style={{
+                        aspectRatio: `${BANNER_WIDTH}/${BANNER_HEIGHT}`,
+                      }}
+                    >
+                      <Image
+                        src={bannerImagePreview || "/placeholder.svg"}
+                        alt="Imagem maior"
+                        fill
+                        className="rounded-lg object-cover"
+                      />
+                      <div className="absolute bottom-0 right-0 bg-black/70 text-white text-xs px-2 py-1 rounded-tl-md">
+                        {BANNER_WIDTH} x {BANNER_HEIGHT} px
+                      </div>
+                    </div>
                   ) : (
                     <div className="flex flex-col justify-center items-center p-2 bg-gray-100 rounded-lg w-full h-full text-center">
                       <Upload className="w-4 h-4" />
                       <p className="text-sm">Imagem maior</p>
                       <p className="text-xs text-muted-foreground">
-                        Sugerido: 1920x480 px
+                        Proporção: {BANNER_WIDTH} x {BANNER_HEIGHT} px
                       </p>
                     </div>
                   )}
@@ -858,6 +900,30 @@ export function InfoTab() {
           )}
         </Button>
       </div>
+
+      {/* Image Cropper */}
+      <ImageCropper
+        open={cropperOpen}
+        onClose={() => setCropperOpen(false)}
+        imageFile={currentImageFile}
+        onCropComplete={handleCropComplete}
+        aspectRatio={
+          currentCropField === "bannerImageFile"
+            ? BANNER_WIDTH / BANNER_HEIGHT
+            : SMALL_WIDTH / SMALL_HEIGHT
+        }
+        previewWidth={
+          currentCropField === "bannerImageFile" ? BANNER_WIDTH : SMALL_WIDTH
+        }
+        previewHeight={
+          currentCropField === "bannerImageFile" ? BANNER_HEIGHT : SMALL_HEIGHT
+        }
+        previewLabel={
+          currentCropField === "bannerImageFile"
+            ? `Visualização do banner (${BANNER_WIDTH} x ${BANNER_HEIGHT} px)`
+            : `Visualização da imagem menor (${SMALL_WIDTH} x ${SMALL_HEIGHT} px)`
+        }
+      />
     </div>
   );
 }
