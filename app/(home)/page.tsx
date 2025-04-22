@@ -161,10 +161,10 @@ function App() {
             <div className="container flex justify-between items-center gap-4">
               <div className="flex flex-col gap-1">
                 <h1 className="text-md md:text-xl font-semibold">
-                  É um produtos de eventos?
+                  É um produtor de eventos?
                 </h1>
                 <p className="text-zinc-400 text-sm md:text-base">
-                  Veja todas as vantagens e venefícios de criar seu evento com a
+                  Veja todas as vantagens e benefícios de criar seu evento com a
                   gente!
                 </p>
               </div>
