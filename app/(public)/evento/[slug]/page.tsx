@@ -29,7 +29,12 @@ export default function EventPage() {
   const { event, loading, error, setSlug } = useEvent();
 
   useEffect(() => {
-    setSlug(slug);
+    const storedSlug = localStorage.getItem("eventSlug");
+
+    if (slug && slug !== storedSlug) {
+      localStorage.setItem("eventSlug", slug);
+      setSlug(slug);
+    }
   }, [slug]);
 
   if (error) return <p className="text-center text-red-500">{error}</p>;
