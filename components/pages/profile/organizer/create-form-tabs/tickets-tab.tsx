@@ -30,6 +30,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  CopyIcon,
   Loader2,
   MinusIcon,
   PlusIcon,
@@ -49,10 +50,11 @@ import { OptionsInputField } from "../options-input-field";
 interface TicketItemProps {
   index: number;
   removeTicket: (index: number) => void;
+  duplicateTicket: (index: number) => void;
 }
 
-function TicketItem({ index, removeTicket }: TicketItemProps) {
-  const { control, watch, trigger } = useFormContext();
+function TicketItem({ index, removeTicket, duplicateTicket }: TicketItemProps) {
+  const { control, watch, trigger, getValues } = useFormContext();
   const currentUserType = watch(`ticketTypes.${index}.userType`);
   const [openLots, setOpenLots] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState<string[]>([`ticket-${index}`]);
@@ -133,6 +135,18 @@ function TicketItem({ index, removeTicket }: TicketItemProps) {
               >
                 {currentUserType === "ATHLETE" ? "Atleta" : "Espectador"}
               </Badge>
+
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  duplicateTicket(index);
+                }}
+                className="p-[10px] [&_svg]:size-4 rounded-sm bg-sporticket-purple-100 text-sporticket-purple-800 shadow hover:bg-sporticket-purple-100/80"
+                title="Duplicar ingresso"
+              >
+                <CopyIcon className="w-4 h-4" />
+              </span>
+
               <span
                 className="p-[10px] [&_svg]:size-4 rounded-sm bg-sporticket-purple-100 text-sporticket-purple-800 shadow hover:bg-sporticket-purple-100/80"
                 onClick={(e) => {
@@ -873,6 +887,16 @@ export function TicketsTab() {
     }
   };
 
+  const duplicateTicket = (index: number) => {
+    const tickets = getValues("ticketTypes");
+    const original = tickets[index] as Record<string, any>;
+
+    const { id, ...dataWithoutId } = original;
+    const clone = structuredClone(dataWithoutId);
+
+    append(clone);
+  };
+
   return (
     <div className="space-y-4 max-w-full px-0 sm:px-6">
       <div className="flex flex-row items-center justify-between gap-2 mb-6">
@@ -913,7 +937,12 @@ export function TicketsTab() {
       ) : (
         <div className="space-y-6">
           {fields.map((item, index) => (
-            <TicketItem key={item.id} index={index} removeTicket={remove} />
+            <TicketItem
+              key={item.id}
+              index={index}
+              removeTicket={remove}
+              duplicateTicket={duplicateTicket}
+            />
           ))}
         </div>
       )}
