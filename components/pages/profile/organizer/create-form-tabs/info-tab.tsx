@@ -92,8 +92,8 @@ export function InfoTab() {
 
   const BANNER_WIDTH = 1268;
   const BANNER_HEIGHT = 464;
-  const SMALL_WIDTH = 600;
-  const SMALL_HEIGHT = 400;
+  const SMALL_WIDTH = 700;
+  const SMALL_HEIGHT = 350;
 
   useEffect(() => {
     if (smallImageFile instanceof File) {
