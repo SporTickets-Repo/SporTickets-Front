@@ -70,7 +70,7 @@ export interface Player {
   name: string;
   email: string;
   phone: string;
-  photoUrl: string;
+  profileImageUrl: string;
   sex: UserSex;
   personalizedField: PersonalizedFieldResponse[];
   category: Category;
