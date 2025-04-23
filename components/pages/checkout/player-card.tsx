@@ -14,7 +14,6 @@ export function PlayerCard({
   onClick,
   completed = true,
 }: PlayerCardProps) {
-  console.log(player);
   return (
     <div
       className={`w-full flex flex-row items-center justify-between p-4 rounded-lg cursor-pointer bg-zinc-50 hover:bg-zinc-100 shadow-sm transition-colors`}

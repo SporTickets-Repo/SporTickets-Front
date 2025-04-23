@@ -36,7 +36,7 @@ export function PlayerForm({
   const hasPersonalizedFields =
     currentTicket.ticketType.personalizedFields.length > 0;
 
-  const hasCategoryFields = currentTicket.ticketType.categories.length > 0;
+  const hasCategoryFields = currentTicket.ticketType?.categories?.length > 0;
 
   const handleAdd = (newPlayer: Player) => {
     setPlayerData(newPlayer);

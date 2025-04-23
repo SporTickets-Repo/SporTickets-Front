@@ -19,6 +19,7 @@ import type { Player, TicketForm } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import React from "react";
+import { FiAlertTriangle } from "react-icons/fi";
 
 export default function PaymentPage() {
   const { selectedTickets, submitCheckout, event, isHydrated } = useEvent();
@@ -101,8 +102,8 @@ export default function PaymentPage() {
           ticket.ticketType.personalizedFields?.length
       ) &&
       players.every((player) => {
-        if (ticket.ticketType.categories.length === 0) return true;
-        return player.category.id !== "";
+        if (ticket.ticketType?.categories?.length === 0) return true;
+        return player.category?.id !== "";
       }) &&
       ticket.paymentData?.paymentMethod
     ) {
@@ -259,23 +260,8 @@ export default function PaymentPage() {
 
             {!formCompleted && (
               <div className="mt-4 mb-2 p-3 border border-amber-300 bg-amber-50 rounded-lg">
-                <h3 className="font-medium text-amber-800 mb-2 flex items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="mr-2"
-                  >
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                    <line x1="12" y1="9" x2="12" y2="13" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                  </svg>
+                <h3 className="font-medium text-amber-800 mb-2 flex items-center gap-2">
+                  <FiAlertTriangle />
                   Complete as informações abaixo para finalizar
                 </h3>
                 <ul className="space-y-1 text-sm text-amber-700 pl-7 list-disc">

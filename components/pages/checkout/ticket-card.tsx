@@ -27,7 +27,7 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
           player.personalizedField?.length ===
           ticket.ticketType.personalizedFields?.length
       ) &&
-      ticket.players.every((player) => player.category.id !== "")
+      ticket.players.every((player) => player.category?.id !== "")
     ) {
       return true;
     }
