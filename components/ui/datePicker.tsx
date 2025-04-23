@@ -17,6 +17,7 @@ import { eachMonthOfInterval, endOfYear, format, startOfYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon, Clock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { isMobile } from "react-device-detect";
 
 interface DateTimePickerProps {
   date: Date | undefined;
@@ -142,6 +143,24 @@ export function DatePicker({
     }
     setDate(newDate);
   };
+
+  if (isMobile) {
+    return (
+      <input
+        type="date"
+        disabled={disabled}
+        value={date ? date.toISOString().split("T")[0] : ""}
+        onChange={(e) => {
+          const newDate = new Date(e.target.value);
+          newDate.setHours(parseInt(hours, 10));
+          newDate.setMinutes(parseInt(minutes, 10));
+          setDate(newDate);
+        }}
+        className="w-full bg-neutral-100 border rounded px-3 py-2 text-sm"
+        placeholder={placeholder || "Selecione a data"}
+      />
+    );
+  }
 
   return (
     <Popover>
