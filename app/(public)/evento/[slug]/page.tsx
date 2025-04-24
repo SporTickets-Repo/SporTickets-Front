@@ -19,6 +19,7 @@ import {
   translateEventStatus,
   translateEventType,
 } from "@/utils/eventTranslations";
+import { stripHtml } from "@/utils/format";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { IoPin } from "react-icons/io5";
@@ -131,7 +132,9 @@ export default function EventPage() {
               <RegistrationSummary ticketTypes={event.ticketTypes} />
             </div>
 
-            <EventDescription description={event.description as string} />
+            {event?.description && stripHtml(event.description).length > 0 && (
+              <EventDescription description={event.description as string} />
+            )}
 
             <EventPolicy regulation={event.regulation as string} />
 
@@ -139,9 +142,12 @@ export default function EventPage() {
 
             <EventBracket brackets={event.bracket} />
 
-            <EventAditionalInfo
-              additionalInfo={event.additionalInfo as string}
-            />
+            {event?.additionalInfo &&
+              stripHtml(event.additionalInfo).length > 0 && (
+                <EventAditionalInfo
+                  additionalInfo={event.additionalInfo as string}
+                />
+              )}
           </div>
 
           <div className="hidden lg:block lg:col-span-1 order-none">
