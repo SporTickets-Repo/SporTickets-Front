@@ -36,7 +36,7 @@ export function PlayerForm({
   const hasPersonalizedFields =
     currentTicket.ticketType.personalizedFields.length > 0;
 
-  const hasCategoryFields = currentTicket.ticketType.categories.length > 0;
+  const hasCategoryFields = currentTicket.ticketType?.categories?.length > 0;
 
   const handleAdd = (newPlayer: Player) => {
     setPlayerData(newPlayer);
@@ -73,7 +73,7 @@ export function PlayerForm({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="items-center mb-4">
           <DialogTitle>
             {step === "search"
