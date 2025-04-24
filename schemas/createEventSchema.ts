@@ -25,15 +25,46 @@ export const eventFormValuesSchema = z
       if (arg instanceof Date) return arg.toISOString();
       return arg;
     }, z.string().nonempty({ message: "A data de encerramento é obrigatória" })),
-    description: z.string().refine((val) => stripHtml(val).length >= 6, {
-      message: "A descrição deve ter no mínimo 6 caracteres",
-    }),
-    regulation: z.string().refine((val) => stripHtml(val).length >= 6, {
-      message: "O regulamento deve ter no mínimo 6 caracteres",
-    }),
-    additionalInfo: z.string().refine((val) => stripHtml(val).length >= 6, {
-      message: "As informações adicionais devem ter no mínimo 6 caracteres",
-    }),
+
+    description: z.preprocess(
+      (val) =>
+        typeof val === "string" && stripHtml(val).trim() === ""
+          ? undefined
+          : val,
+      z
+        .string()
+        .optional()
+        .refine((val) => !val || stripHtml(val).length >= 6, {
+          message: "A descrição deve ter no mínimo 6 caracteres",
+        })
+    ),
+
+    regulation: z.preprocess(
+      (val) =>
+        typeof val === "string" && stripHtml(val).trim() === ""
+          ? undefined
+          : val,
+      z
+        .string()
+        .optional()
+        .refine((val) => !val || stripHtml(val).length >= 6, {
+          message: "O regulamento deve ter no mínimo 6 caracteres",
+        })
+    ),
+
+    additionalInfo: z.preprocess(
+      (val) =>
+        typeof val === "string" && stripHtml(val).trim() === ""
+          ? undefined
+          : val,
+      z
+        .string()
+        .optional()
+        .refine((val) => !val || stripHtml(val).length >= 6, {
+          message: "As informações adicionais devem ter no mínimo 6 caracteres",
+        })
+    ),
+
     cep: z
       .string()
       .transform((val) => val.replace(/\D/g, "").slice(0, 8))
