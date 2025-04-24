@@ -43,6 +43,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { DatePicker } from "@/components/ui/datePicker";
 import { useCreateEventContext } from "@/context/create-event";
+import { TicketType } from "@/interface/tickets";
 import { ticketService } from "@/service/ticket";
 import { mutate } from "swr";
 import { OptionsInputField } from "../options-input-field";
@@ -54,7 +55,7 @@ interface TicketItemProps {
 }
 
 function TicketItem({ index, removeTicket, duplicateTicket }: TicketItemProps) {
-  const { control, watch, trigger, getValues } = useFormContext();
+  const { control, watch, trigger, getValues, setValue } = useFormContext();
   const currentUserType = watch(`ticketTypes.${index}.userType`);
   const [openLots, setOpenLots] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState<string[]>([`ticket-${index}`]);
@@ -115,6 +116,54 @@ function TicketItem({ index, removeTicket, duplicateTicket }: TicketItemProps) {
 
     setOpenLots((prev) => [...prev, `lot-${newIndex}`]);
   }, [lotsArray, index, trigger, watch]);
+
+  const adjustLotQuantities = useCallback(
+    (ticketIndex: any, categorySum: any, lots: any) => {
+      if (!lots || lots.length === 0) return;
+
+      const currentLotSum = calculateLotSum(lots);
+      const difference = categorySum - currentLotSum;
+
+      if (difference === 0) return;
+
+      const activeLots = lots.filter((lot: any) => lot.isActive !== false);
+
+      if (activeLots.length === 0) {
+        const firstLotIndex = 0;
+        const currentQuantity = lots[firstLotIndex].quantity || 0;
+        setValue(
+          `ticketTypes.${ticketIndex}.ticketLots.${firstLotIndex}.quantity`,
+          Math.max(0, currentQuantity + difference)
+        );
+        return;
+      }
+
+      if (activeLots.length === 1) {
+        const lotIndex = lots.findIndex(
+          (lot: any) => lot.id === activeLots[0].id
+        );
+        const currentQuantity = lots[lotIndex].quantity || 0;
+        setValue(
+          `ticketTypes.${ticketIndex}.ticketLots.${lotIndex}.quantity`,
+          Math.max(0, currentQuantity + difference)
+        );
+        return;
+      }
+
+      const lastActiveLot = activeLots[activeLots.length - 1];
+      const lastActiveLotIndex = lots.findIndex(
+        (lot: any) => lot.id === lastActiveLot.id
+      );
+      const currentQuantity = lots[lastActiveLotIndex].quantity || 0;
+      setValue(
+        `ticketTypes.${ticketIndex}.ticketLots.${lastActiveLotIndex}.quantity`,
+        Math.max(0, currentQuantity + difference)
+      );
+
+      toast.success(`Quantidades ajustadas automaticamente.`);
+    },
+    [setValue]
+  );
 
   return (
     <Accordion
@@ -615,54 +664,126 @@ function TicketItem({ index, removeTicket, duplicateTicket }: TicketItemProps) {
                             <FormField
                               control={control}
                               name={`ticketTypes.${index}.ticketLots.${lotIndex}.quantity`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <div className="flex items-center justify-between">
-                                    <FormLabel className="flex items-center gap-2">
-                                      <Ticket className="h-4 w-4" />
-                                      Quantidade disponível
-                                    </FormLabel>
-                                    <div className="flex items-center gap-2">
-                                      <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-8 w-8"
-                                        onClick={() =>
-                                          field.onChange(
-                                            Math.max(0, field.value - 1)
-                                          )
-                                        }
-                                      >
-                                        <MinusIcon className="h-4 w-4" />
-                                      </Button>
-                                      <Input
-                                        className="w-24 h-10 text-center bg-muted "
-                                        value={field.value ?? ""}
-                                        onChange={(e) => {
-                                          const val = e.target.value.replace(
-                                            /\D/g,
-                                            ""
-                                          );
-                                          field.onChange(Number(val) || 0);
-                                        }}
-                                      />
-                                      <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-8 w-8"
-                                        onClick={() =>
-                                          field.onChange((field.value || 0) + 1)
-                                        }
-                                      >
-                                        <PlusIcon className="h-4 w-4" />
-                                      </Button>
+                              render={({ field }) => {
+                                const categories = watch(
+                                  `ticketTypes.${index}.categories`
+                                );
+                                const lots = watch(
+                                  `ticketTypes.${index}.ticketLots`
+                                );
+                                const categorySum =
+                                  calculateCategorySum(categories);
+                                const lotSum = calculateLotSum(lots);
+                                const isAthlete =
+                                  watch(`ticketTypes.${index}.userType`) ===
+                                  "ATHLETE";
+                                const showWarning =
+                                  isAthlete &&
+                                  categorySum > 0 &&
+                                  categorySum !== lotSum;
+
+                                return (
+                                  <FormItem>
+                                    <div className="flex flex-col">
+                                      {isAthlete && categorySum > 0 && (
+                                        <div className="flex items-center justify-between mb-2">
+                                          <div
+                                            className={`text-xs ${
+                                              showWarning
+                                                ? "text-destructive font-medium"
+                                                : "text-muted-foreground"
+                                            }`}
+                                          >
+                                            {showWarning ? (
+                                              <>
+                                                Atenção: A soma das categorias (
+                                                {categorySum}) deve ser igual à
+                                                soma dos lotes ({lotSum}).
+                                                {categorySum > lotSum
+                                                  ? ` Faltam ${
+                                                      categorySum - lotSum
+                                                    } vagas.`
+                                                  : ` Há ${
+                                                      lotSum - categorySum
+                                                    } vagas excedentes.`}
+                                              </>
+                                            ) : (
+                                              <>
+                                                Soma das categorias:{" "}
+                                                {categorySum} vagas
+                                              </>
+                                            )}
+                                          </div>
+                                          {showWarning && (
+                                            <Button
+                                              type="button"
+                                              variant="outline"
+                                              size="sm"
+                                              className="h-7 text-xs"
+                                              onClick={() =>
+                                                adjustLotQuantities(
+                                                  index,
+                                                  categorySum,
+                                                  lots
+                                                )
+                                              }
+                                            >
+                                              Ajustar automaticamente
+                                            </Button>
+                                          )}
+                                        </div>
+                                      )}
+                                      <div className="flex items-center justify-between">
+                                        <FormLabel className="flex items-center gap-2">
+                                          <Ticket className="h-4 w-4" />
+                                          Quantidade disponível
+                                        </FormLabel>
+                                        <div className="flex items-center gap-2">
+                                          <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-8 w-8"
+                                            onClick={() =>
+                                              field.onChange(
+                                                Math.max(0, field.value - 1)
+                                              )
+                                            }
+                                          >
+                                            <MinusIcon className="h-4 w-4" />
+                                          </Button>
+                                          <Input
+                                            className="w-24 h-10 text-center bg-muted "
+                                            value={field.value ?? ""}
+                                            onChange={(e) => {
+                                              const val =
+                                                e.target.value.replace(
+                                                  /\D/g,
+                                                  ""
+                                                );
+                                              field.onChange(Number(val) || 0);
+                                            }}
+                                          />
+                                          <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-8 w-8"
+                                            onClick={() =>
+                                              field.onChange(
+                                                (field.value || 0) + 1
+                                              )
+                                            }
+                                          >
+                                            <PlusIcon className="h-4 w-4" />
+                                          </Button>
+                                        </div>
+                                      </div>
+                                      <FormMessage />
                                     </div>
-                                  </div>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
+                                  </FormItem>
+                                );
+                              }}
                             />
                           </div>
                         </AccordionContent>
@@ -870,9 +991,26 @@ export function TicketsTab() {
       return;
     }
 
+    const currentTickets = getValues("ticketTypes");
+    const invalidTickets = currentTickets.filter((ticket: TicketType) => {
+      if (ticket.userType !== "ATHLETE" || !ticket.categories?.length)
+        return false;
+
+      const categorySum = calculateCategorySum(ticket.categories);
+      const lotSum = calculateLotSum(ticket.ticketLots);
+
+      return categorySum !== lotSum;
+    });
+
+    if (invalidTickets.length > 0) {
+      toast.error(
+        "A soma das quantidades de categorias deve ser igual à soma das quantidades dos lotes em todos os ingressos."
+      );
+      return;
+    }
+
     setIsSaving(true);
     try {
-      const currentTickets = getValues("ticketTypes");
       await ticketService.upsertTickets(currentTickets, eventId);
       toast.success("Ingressos atualizados com sucesso!");
       try {
@@ -1002,4 +1140,15 @@ function useSyncNextLotStartDate(index: number) {
 
     return () => subscription.unsubscribe?.();
   }, [watch, index, setValue]);
+}
+
+function calculateCategorySum(categories: any[]) {
+  return (
+    categories?.reduce((sum, category) => sum + (category.quantity || 0), 0) ||
+    0
+  );
+}
+
+function calculateLotSum(lots: any[]) {
+  return lots?.reduce((sum, lot) => sum + (lot.quantity || 0), 0) || 0;
 }
