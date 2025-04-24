@@ -305,7 +305,8 @@ export function InfoTab() {
                       <Image
                         src={smallImagePreview || "/placeholder.svg"}
                         alt="Imagem do evento"
-                        fill
+                        width={SMALL_WIDTH}
+                        height={SMALL_HEIGHT}
                         className="rounded-lg object-cover"
                       />
                       <div className="absolute bottom-0 right-0 bg-black/70 text-white text-xs px-2 py-1 rounded-tl-md">
@@ -357,7 +358,8 @@ export function InfoTab() {
                       <Image
                         src={bannerImagePreview || "/placeholder.svg"}
                         alt="Imagem maior"
-                        fill
+                        width={BANNER_WIDTH}
+                        height={BANNER_HEIGHT}
                         className="rounded-lg object-cover"
                       />
                       <div className="absolute bottom-0 right-0 bg-black/70 text-white text-xs px-2 py-1 rounded-tl-md">
