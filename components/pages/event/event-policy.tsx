@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { stripHtml } from "@/utils/format";
 import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
@@ -19,7 +20,7 @@ export default function EventPolicy({ regulation }: EventPolicyProps) {
       </div>
 
       <div className="space-y-4 text-sm text-gray-700">
-        {regulation && (
+        {regulation && stripHtml(regulation).length > 0 && (
           <div>
             <h3 className="font-medium">Regulamento do evento</h3>
 

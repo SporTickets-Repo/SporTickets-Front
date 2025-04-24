@@ -165,7 +165,8 @@ export default function useHome() {
     () =>
       events
         .map((event) => event.type)
-        .filter((value, index, self) => self.indexOf(value) === index),
+        .filter((value, index, self) => self.indexOf(value) === index)
+        .sort(),
     [events]
   );
 
