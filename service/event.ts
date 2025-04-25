@@ -115,6 +115,15 @@ export const eventService = {
     }
   },
 
+  getEventsUserMaster: async (userId: string): Promise<Event[]> => {
+    try {
+      const response = await api.get<Event[]>(`/events/all-master/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   setEventStatus: async (eventId: string, status: string): Promise<Event> => {
     try {
       const response = await api.put<Event>(`/events/${eventId}/set-status`, {

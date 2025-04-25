@@ -62,4 +62,13 @@ export const userService = {
       throw error;
     }
   },
+
+  userById: async (id: string): Promise<UserProfile> => {
+    try {
+      const response = await api.get(`/user/by-id/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
