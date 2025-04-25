@@ -30,7 +30,7 @@ function App() {
 
   return (
     <>
-      {loading || events.length === 0 ? (
+      {loading || events.length === 0 || false ? (
         <HomeSkeleton />
       ) : (
         <div className="min-h-screen">

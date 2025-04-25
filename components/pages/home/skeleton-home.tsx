@@ -7,14 +7,14 @@ export function HomeSkeleton() {
       <div className="flex flex-col min-h-[90vh] relative z-40 text-white bg-black/80 mb-5">
         <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-zinc-700/20 via-zinc-900/80 to-black -z-10" />
         <div className="flex flex-1 flex-col justify-center items-center md:max-w-4xl text-black gap-2 container mt-48 mb-24">
-          <div className="relative w-full">
-            <Skeleton className="h-12 rounded-md md:min-w-[450px] bg-gray-300/20" />
+          <div className="relative w-full mt-[-16px]">
+            <Skeleton className="h-[51px]  rounded-md md:min-w-[450px] bg-gray-300/20" />
           </div>
           <div className="flex gap-2 flex-wrap justify-center">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton
                 key={i}
-                className="w-[150px] h-[50px] rounded-lg bg-gray-300/20"
+                className="w-[165px] h-[64px] rounded-lg bg-gray-300/20"
               />
             ))}
           </div>
