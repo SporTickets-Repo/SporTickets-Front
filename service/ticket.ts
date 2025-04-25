@@ -38,9 +38,31 @@ export const ticketService = {
     }
   },
 
+  myTicketsByUser: async (userId: string): Promise<MyTicket[]> => {
+    try {
+      const response = await api.get<MyTicket[]>(
+        `/tickets/my-tickets-master/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   allTickets: async (): Promise<MyTicket[]> => {
     try {
       const response = await api.get<MyTicket[]>(`/tickets/all`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  allTicketsByUser: async (userId: string): Promise<MyTicket[]> => {
+    try {
+      const response = await api.get<MyTicket[]>(
+        `/tickets/all-master/${userId}`
+      );
       return response.data;
     } catch (error) {
       throw error;

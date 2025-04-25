@@ -50,6 +50,9 @@ export function UserProfile() {
           )}
         </TabsList>
         <Separator className="my-2 border-gray-100 border" />
+        <TabsContent value="tickets">
+          <MyTicketsList />
+        </TabsContent>
         {showevents && (
           <>
             <TabsContent value="events">
@@ -60,10 +63,6 @@ export function UserProfile() {
             </TabsContent>
           </>
         )}
-
-        <TabsContent value="tickets">
-          <MyTicketsList />
-        </TabsContent>
       </Tabs>
     </div>
   );

@@ -53,6 +53,15 @@ export const translateEventLevel = (level: EventLevel): string => {
   return translations[level] || "Desconhecido";
 };
 
+export const translateSex = (sex: string): string => {
+  const translations: Record<string, string> = {
+    MALE: "Masculino",
+    FEMALE: "Feminino",
+  };
+
+  return translations[sex] || "Desconhecido";
+};
+
 export const translatePaymentStatus = (status: TransactionStatus): string => {
   const translations: Record<TransactionStatus, string> = {
     PENDING: "Pendente",

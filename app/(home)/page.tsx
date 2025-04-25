@@ -15,6 +15,7 @@ import useHome from "./useHome";
 
 function App() {
   const {
+    events,
     eventTypes,
     recentEvents,
     finishedEvents,
@@ -29,7 +30,7 @@ function App() {
 
   return (
     <>
-      {loading ? (
+      {loading || events.length === 0 || false ? (
         <HomeSkeleton />
       ) : (
         <div className="min-h-screen">
@@ -184,7 +185,7 @@ function App() {
           <div className="container mb-6">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-md md:text-lg font-bold">
-                Eventos acontecendo e finalizados
+                Eventos acontecendo ou finalizados
               </h2>
               <Button variant="tertiary" size="sm">
                 <ArrowRight size={16} />

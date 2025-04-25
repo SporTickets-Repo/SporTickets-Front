@@ -138,9 +138,13 @@ export default function EventPage() {
 
             <EventPolicy regulation={event.regulation as string} />
 
-            <EventRanking rankings={event.ranking} />
+            {event.ranking.length > 0 && (
+              <EventRanking rankings={event.ranking} />
+            )}
 
-            <EventBracket brackets={event.bracket} />
+            {event.bracket.length > 0 && (
+              <EventBracket brackets={event.bracket} />
+            )}
 
             {event?.additionalInfo &&
               stripHtml(event.additionalInfo).length > 0 && (

@@ -58,7 +58,7 @@ export function HomeSearchBar() {
     <Command className="rounded-lg border shadow-md md:min-w-[450px]">
       <CommandInput
         placeholder="Digite sua busca..."
-        className="w-full pr-10 py-8 px-4 rounded-2xl !text-lg"
+        className="w-full md:pr-10 py-6 px-4 rounded-2xl md:text-lg text-md"
         value={search}
         onValueChange={setSearch}
         onKeyDown={handleKeyDown}

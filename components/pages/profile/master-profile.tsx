@@ -2,30 +2,33 @@
 
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/context/auth";
 import { Event } from "@/interface/event";
-import { UserRole } from "@/interface/user";
 import { eventService } from "@/service/event";
-import { Loader2, Search } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { FaRegChartBar } from "react-icons/fa";
 import { TbSoccerField, TbTicket } from "react-icons/tb";
 import useSWR from "swr";
-import { MetricDashboard } from "./metrics/metrics-dashboard";
-import { MyTicketsList } from "./my-tickets/my-tickets-list";
-import { ProfileEventList } from "./organizer/profile-event-list";
-import { SearchUser } from "./search-user";
+import { MetricDashboardMaster } from "./metrics/metrics-dashboard-master";
+import { MyTicketsListMaster } from "./my-tickets/my-tickets-list-master";
+import { ProfileEventListMaster } from "./organizer/profile-event-list-master";
 
-export function OrganizerProfile() {
-  const { user } = useAuth();
-  const isMaster = user?.role === UserRole.MASTER;
+interface MasterProfileProps {
+  userId: string;
+}
+
+export function MasterProfile({ userId }: MasterProfileProps) {
   const {
     data: events,
     error,
     isLoading,
-  } = useSWR<Event[]>("/events/my-events", eventService.getMyEvents, {
-    revalidateOnFocus: false,
-    refreshInterval: 0,
-  });
+  } = useSWR<Event[]>(
+    userId ? `/events/all-master/${userId}` : null,
+    () => eventService.getEventsUserMaster(userId),
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 0,
+    }
+  );
 
   if (error) {
     return (
@@ -58,17 +61,8 @@ export function OrganizerProfile() {
             className="flex items-center gap-2 text-sm md:text-base"
           >
             <TbTicket className="w-5 h-5 md:w-6 md:h-6" />
-            <span>Meus Ingressos</span>
+            <span>Ingressos do usuario</span>
           </TabsTrigger>
-          {isMaster && (
-            <TabsTrigger
-              value="search"
-              className="flex items-center gap-2 text-sm md:text-base"
-            >
-              <Search className="w-5 h-5 md:w-6 md:h-6" />
-              <span>Pesquisar Usuários</span>
-            </TabsTrigger>
-          )}
         </TabsList>
         <Separator className="my-4 border-sporticket-gray" />
         <TabsContent value="events">
@@ -77,20 +71,15 @@ export function OrganizerProfile() {
               <Loader2 className="animate-spin w-8 h-8 text-primary" />
             </div>
           ) : (
-            <ProfileEventList events={events || []} />
+            <ProfileEventListMaster events={events || []} />
           )}
         </TabsContent>
         <TabsContent value="metrics">
-          <MetricDashboard />
+          <MetricDashboardMaster userId={userId} />
         </TabsContent>
         <TabsContent value="tickets">
-          <MyTicketsList />
+          <MyTicketsListMaster userId={userId} />
         </TabsContent>
-        {isMaster && (
-          <TabsContent value="search">
-            <SearchUser />
-          </TabsContent>
-        )}
       </Tabs>
     </div>
   );
