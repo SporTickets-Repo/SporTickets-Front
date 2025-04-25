@@ -2,7 +2,9 @@
 
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/context/auth";
 import { Event } from "@/interface/event";
+import { UserRole } from "@/interface/user";
 import { eventService } from "@/service/event";
 import { Loader2, Search } from "lucide-react";
 import { FaRegChartBar } from "react-icons/fa";
@@ -14,6 +16,8 @@ import { ProfileEventList } from "./organizer/profile-event-list";
 import { SearchUser } from "./search-user";
 
 export function OrganizerProfile() {
+  const { user } = useAuth();
+  const isMaster = user?.role === UserRole.MASTER;
   const {
     data: events,
     error,
@@ -56,13 +60,15 @@ export function OrganizerProfile() {
             <TbTicket className="w-5 h-5 md:w-6 md:h-6" />
             <span>Meus Ingressos</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="search"
-            className="flex items-center gap-2 text-sm md:text-base"
-          >
-            <Search className="w-5 h-5 md:w-6 md:h-6" />
-            <span>Pesquisar Usuários</span>
-          </TabsTrigger>
+          {isMaster && (
+            <TabsTrigger
+              value="search"
+              className="flex items-center gap-2 text-sm md:text-base"
+            >
+              <Search className="w-5 h-5 md:w-6 md:h-6" />
+              <span>Pesquisar Usuários</span>
+            </TabsTrigger>
+          )}
         </TabsList>
         <Separator className="my-4 border-sporticket-gray" />
         <TabsContent value="events">
@@ -80,9 +86,11 @@ export function OrganizerProfile() {
         <TabsContent value="tickets">
           <MyTicketsList />
         </TabsContent>
-        <TabsContent value="search">
-          <SearchUser />
-        </TabsContent>
+        {isMaster && (
+          <TabsContent value="search">
+            <SearchUser />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

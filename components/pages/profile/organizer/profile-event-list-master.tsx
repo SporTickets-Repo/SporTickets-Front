@@ -1,9 +1,6 @@
 "use client";
 import { Event } from "@/interface/event";
-import { eventService } from "@/service/event";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { ProfileEventCard } from "./profile-event-card";
 
 interface ProfileEventListProps {
@@ -15,22 +12,6 @@ export function ProfileEventListMaster({
   events,
   user = false,
 }: ProfileEventListProps) {
-  const router = useRouter();
-
-  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
-
-  const handleCreateEvent = async () => {
-    try {
-      const response = await eventService.init();
-
-      if (response) {
-        router.push(`/evento/criar/${response.eventId}`);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex flex-1 flex-col gap-3 max-h-[50vh] overflow-y-auto">

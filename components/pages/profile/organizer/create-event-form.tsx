@@ -20,6 +20,7 @@ import {
   Trash2Icon,
   Users2,
 } from "lucide-react";
+import { CgMathPercent } from "react-icons/cg";
 
 import {
   Dialog,
@@ -39,6 +40,8 @@ import {
 import { useAuth } from "@/context/auth";
 import { useCreateEventContext } from "@/context/create-event";
 import { SendTicketProvider } from "@/context/send-ticket";
+//import { EventDashboardAccess } from "@/interface/collaborator";
+import { EventDashboardAccess } from "@/interface/collaborator";
 import {
   EventLevel,
   EventStatus,
@@ -54,7 +57,6 @@ import {
 import { eventService } from "@/service/event";
 import { translateEventStatusOrganizer } from "@/utils/eventTranslations";
 import { useRouter } from "next/navigation";
-import { FiPercent } from "react-icons/fi";
 import { mutate } from "swr";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
@@ -87,10 +89,30 @@ interface CreateEventFormProps {
   eventId: string;
 }
 
+const NotUserPermissionComponent = () => {
+  const router = useRouter();
+
+  return (
+    <section className="container py-4">
+      <div className="flex flex-col items-center gap-4">
+        <h1 className="text-2xl font-bold">Configurações do evento</h1>
+        <p>Você não tem permissão para acessar essa página.</p>
+        <Button variant="default" onClick={() => router.push("/perfil")}>
+          Voltar para o perfil
+        </Button>
+      </div>
+    </section>
+  );
+};
+
 export function CreateEventForm({ eventId }: CreateEventFormProps) {
   const { user } = useAuth();
-
   const isMaster = user?.role === "MASTER";
+
+  const { event } = useCreateEventContext();
+
+  const collaborators: EventDashboardAccess[] =
+    event?.eventDashboardAccess || [];
 
   const {
     event: eventData,
@@ -101,6 +123,12 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     setSmallImagePreview,
     setBannerImagePreview,
   } = useCreateEventContext();
+
+  const hasPermission =
+    isMaster ||
+    user?.id === event?.createdBy ||
+    collaborators.some((collaborator) => collaborator.userId === user?.id) ||
+    eventLoading;
 
   const methods = useForm<CreateEventFormValues>({
     resolver: zodResolver(createEventFormValuesSchema),
@@ -433,6 +461,10 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     }
   }, [eventData]);
 
+  if (!hasPermission) {
+    return <NotUserPermissionComponent />;
+  }
+
   return (
     <div className="container-sm">
       <div className="flex items-center space-x-4 mt-2 mb-4">
@@ -464,7 +496,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                   {tab === "coupons" && <TicketPercent className="w-4 h-4" />}
                   {tab === "collaborators" && <Users2 className="w-4 h-4" />}
                   {tab === "integrations" && <Link className="w-4 h-4" />}
-                  {tab === "taxes" && <FiPercent className="w-4 h-4" />}
+                  {tab === "taxes" && <CgMathPercent className="w-4 h-4" />}
                   {tab === "sendTicket" && <ArrowUpIcon className="w-4 h-4" />}
                   {tabLabels[tab]}
                 </Button>
