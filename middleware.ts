@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const privateRoutes = ["/perfil", "/evento/criar", "/pagamento"];
+const privateRoutes = ["/perfil", "/evento/criar", "/pagamento", "/usuario"];
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value || null;
