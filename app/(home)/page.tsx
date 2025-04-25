@@ -15,6 +15,7 @@ import useHome from "./useHome";
 
 function App() {
   const {
+    events,
     eventTypes,
     recentEvents,
     finishedEvents,
@@ -29,7 +30,7 @@ function App() {
 
   return (
     <>
-      {loading ? (
+      {loading || events.length === 0 ? (
         <HomeSkeleton />
       ) : (
         <div className="min-h-screen">
