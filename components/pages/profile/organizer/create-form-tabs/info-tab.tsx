@@ -299,7 +299,7 @@ export function InfoTab() {
                 >
                   {smallImagePreview ? (
                     <div
-                      className="w-full h-full relative"
+                      className="w-full h-full relative overflow-hidden rounded-lg"
                       style={{ aspectRatio: `${SMALL_WIDTH}/${SMALL_HEIGHT}` }}
                     >
                       <Image
@@ -350,7 +350,7 @@ export function InfoTab() {
                 >
                   {bannerImagePreview ? (
                     <div
-                      className="w-full h-full relative"
+                      className="w-full h-full relative overflow-hidden rounded-lg"
                       style={{
                         aspectRatio: `${BANNER_WIDTH}/${BANNER_HEIGHT}`,
                       }}
