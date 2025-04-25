@@ -4,6 +4,7 @@ import { MasterProfile } from "@/components/pages/profile/master-profile";
 import { useAuth } from "@/context/auth";
 import { UserProfile, UserRole } from "@/interface/user";
 import { userService } from "@/service/user";
+import { translateSex } from "@/utils/eventTranslations";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -55,7 +56,7 @@ const UserInfoBanner = ({ userProfile }: { userProfile?: UserProfile }) => (
           CEP: {userProfile?.cep || "CEP não informado"}
         </p>
         <p className="text-sm md:text-base">
-          Sexo: {userProfile?.sex || "Sexo não informado"}
+          Sexo: {translateSex(userProfile?.sex || "Não informado")}
         </p>
       </div>
       <div className="flex flex-col gap-1"></div>
