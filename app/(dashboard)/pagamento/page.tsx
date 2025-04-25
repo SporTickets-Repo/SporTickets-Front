@@ -277,7 +277,6 @@ export default function PaymentPage() {
                     const needsCategories =
                       ticket.ticketType.categories.length > 0 &&
                       players.some((player) => !player.category?.id);
-                    const needsPayment = !ticket.paymentData?.paymentMethod;
 
                     return (
                       <React.Fragment key={index}>
@@ -299,12 +298,12 @@ export default function PaymentPage() {
                         {needsCategories && (
                           <li>Selecione a categoria para todos os jogadores</li>
                         )}
-                        {needsPayment && (
-                          <li>Selecione um método de pagamento</li>
-                        )}
                       </React.Fragment>
                     );
                   })}
+                  {selectedTickets.some(
+                    (ticket) => !ticket.paymentData?.paymentMethod
+                  ) && <li>Selecione um método de pagamento</li>}
                 </ul>
               </div>
             )}
