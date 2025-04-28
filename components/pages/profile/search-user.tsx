@@ -96,7 +96,7 @@ export function SearchUser() {
                   user.profileImageUrl || "/assets/icons/default-profile.png"
                 }
                 alt={user.name || "Usuário"}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover max-h-16 max-w-16"
               />
             </div>
             <div className="flex-1">

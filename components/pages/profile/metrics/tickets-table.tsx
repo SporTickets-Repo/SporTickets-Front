@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { MyTicket } from "@/interface/myTickets";
-import { translatePaymentStatus } from "@/utils/eventTranslations";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import * as XLSX from "xlsx";
@@ -30,12 +29,13 @@ export function TicketsTable({ tickets }: TicketsTableProps) {
       );
 
       return {
+        Evento: ticket.ticketLot.ticketType.event.name,
         Usuário: `${ticket.user.name}`,
         Email: ticket.user.email,
         Categoria: ticket.category?.title || "",
+        TicketType: ticket.ticketLot.ticketType.name,
         Lote: ticket.ticketLot.name,
         "Valor Pago": ticket.price,
-        Evento: ticket.ticketLot.ticketType.event.name,
         "Status da Transação": ticket.transaction.status,
         "Código do Ticket": ticket.code,
         "Team Name": ticket.team.tickets.map((t) => t.user.name).join(", "),
@@ -75,9 +75,10 @@ export function TicketsTable({ tickets }: TicketsTableProps) {
             <tr className="text-left text-sm font-semibold text-gray-500">
               <th className="px-4 py-2">Usuário:</th>
               <th className="px-4 py-2">Evento:</th>
+              <th className="px-4 py-2">TicketType:</th>
               <th className="px-4 py-2">Categoria:</th>
               <th className="px-4 py-2">Lote:</th>
-              <th className="px-4 py-2">Status da Transação:</th>
+
               <th className="px-4 py-2">Valor Pago:</th>
               <th className="px-4 py-2">Código do Ticket:</th>
             </tr>
@@ -92,7 +93,7 @@ export function TicketsTable({ tickets }: TicketsTableProps) {
                         <img
                           src={ticket.user.profileImageUrl}
                           alt={ticket.user.name}
-                          className="rounded-full"
+                          className="rounded-full max-h-9 max-w-9 h-9 w-9 object-cover"
                         />
                       ) : (
                         <span>{ticket.user.name[0]}</span>
@@ -111,14 +112,17 @@ export function TicketsTable({ tickets }: TicketsTableProps) {
                 <td className="px-4 py-2">
                   {ticket.ticketLot.ticketType.event.name}
                 </td>
+                <td className="px-4 py-2">
+                  {ticket.ticketLot.ticketType.name}
+                </td>
                 <td className="px-4 py-2 items-center">
                   {ticket.category?.title || "-"}
                 </td>
                 <td className="px-4 py-2">{ticket.ticketLot.name}</td>
 
-                <td className="px-4 py-2">
+                {/*  <td className="px-4 py-2">
                   {translatePaymentStatus(ticket.transaction.status)}
-                </td>
+                </td> */}
                 <td className="px-4 py-2 items-center">
                   {formatMoneyBR(ticket.price)}
                 </td>
