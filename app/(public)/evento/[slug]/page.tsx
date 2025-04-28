@@ -113,12 +113,14 @@ export default function EventPage() {
                     );
                   }
 
-                  return (
-                    <span className="">
-                      {totalAvailable} vaga{totalAvailable > 1 ? "s" : ""}{" "}
-                      disponíveis
-                    </span>
-                  );
+                  if (event?.allowFullTickets) {
+                    return (
+                      <span className="">
+                        {totalAvailable} vaga{totalAvailable > 1 ? "s" : ""}{" "}
+                        disponíveis
+                      </span>
+                    );
+                  }
                 })()}
               </div>
             </div>
@@ -129,7 +131,13 @@ export default function EventPage() {
             />
 
             <div className="block lg:hidden order-last">
-              <RegistrationSummary ticketTypes={event.ticketTypes} />
+              <RegistrationSummary
+                ticketTypes={event.ticketTypes}
+                ticketsVisibility={{
+                  allowFullTickets: event.allowFullTickets,
+                  allowIndividualTickets: event.allowIndividualTickets,
+                }}
+              />
             </div>
 
             {event?.description && stripHtml(event.description).length > 0 && (
@@ -155,7 +163,13 @@ export default function EventPage() {
           </div>
 
           <div className="hidden lg:block lg:col-span-1 order-none">
-            <RegistrationSummary ticketTypes={event.ticketTypes} />
+            <RegistrationSummary
+              ticketTypes={event.ticketTypes}
+              ticketsVisibility={{
+                allowFullTickets: event.allowFullTickets,
+                allowIndividualTickets: event.allowIndividualTickets,
+              }}
+            />
           </div>
         </div>
       </div>

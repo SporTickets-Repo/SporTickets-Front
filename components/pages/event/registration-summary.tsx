@@ -8,10 +8,15 @@ import { useRouter } from "next/navigation";
 
 interface RegistrationSummaryProps {
   ticketTypes: TicketType[];
+  ticketsVisibility: {
+    allowIndividualTickets: boolean;
+    allowFullTickets: boolean;
+  };
 }
 
 export default function RegistrationSummary({
   ticketTypes,
+  ticketsVisibility,
 }: RegistrationSummaryProps) {
   const { addTicket, removeTicket, selectedTickets } = useEvent();
   const router = useRouter();
@@ -61,13 +66,15 @@ export default function RegistrationSummary({
             >
               <div>
                 <h3 className="font-medium">{ticket.name}</h3>
-                <p className="text-xs text-gray-500">
-                  {isSoldOut
-                    ? "Esgotado"
-                    : `Restam ${availableQuantity} vaga${
-                        availableQuantity > 1 ? "s" : ""
-                      }`}
-                </p>
+                {ticketsVisibility?.allowIndividualTickets && (
+                  <p className="text-xs text-gray-500">
+                    {isSoldOut
+                      ? "Esgotado"
+                      : `Restam ${availableQuantity} vaga${
+                          availableQuantity > 1 ? "s" : ""
+                        }`}
+                  </p>
+                )}
                 <span className="block text-sm text-sporticket-green-700">
                   Valor por equipe ({ticket.teamSize}{" "}
                   {ticket.teamSize > 1 ? "pessoas" : "pessoa"}):{" "}
