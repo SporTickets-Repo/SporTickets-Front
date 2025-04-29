@@ -165,11 +165,6 @@ export function InfoTab() {
   };
 
   const handleSave = async () => {
-    console.log(
-      getValues("event.allowFullTickets"),
-      getValues("event.allowIndividualTickets")
-    );
-
     const isValid = await trigger("event");
     if (!isValid) {
       toast.error("Por favor, corrija os erros antes de salvar.");
