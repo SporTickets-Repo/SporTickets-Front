@@ -35,9 +35,11 @@ const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      const response = await authService.checkEmail(data.email);
+      const response = await authService.checkEmail(
+        data.email.toLocaleLowerCase()
+      );
       if (response) {
-        setEmail(data.email);
+        setEmail(data.email.toLocaleLowerCase());
         nextStep(AuthStep.ENTER_PASSWORD);
       } else {
         setEmail(data.email);
