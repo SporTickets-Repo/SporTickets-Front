@@ -58,7 +58,7 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
     const body = {
       name: data.name,
       document: clearMask(data.document),
-      email: data.email,
+      email: data.email.toLowerCase(),
       password: data.password,
       confirmPassword: data.confirmPassword,
       bornAt: data.bornAt.toISOString(),

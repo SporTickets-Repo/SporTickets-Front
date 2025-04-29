@@ -62,6 +62,7 @@ export function RegisterStep({ email, onRegistered, onClose }: Props) {
     try {
       const cleanedData = {
         ...data,
+        email: data.email.toLowerCase(),
         document: clearMask(data.document),
         cep: clearMask(data.cep),
         phone: clearMask(data.phone),
