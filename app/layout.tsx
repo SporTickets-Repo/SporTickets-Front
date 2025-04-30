@@ -14,8 +14,15 @@ const rubik = Rubik({
 
 export const metadata: Metadata = {
   title: "SporTickets",
-  description: "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
-  keywords: ["ingressos esportivos", "eventos esportivos", "comprar ingressos", "esportes", "tickets esportivos"],
+  description:
+    "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
+  keywords: [
+    "ingressos esportivos",
+    "eventos esportivos",
+    "comprar ingressos",
+    "esportes",
+    "tickets esportivos",
+  ],
   authors: [{ name: "SporTickets" }],
   creator: "SporTickets",
   publisher: "SporTickets",
@@ -24,7 +31,9 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://sportickets.com.br"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://sportickets.com.br"
+  ),
   alternates: {
     canonical: "/",
   },
@@ -34,7 +43,8 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "SporTickets",
     title: "SporTickets - Seu site de ingressos para eventos esportivos",
-    description: "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
+    description:
+      "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
     images: [
       {
         url: "/logos/Logo-Reduzida-para-fundo-Branco.png",
@@ -47,7 +57,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "SporTickets - Seu site de ingressos para eventos esportivos",
-    description: "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
+    description:
+      "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
     images: ["/logos/Logo-Reduzida-para-fundo-Branco.png"],
   },
   robots: {
@@ -75,6 +86,29 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "SporTickets",
+              url:
+                process.env.NEXT_PUBLIC_SITE_URL ||
+                "https://sportickets.com.br",
+              logo: `${process.env.NEXT_PUBLIC_SITE_URL}/logos/Logo-Reduzida-para-fundo-Branco.png`,
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: "+55-61-996476207",
+                contactType: "customer support",
+                areaServed: "BR",
+                availableLanguage: "Portuguese",
+              },
+            }),
+          }}
+        />
+      </head>
       <body className={rubik.className}>
         <AuthProvider>
           <EventProvider>
