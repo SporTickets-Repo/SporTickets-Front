@@ -71,7 +71,7 @@ const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
             Digite seu e-mail
           </h1>
           <p className="text-sm text-muted-foreground">
-            A sporTickets agradece a preferência
+            A SporTickets agradece a preferência
           </p>
         </div>
 

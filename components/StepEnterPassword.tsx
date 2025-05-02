@@ -70,7 +70,7 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
             Bem vindo de volta!
           </h1>
           <p className="text-sm text-muted-foreground">
-            A sporTickets agradece a preferência
+            A SporTickets agradece a preferência
           </p>
         </div>
 
