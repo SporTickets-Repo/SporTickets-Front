@@ -3,8 +3,16 @@ import { NextRequest, NextResponse } from "next/server";
 const privateRoutes = ["/perfil", "/evento/criar", "/pagamento", "/usuario"];
 
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value || null;
   const { pathname, searchParams } = req.nextUrl;
+  const token = req.cookies.get("token")?.value || null;
+
+  if (
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml" ||
+    pathname === "/evento/sitemap.xml"
+  ) {
+    return NextResponse.next();
+  }
 
   if (pathname === "/entrar" && token) {
     const redirect = searchParams.get("redirect") || "/";
@@ -25,5 +33,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|favicon.ico|api).*)"],
+  matcher: ["/((?!_next|favicon.ico|robots.txt|.*sitemap.*|api).*)"],
 };
