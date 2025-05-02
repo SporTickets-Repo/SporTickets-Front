@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { ImageCropper } from "@/components/ui/image-cropper";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Tiptap } from "@/components/ui/tiptap";
 import { useAuth } from "@/context/auth";
 import { useCreateEventContext } from "@/context/create-event";
@@ -206,6 +208,8 @@ export function InfoTab() {
         city: values.event.city,
         state: values.event.state,
       },
+      allowFullTickets: values.event.allowFullTickets,
+      allowIndividualTickets: values.event.allowIndividualTickets,
       bannerImageFile: values.event.bannerImageFile,
       smallImageFile: values.event.smallImageFile,
     };
@@ -592,6 +596,45 @@ export function InfoTab() {
                     />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormField
+              control={control}
+              name={`event.allowFullTickets`}
+              render={({ field }) => (
+                <FormItem className="flex items-center space-x-2 m-0">
+                  <FormLabel>Permitir contagem total de ingresso</FormLabel>
+                  <FormControl>
+                    <span onClick={(e) => e.stopPropagation()}>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </span>
+                  </FormControl>
+                  <Label className="text-xs !m-0 !ml-2">Ativo</Label>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name={`event.allowIndividualTickets`}
+              render={({ field }) => (
+                <FormItem className="flex items-center space-x-2 m-0">
+                  <FormLabel>Permitir contagem por tipo de ingresso</FormLabel>
+                  <FormControl>
+                    <span onClick={(e) => e.stopPropagation()}>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </span>
+                  </FormControl>
+                  <Label className="text-xs !m-0 !ml-2">Ativo</Label>
                 </FormItem>
               )}
             />

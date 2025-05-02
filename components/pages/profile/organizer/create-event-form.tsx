@@ -152,6 +152,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         neighborhood: "",
         place: "",
         regulation: "",
+        allowIndividualTickets: false,
+        allowFullTickets: false,
         bannerImageFile: undefined,
         smallImageFile: undefined,
       },
@@ -190,6 +192,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
           neighborhood: eventData.address?.neighborhood ?? "",
           place: eventData.place ?? "",
           regulation: eventData.regulation ?? "",
+          allowIndividualTickets: eventData.allowIndividualTickets ?? false,
+          allowFullTickets: eventData.allowFullTickets ?? false,
           paymentMethods:
             eventData.paymentMethods && eventData.paymentMethods.length > 0
               ? eventData.paymentMethods
@@ -424,6 +428,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
       neighborhood: event.address?.neighborhood,
       place: event.place,
       regulation: event.regulation,
+      allowIndividualTickets: event.allowIndividualTickets,
+      allowFullTickets: event.allowFullTickets,
     });
 
     if (!eventCheck.success) {

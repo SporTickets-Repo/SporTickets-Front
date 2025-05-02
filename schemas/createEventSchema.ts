@@ -79,6 +79,8 @@ export const eventFormValuesSchema = z
     complement: z.string().optional(),
     neighborhood: z.string().nonempty({ message: "O bairro é obrigatório" }),
     place: z.string().nonempty({ message: "O local é obrigatório" }),
+    allowIndividualTickets: z.boolean().optional(),
+    allowFullTickets: z.boolean().optional(),
     bannerImageFile: z
       .instanceof(File, {
         message: "O arquivo da imagem do banner é obrigatório",

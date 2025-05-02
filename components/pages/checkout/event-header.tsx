@@ -37,9 +37,11 @@ export function EventHeader() {
         <p className="text-sm text-muted-foreground">
           {event.place}, {event.address?.neighborhood}
         </p>
-        <p className="text-sm text-sporticket-green-500">
-          {numberOfTickets} vagas restantes
-        </p>
+        {event.allowFullTickets && (
+          <p className="text-sm text-sporticket-green-500">
+            {numberOfTickets} vagas restantes
+          </p>
+        )}
       </div>
     </div>
   );
