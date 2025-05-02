@@ -43,7 +43,7 @@ export async function generateMetadata({
   }
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://sportickets.com.br";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.sportickets.com.br";
   const eventUrl = `${baseUrl}/evento/${slug}`;
   const description = stripHtml(event.description || "").slice(0, 160);
   const bannerUrl =

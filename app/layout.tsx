@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://sportickets.com.br"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.sportickets.com.br"
   ),
   alternates: {
     canonical: "/",
@@ -96,7 +96,7 @@ export default function RootLayout({
               name: "SporTickets",
               url:
                 process.env.NEXT_PUBLIC_SITE_URL ||
-                "https://sportickets.com.br",
+                "https://www.sportickets.com.br",
               logo: `${process.env.NEXT_PUBLIC_SITE_URL}/logos/Logo-Reduzida-para-fundo-Branco.png`,
               contactPoint: {
                 "@type": "ContactPoint",
