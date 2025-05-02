@@ -7,7 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
-  pixQRCode: string;
+  pixQRCode: string | null;
   onRefresh: (isUserAction: boolean) => Promise<void>;
 }
 
@@ -15,6 +15,7 @@ export function TransactionQRCode({ pixQRCode, onRefresh }: Props) {
   const [loading, setLoading] = useState(false);
 
   const handleCopy = async () => {
+    if (!pixQRCode) return;
     try {
       await navigator.clipboard.writeText(pixQRCode);
       toast.success("Código PIX copiado!");
@@ -28,6 +29,20 @@ export function TransactionQRCode({ pixQRCode, onRefresh }: Props) {
     await onRefresh(true);
     setLoading(false);
   };
+
+  if (!pixQRCode) {
+    return (
+      <div className="space-y-6 text-center max-w-md w-full">
+        <h2 className="text-xl font-bold">Carregando QR Code...</h2>
+        <div className="w-full flex justify-center items-center h-64 bg-zinc-100 rounded-md">
+          <Loader2 className="h-10 w-10 animate-spin text-zinc-500" />
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Estamos gerando o seu QR Code. Isso pode levar alguns segundos...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 text-center max-w-md w-full">
