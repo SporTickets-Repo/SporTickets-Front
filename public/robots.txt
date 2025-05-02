@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /dashboard/
-Disallow: /auth/
-
-Sitemap: https://sportickets.com.br/sitemap.xml
-Sitemap: https://sportickets.com.br/evento/sitemap.xml 
