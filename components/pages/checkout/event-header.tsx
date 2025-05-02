@@ -10,7 +10,7 @@ export function EventHeader() {
     return (
       acc +
       ticket.ticketLots.reduce((acc, lot) => {
-        return acc + (lot.isActive ? lot.quantity : 0);
+        return acc + (lot.isActive ? lot.quantity - lot.soldQuantity : 0);
       }, 0)
     );
   }, 0);
