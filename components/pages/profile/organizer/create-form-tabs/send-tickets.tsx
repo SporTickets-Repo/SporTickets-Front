@@ -61,9 +61,9 @@ export function SendTicketTab() {
     };
 
     try {
-      const response = await checkoutService.freeCheckout(payload);
+      await checkoutService.freeCheckout(payload);
       toast.success("Ingressos enviados com sucesso!");
-      console.log("Free checkout response:", response);
+      setSelectedTicket(null);
     } catch (error: any) {
       toast.error("Erro ao enviar ingressos.");
       console.error("Erro no freeCheckout:", error);
