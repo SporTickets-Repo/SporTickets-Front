@@ -10,7 +10,7 @@ export function EventHeader() {
     return (
       acc +
       ticket.ticketLots.reduce((acc, lot) => {
-        return acc + (lot.isActive ? lot.quantity : 0);
+        return acc + (lot.isActive ? lot.quantity - lot.soldQuantity : 0);
       }, 0)
     );
   }, 0);
@@ -37,9 +37,11 @@ export function EventHeader() {
         <p className="text-sm text-muted-foreground">
           {event.place}, {event.address?.neighborhood}
         </p>
-        <p className="text-sm text-sporticket-green-500">
-          {numberOfTickets} vagas restantes
-        </p>
+        {event.allowFullTickets && (
+          <p className="text-sm text-sporticket-green-500">
+            {numberOfTickets} vagas restantes
+          </p>
+        )}
       </div>
     </div>
   );

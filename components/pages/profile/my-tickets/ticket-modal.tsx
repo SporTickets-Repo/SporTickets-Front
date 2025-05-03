@@ -103,10 +103,8 @@ export function TicketModal({ isOpen, onClose, ticket }: TicketModalProps) {
                   <p className="font-medium">{ticket.ticketLot.name}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Valor do lote</p>
-                  <p className="font-medium">
-                    {formatMoneyBR(ticket.ticketLot.price)}
-                  </p>
+                  <p className="text-gray-500">Valor pago</p>
+                  <p className="font-medium">{formatMoneyBR(ticket.price)}</p>
                 </div>
               </div>
 

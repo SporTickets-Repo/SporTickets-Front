@@ -31,6 +31,8 @@ export interface Event {
   coupons: Coupon[];
   eventDashboardAccess: EventDashboardAccess[];
   eventFee?: number;
+  allowIndividualTickets: boolean;
+  allowFullTickets: boolean;
 }
 
 export interface EventSummary {
