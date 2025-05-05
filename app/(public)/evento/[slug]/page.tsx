@@ -12,9 +12,9 @@ const baseUrl =
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
 
   const res = await fetch(`${apiUrl}/events/slug/${slug}`, {
     next: { revalidate: 21600 }, // cache por 6 horas
@@ -73,9 +73,9 @@ export async function generateMetadata({
 export default async function EventPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   const res = await fetch(`${apiUrl}/events/slug/${slug}`, {
     next: { revalidate: 300 }, // cache por 5 minutos
