@@ -1,25 +1,23 @@
 import EventSlugContent from "@/components/pages/event/event-slug-content";
-import { EventStatus } from "@/interface/event";
+import EventSlugInitializer from "@/components/pages/event/event-slug-initializer";
+import { Event, EventStatus } from "@/interface/event";
 import { stripHtml } from "@/utils/format";
 import { Metadata } from "next";
+
+const apiUrl =
+  process.env.NEXT_PUBLIC_API_URL || "https://api.sportickets.com.br";
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.sportickets.com.br";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
 
-  if (!slug) {
-    return {
-      title: "Carregando evento | SporTickets",
-    };
-  }
-
-  const apiUrl =
-    process.env.NEXT_PUBLIC_API_URL || "https://api.sportickets.com.br";
   const res = await fetch(`${apiUrl}/events/slug/${slug}`, {
-    next: { revalidate: 21600 }, // 6 horas
+    next: { revalidate: 21600 }, // cache por 6 horas
   });
 
   if (!res.ok) {
@@ -29,7 +27,7 @@ export async function generateMetadata({
     };
   }
 
-  const event = await res.json();
+  const event: Event = await res.json();
 
   if (
     !event ||
@@ -42,8 +40,6 @@ export async function generateMetadata({
     };
   }
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.sportickets.com.br";
   const eventUrl = `${baseUrl}/evento/${slug}`;
   const description = stripHtml(event.description || "").slice(0, 160);
   const bannerUrl =
@@ -77,7 +73,29 @@ export async function generateMetadata({
 export default async function EventPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  return <EventSlugContent />;
+  const { slug } = params;
+
+  const res = await fetch(`${apiUrl}/events/slug/${slug}`, {
+    next: { revalidate: 300 }, // cache por 5 minutos
+  });
+
+  if (!res.ok) return <div>Evento não encontrado</div>;
+
+  const event: Event = await res.json();
+
+  if (
+    event.status === EventStatus.DRAFT ||
+    event.status === EventStatus.CANCELLED
+  ) {
+    return <div>Evento indisponível</div>;
+  }
+
+  return (
+    <>
+      <EventSlugInitializer slug={slug} />
+      <EventSlugContent event={event} />;
+    </>
+  );
 }
