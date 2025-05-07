@@ -1,13 +1,29 @@
 import { EventStatus } from "@/interface/event";
-import { eventService } from "@/service/event";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL || "https://www.sportickets.com.br";
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL || "https://api.sportickets.com.br";
 
   try {
-    const events = await eventService.getAllEvents(1, 1000, "name");
+    const res = await fetch(
+      `${apiUrl}/events/all?page=1&limit=1000&sort=name`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 3600 },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`Erro ao buscar eventos: ${res.statusText}`);
+    }
+
+    const events: any[] = await res.json();
+
     const publicEvents = events.filter(
       (event) =>
         event.status !== EventStatus.DRAFT &&

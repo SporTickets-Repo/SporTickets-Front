@@ -1,11 +1,23 @@
 import LoginContent from "@/components/pages/auth/login-content";
-import type { Metadata } from "next";
+import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Entrar - SporTickets",
-  description:
-    "Acesse sua conta SporTickets para comprar ingressos para os melhores eventos esportivos do Brasil.",
-};
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.sportickets.com.br";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Entrar - SporTickets",
+    description:
+      "Acesse sua conta SporTickets para comprar ingressos para os melhores eventos esportivos do Brasil.",
+    alternates: {
+      canonical: `${baseUrl}/entrar`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 export default function LoginPage() {
   return <LoginContent />;
