@@ -1,7 +1,11 @@
 import EventSlugContent from "@/components/pages/event/event-slug-content";
 import EventSlugInitializer from "@/components/pages/event/event-slug-initializer";
 import { Event, EventStatus } from "@/interface/event";
-import { stripHtml } from "@/utils/format";
+import { formatDate, formatDateWithoutYear } from "@/utils/dateTime";
+import {
+  translateEventStatus,
+  translateEventType,
+} from "@/utils/eventTranslations";
 import { Metadata } from "next";
 
 const apiUrl =
@@ -41,9 +45,25 @@ export async function generateMetadata({
   }
 
   const eventUrl = `${baseUrl}/evento/${slug}`;
-  const description = stripHtml(event.description || "").slice(0, 160);
+
+  formatDateWithoutYear;
+  const eventDate = event?.startDate
+    ? formatDate(event.startDate)
+    : "data não disponível";
+
+  const location =
+    event.place || `${event.address?.street}, ${event.address?.city}`;
+
+  const eventType = translateEventType(event.type).toLowerCase();
+  const eventStatus = translateEventStatus(event.status).toLowerCase();
+
+  const description = `${event.name} acontecerá em ${location} no dia ${eventDate}. Tipo: ${eventType}, status: ${eventStatus}.`;
+
   const bannerUrl =
     event.bannerUrl || "/logos/Logo-Horizontal-para-fundo-Roxo.png";
+  const smallImageUrl =
+    event.smallImageUrl || "/logos/Logo-Horizontal-para-fundo-Roxo.png";
+
   const eventName = event.name || "Evento";
 
   return {
@@ -54,7 +74,10 @@ export async function generateMetadata({
       description,
       url: eventUrl,
       siteName: "SporTickets",
-      images: [{ url: bannerUrl, width: 1200, height: 630 }],
+      images: [
+        { url: smallImageUrl, width: 700, height: 350 },
+        { url: bannerUrl, width: 1268, height: 464 },
+      ],
       locale: "pt_BR",
       type: "website",
     },
@@ -62,7 +85,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: eventName,
       description,
-      images: [bannerUrl],
+      images: [bannerUrl, smallImageUrl],
     },
     alternates: {
       canonical: eventUrl,
