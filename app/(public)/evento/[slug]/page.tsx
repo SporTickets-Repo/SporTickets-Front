@@ -76,7 +76,7 @@ export async function generateMetadata({
       siteName: "SporTickets",
       images: [
         { url: smallImageUrl, width: 700, height: 350 },
-        { url: bannerUrl, width: 1268, height: 464 },
+        // { url: bannerUrl, width: 1268, height: 464 },
       ],
       locale: "pt_BR",
       type: "website",
