@@ -18,20 +18,21 @@ export function TicketCard({ ticket, isSelected, onSelect }: TicketCardProps) {
   };
 
   const maxPlayers = ticket.ticketType.teamSize;
-
   const completedTicket = () => {
-    if (
-      ticket.players.length === maxPlayers &&
-      ticket.players.every(
-        (player) =>
-          player.personalizedField?.length ===
-          ticket.ticketType.personalizedFields?.length
-      ) &&
-      ticket.players.every((player) => player.category?.id !== "")
-    ) {
-      return true;
-    }
-    return false;
+    const hasAllPlayers = ticket.players.length === maxPlayers;
+
+    const hasAllPersonalFields = ticket.players.every(
+      (player) =>
+        (player.personalizedField?.length ?? 0) ===
+        ticket.ticketType.personalizedFields.length
+    );
+
+    const categoryRequired = ticket.ticketType.categories.length > 0;
+
+    const hasAllCategories =
+      !categoryRequired || ticket.players.every((p) => !!p.category?.id);
+
+    return hasAllPlayers && hasAllPersonalFields && hasAllCategories;
   };
 
   return (

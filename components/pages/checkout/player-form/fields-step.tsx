@@ -49,7 +49,7 @@ export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
         (acc, f) => ({ ...acc, [f.personalizedFieldId]: f.answer }),
         {}
       ) || {}),
-      categoryId: player.category?.id || "",
+      categoryId: player.category?.id ?? "",
     },
   });
 
@@ -57,15 +57,12 @@ export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
     const updated: Player = {
       ...player,
       personalizedField: Object.entries(data)
-        .filter(([key]) => key !== "categoryId")
-        .map(([id, answer]) => ({
-          personalizedFieldId: id,
-          answer,
-        })),
+        .filter(([k]) => k !== "categoryId")
+        .map(([id, answer]) => ({ personalizedFieldId: id, answer })),
       category:
         currentTicket.ticketType.categories.find(
           (c) => c.id === data.categoryId
-        ) || player.category,
+        ) ?? player.category,
     };
 
     onSave(updated);
@@ -73,51 +70,36 @@ export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
   };
 
   const categories = () => {
-    if (currentTicket.players.length === 0) {
-      return currentTicket.ticketType.categories.map((cat) => ({
-        value: cat.id,
-        label: cat.title,
-      }));
-    } else {
-      if (
-        currentTicket.players.some(
-          (p) => p.category?.restriction === "SAME_CATEGORY"
-        )
-      ) {
-        const category = currentTicket.players.filter(
-          (p) => p.category?.restriction === "SAME_CATEGORY"
-        );
-        return currentTicket.ticketType.categories
-          .filter((cat) => cat.id === category[0].category.id)
-          .map((cat) => ({
-            value: cat.id,
-            label: cat.title,
-          }));
-      } else {
-        return currentTicket.ticketType.categories.map((cat) => ({
-          value: cat.id,
-          label: cat.title,
-        }));
-      }
-    }
+    const all = currentTicket.ticketType.categories.map((cat) => ({
+      value: cat.id,
+      label: cat.title,
+    }));
+
+    if (currentTicket.players.length === 0) return all;
+
+    const sameCatPlayer = currentTicket.players.find(
+      (p) => p.category?.restriction === "SAME_CATEGORY"
+    );
+
+    return sameCatPlayer
+      ? all.filter((c) => c.value === sameCatPlayer.category!.id)
+      : all;
   };
 
   return (
     <>
       <PlayerCard player={player} />
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
-          {currentTicket.ticketType.categories.length > 0 && (
+          {hasCategories && (
             <FormField
               control={form.control}
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Categoria</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione uma categoria" />
@@ -136,21 +118,22 @@ export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
               )}
             />
           )}
-          {currentTicket.ticketType.personalizedFields.map((field) => (
+
+          {currentTicket.ticketType.personalizedFields.map((f) => (
             <FormField
-              key={field.id}
+              key={f.id}
               control={form.control}
-              name={field.id}
-              render={({ field: formField }) => (
+              name={f.id}
+              render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{field.requestTitle}</FormLabel>
+                  <FormLabel>{f.requestTitle}</FormLabel>
                   <FormControl>
-                    {field.type === "text" ? (
-                      <Input {...formField} />
+                    {f.type === "text" ? (
+                      <Input {...field} />
                     ) : (
                       <Select
-                        onValueChange={formField.onChange}
-                        defaultValue={formField.value}
+                        onValueChange={field.onChange}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -158,13 +141,11 @@ export function FieldsStep({ player, currentTicket, onSave, onClose }: Props) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {Object.entries(field.optionsList).map(
-                            ([key, value]) => (
-                              <SelectItem key={key} value={value}>
-                                {value}
-                              </SelectItem>
-                            )
-                          )}
+                          {Object.values(f.optionsList).map((opt) => (
+                            <SelectItem key={opt} value={opt}>
+                              {opt}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     )}

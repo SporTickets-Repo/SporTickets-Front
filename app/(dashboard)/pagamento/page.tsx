@@ -94,23 +94,21 @@ export default function PaymentPage() {
 
   const formCompleted = selectedTickets.every((ticket) => {
     const players = ticket.players || [];
-    if (
-      players.length === ticket.ticketType.teamSize &&
-      players.every(
-        (player) =>
-          player.personalizedField?.length ===
-          ticket.ticketType.personalizedFields?.length
-      ) &&
-      players.every((player) => {
-        if (ticket.ticketType?.categories?.length === 0) return true;
-        return player.category?.id !== "";
-      }) &&
-      ticket.paymentData?.paymentMethod
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+
+    const hasAllPlayers = players.length === ticket.ticketType.teamSize;
+    const hasAllPers = players.every(
+      (p) =>
+        (p.personalizedField?.length ?? 0) ===
+        ticket.ticketType.personalizedFields.length
+    );
+
+    const needsCategories =
+      ticket.ticketType.categories.length > 0 &&
+      players.some((p) => !p.category?.id);
+
+    const hasPayment = !!ticket.paymentData?.paymentMethod;
+
+    return hasAllPlayers && hasAllPers && !needsCategories && hasPayment;
   });
 
   const handleSubmitCheckout = async () => {
@@ -274,6 +272,7 @@ export default function PaymentPage() {
                         player.personalizedField?.length <
                         ticket.ticketType.personalizedFields?.length
                     );
+
                     const needsCategories =
                       ticket.ticketType.categories.length > 0 &&
                       players.some((player) => !player.category?.id);

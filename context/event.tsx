@@ -147,18 +147,20 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     const payload: TicketCheckoutPayload = {
       teams: selectedTickets.map((ticket) => ({
         ticketTypeId: ticket.ticketType.id,
-        player: ticket.players.map((player) => ({
-          userId: player.userId,
-          categoryId: player.category.id,
-          personalFields: player.personalizedField.map((field) => ({
-            personalizedFieldId: field.personalizedFieldId,
-            answer: field.answer,
-          })),
+        player: ticket.players.map((p) => ({
+          userId: p.userId,
+          ...(p.category?.id && { categoryId: p.category.id }),
+          ...(p.personalizedField && {
+            personalFields: p.personalizedField.map((f) => ({
+              personalizedFieldId: f.personalizedFieldId,
+              answer: f.answer,
+            })),
+          }),
         })),
       })),
-      ...(selectedTickets[0].coupon?.id
-        ? { couponId: selectedTickets[0].coupon.id }
-        : {}),
+      ...(selectedTickets[0].coupon?.id && {
+        couponId: selectedTickets[0].coupon.id,
+      }),
       paymentData: selectedTickets[0].paymentData,
     };
 

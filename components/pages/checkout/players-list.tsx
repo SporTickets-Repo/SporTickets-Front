@@ -84,10 +84,13 @@ export function PlayersList({
                 player={player}
                 onClick={() => onSelectPlayer(player)}
                 completed={
-                  currentTicket.ticketType.personalizedFields.length ===
-                  player.personalizedField?.length
+                  (player.personalizedField?.length ?? 0) ===
+                    currentTicket.ticketType.personalizedFields.length &&
+                  (currentTicket.ticketType.categories.length === 0 ||
+                    !!player.category?.id)
                 }
               />
+
               <Button
                 onClick={() => handleRemovePlayer(player.userId)}
                 variant={"destructive"}
