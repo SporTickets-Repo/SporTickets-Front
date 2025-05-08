@@ -55,7 +55,16 @@ export default function EventLocation({ address, place }: EventLocationProps) {
         ></iframe>
       )}
 
-      <div className="flex p-3 gap-2 items-center">
+      <div
+        className="flex p-3 gap-2 items-center cursor-pointer"
+        onClick={() => {
+          const query = `${address.street}, ${address.neighborhood}, ${address.city}, ${address.state}, ${address.zipCode}, Brasil`;
+          const mapsURL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            query
+          )}`;
+          window.open(mapsURL, "_blank");
+        }}
+      >
         <MapPin size={14} />
         <div className="text-xs">
           <p className="font-medium">{place}</p>
