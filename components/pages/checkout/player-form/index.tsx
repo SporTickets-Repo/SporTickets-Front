@@ -77,9 +77,9 @@ export function PlayerForm({
         <DialogHeader className="items-center mb-4">
           <DialogTitle>
             {step === "search"
-              ? "Adicionar Jogador"
+              ? "Adicionar atleta"
               : step === "register"
-              ? "Registrar Jogador"
+              ? "Registrar atleta"
               : "Complete os campos"}
           </DialogTitle>
         </DialogHeader>

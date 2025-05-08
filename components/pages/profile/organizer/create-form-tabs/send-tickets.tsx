@@ -136,7 +136,7 @@ export function SendTicketTab() {
               }
             >
               <Plus />
-              Novo Jogador
+              Novo atleta
             </Button>
           </div>
 
@@ -188,10 +188,10 @@ export function SendTicketTab() {
               <div className="max-w-[400px] flex flex-col space-y-4 items-center text-center">
                 <FiUserPlus size={48} className="text-zinc-400" />
                 <h2 className="text-lg font-bold mt-2">
-                  Nenhum Jogador Adicionado
+                  Nenhum atleta Adicionado
                 </h2>
                 <p className="text-muted-foreground">
-                  Adicione os jogadores que irão participar do evento para
+                  Adicione os atletas que irão participar do evento para
                   completar a inscrição.
                 </p>
                 <Button
@@ -199,7 +199,7 @@ export function SendTicketTab() {
                   className="w-full"
                   onClick={() => setModalOpen(true)}
                 >
-                  Adicionar Jogador
+                  Adicionar atleta
                   <FiUserPlus size={16} />
                 </Button>
               </div>
@@ -223,8 +223,7 @@ export function SendTicketTab() {
               Nenhum ingresso selecionado
             </h2>
             <p className="text-muted-foreground">
-              Selecione o tipo de ingresso aqui em cima para adicionar
-              jogadores.
+              Selecione o tipo de ingresso aqui em cima para adicionar atletas.
             </p>
           </div>
         </div>

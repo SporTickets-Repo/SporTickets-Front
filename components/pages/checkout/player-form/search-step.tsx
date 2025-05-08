@@ -65,7 +65,7 @@ export function SearchStep({
         (p) => p.userId === response.userId
       );
       if (isDuplicated) {
-        setCustomError("Já existe um jogador com este CPF neste ingresso.");
+        setCustomError("Já existe um atleta com este CPF neste ingresso.");
         return;
       }
       onFound(response);
