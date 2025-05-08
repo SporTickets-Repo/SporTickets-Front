@@ -63,7 +63,7 @@ export function Footer() {
               <ul className="space-y-1">
                 <li>
                   <Link
-                    href="https://www.instagram.com/sportickets_br/"
+                    href="https://www.instagram.com/sporticketsbr/"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Instagram
@@ -117,7 +117,7 @@ export function Footer() {
       </div>
       <Separator />
       <div className="text-center text-sm text-muted-foreground py-6 bg-[#FAFAFA]">
-        © {new Date().getFullYear()} Sport Tickets. Todos os direitos reservados
+        © {new Date().getFullYear()} SporTickets. Todos os direitos reservados
       </div>
     </footer>
   );
