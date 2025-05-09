@@ -128,6 +128,8 @@ export function MetricDashboard() {
       const formatted = date.toLocaleDateString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
       });
       grouped[formatted] = (grouped[formatted] || 0) + parseFloat(ticket.price);
     });
