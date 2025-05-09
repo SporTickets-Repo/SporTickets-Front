@@ -288,18 +288,18 @@ export default function PaymentPage() {
                             Adicione{" "}
                             {ticket.ticketType.teamSize - players.length}{" "}
                             {ticket.ticketType.teamSize - players.length === 1
-                              ? "jogador"
-                              : "jogadores"}{" "}
+                              ? "atleta"
+                              : "atletas"}{" "}
                             para o ingresso {ticket.ticketType.name}
                           </li>
                         )}
                         {needsPersonalFields && (
                           <li>
-                            Complete os dados pessoais de todos os jogadores
+                            Complete os dados pessoais de todos os atletas
                           </li>
                         )}
                         {needsCategories && (
-                          <li>Selecione a categoria para todos os jogadores</li>
+                          <li>Selecione a categoria para todos os atletas</li>
                         )}
                       </React.Fragment>
                     );

@@ -49,7 +49,7 @@ export function PlayersList({
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-lg font-semibold">Jogadores adicionados</h2>
+          <h2 className="text-lg font-semibold">Atletas adicionados</h2>
           <p className="text-sm text-muted-foreground">
             Adicionados {players.length}/{currentTicket.ticketType.teamSize}
           </p>
@@ -62,7 +62,7 @@ export function PlayersList({
           disabled={players.length === currentTicket.ticketType.teamSize}
         >
           <Plus />
-          Novo Jogador
+          Novo Atleta
         </Button>
       </div>
 
@@ -104,14 +104,14 @@ export function PlayersList({
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <FiUserPlus size={32} className="text-zinc-400 mb-2" />
             <p className="text-muted-foreground">
-              Nenhum jogador encontrado. Adicione um novo jogador.
+              Nenhum atleta encontrado. Adicione um novo atleta.
             </p>
             <Button
               variant="destructive"
               className="mt-4"
               onClick={onAddPlayer}
             >
-              Adicionar Jogador
+              Adicionar atleta
               <FiUserPlus size={16} className="ml-2" />
             </Button>
           </div>
