@@ -73,7 +73,7 @@ export interface Player {
   profileImageUrl: string;
   sex: UserSex;
   personalizedField: PersonalizedFieldResponse[];
-  category: Category;
+  category?: Category;
 }
 
 export interface PersonalizedFieldResponse {
@@ -94,8 +94,8 @@ export interface Teams {
 
 export interface TicketUser {
   userId: string;
-  personalFields: PersonalizedFieldResponse[];
-  categoryId: string;
+  personalFields?: PersonalizedFieldResponse[];
+  categoryId?: string;
 }
 
 export interface PaymentData {

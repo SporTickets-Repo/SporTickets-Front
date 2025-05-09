@@ -12,7 +12,16 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import { MyTicket } from "@/interface/myTickets";
 import { ticketService } from "@/service/ticket";
@@ -119,6 +128,8 @@ export function MetricDashboard() {
       const formatted = date.toLocaleDateString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
       });
       grouped[formatted] = (grouped[formatted] || 0) + parseFloat(ticket.price);
     });
@@ -184,7 +195,7 @@ export function MetricDashboard() {
       date: new Date(ticket.createdAt).toLocaleDateString("pt-BR"),
       event: ticket.ticketLot.ticketType.event.name,
       avatar: ticket.user.profileImageUrl,
-      category: ticket.category.title,
+      category: ticket?.category?.title,
     }));
   }, [filteredTickets]);
 
@@ -311,14 +322,56 @@ export function MetricDashboard() {
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={revenueChartData}>
-                <XAxis dataKey="date" />
-                <YAxis />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                <XAxis
+                  dataKey="date"
+                  stroke="#6b7280"
+                  tick={{ fontSize: 12 }}
+                  tickLine={{ stroke: "#9ca3af" }}
+                />
+                <YAxis
+                  stroke="#6b7280"
+                  tick={{ fontSize: 12 }}
+                  tickFormatter={(value) =>
+                    `R$ ${value.toLocaleString("pt-BR")}`
+                  }
+                  tickLine={{ stroke: "#9ca3af" }}
+                />
                 <Line
                   type="monotone"
                   dataKey="value"
                   stroke="#9661F1"
                   strokeWidth={2}
                   dot={false}
+                />
+                <Tooltip
+                  formatter={(value) => [
+                    `R$ ${Number(value).toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}`,
+                    "Faturamento",
+                  ]}
+                  labelFormatter={(label) => `Data: ${label}`}
+                  contentStyle={{
+                    backgroundColor: "white",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "6px",
+                    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#9661F1"
+                  fill="rgba(150, 97, 241, 0.2)"
+                  strokeWidth={2}
+                  activeDot={{
+                    r: 6,
+                    stroke: "#7c3aed",
+                    strokeWidth: 2,
+                    fill: "#fff",
+                  }}
                 />
               </LineChart>
             </ResponsiveContainer>

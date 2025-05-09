@@ -1,9 +1,8 @@
 "use client";
 
-import { useCreateEventContext } from "@/context/create-event";
-
 import { PlayerCard } from "@/components/pages/checkout/player-card";
 import { Button } from "@/components/ui/button";
+import { useCreateEventContext } from "@/context/create-event";
 import { useSendTicketContext } from "@/context/send-ticket";
 import { Player, TicketType } from "@/interface/tickets";
 import { checkoutService } from "@/service/checkout";
@@ -18,6 +17,7 @@ export function SendTicketTab() {
   const { event } = useCreateEventContext();
   const { selectedTicket, setSelectedTicket, removePlayer } =
     useSendTicketContext();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [onSelectPlayer, setOnSelectPlayer] = useState<Player | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -51,11 +51,12 @@ export function SendTicketTab() {
         ticketTypeId: selectedTicket.ticketType.id,
         player: selectedTicket.players.map((p) => ({
           userId: p.userId,
-          categoryId: p.category.id,
-          personalFields: p.personalizedField.map((field) => ({
-            personalizedFieldId: field.personalizedFieldId,
-            answer: field.answer,
-          })),
+          ...(p.category?.id && { categoryId: p.category.id }), // opcional
+          personalFields:
+            p.personalizedField?.map((f) => ({
+              personalizedFieldId: f.personalizedFieldId,
+              answer: f.answer,
+            })) ?? [],
         })),
       },
     };
@@ -64,7 +65,7 @@ export function SendTicketTab() {
       await checkoutService.freeCheckout(payload);
       toast.success("Ingressos enviados com sucesso!");
       setSelectedTicket(null);
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Erro ao enviar ingressos.");
       console.error("Erro no freeCheckout:", error);
     } finally {
@@ -73,20 +74,17 @@ export function SendTicketTab() {
   };
 
   const isCompleted =
-    selectedTicket?.players.length === selectedTicket?.ticketType.teamSize &&
-    selectedTicket?.players.every(
-      (player) =>
-        player.personalizedField?.length ===
-        selectedTicket?.ticketType.personalizedFields.length
+    !!selectedTicket &&
+    selectedTicket.players.length === selectedTicket.ticketType.teamSize &&
+    selectedTicket.players.every(
+      (p) =>
+        (p.personalizedField?.length ?? 0) ===
+        selectedTicket.ticketType.personalizedFields.length
     ) &&
-    selectedTicket?.players.every((player) => {
-      if (selectedTicket?.ticketType.categories.length === 0) return true;
-      return player.category.id !== "";
-    });
+    (selectedTicket.ticketType.categories.length === 0 ||
+      selectedTicket.players.every((p) => !!p.category?.id));
 
   const isDisabled = !isCompleted || isSaving;
-
-  if (!event) return null;
 
   useEffect(() => {
     if (onSelectPlayer) {
@@ -94,9 +92,12 @@ export function SendTicketTab() {
     }
   }, [onSelectPlayer]);
 
+  if (!event) return null;
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Enviar Ingressos</h2>
+
       <div className="space-y-4">
         <p className="text-sm">Escolha o tipo de ingresso:</p>
         <div className="flex gap-4 flex-wrap">
@@ -143,30 +144,35 @@ export function SendTicketTab() {
           {selectedTicket.players.length > 0 ? (
             <div className="gap-2">
               {selectedTicket.players.map((player, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <div
+                  key={player?.userId || i}
+                  className="flex items-center gap-2"
+                >
                   <PlayerCard
                     player={player}
                     onClick={() => handleSelectPlayer(player)}
                     completed={
-                      selectedTicket.ticketType.personalizedFields.length ===
-                        player.personalizedField?.length &&
-                      player.category.id !== ""
+                      (player.personalizedField?.length ?? 0) ===
+                        selectedTicket.ticketType.personalizedFields.length &&
+                      (selectedTicket.ticketType.categories.length === 0 ||
+                        !!player.category?.id)
                     }
                   />
                   <Button
                     onClick={() => handleRemovePlayer(player.userId)}
-                    variant={"destructive"}
+                    variant="destructive"
                     className="[&_svg]:size-5 h-[80px] px-4 rounded-md bg-zinc-50 hover:bg-zinc-100 shadow-sm"
                   >
                     <FaTrash className="text-sporticket-orange" />
                   </Button>
                 </div>
               ))}
+
               <div className="w-full flex justify-end mt-5">
                 <Button
                   className="[&_svg]:size-5 items-center"
                   type="button"
-                  onClick={() => handleSendTicket()}
+                  onClick={handleSendTicket}
                   disabled={isDisabled}
                 >
                   {isSaving ? (

@@ -147,19 +147,27 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     const payload: TicketCheckoutPayload = {
       teams: selectedTickets.map((ticket) => ({
         ticketTypeId: ticket.ticketType.id,
-        player: ticket.players.map((player) => ({
-          userId: player.userId,
-          categoryId: player.category.id,
-          personalFields: player.personalizedField.map((field) => ({
-            personalizedFieldId: field.personalizedFieldId,
-            answer: field.answer,
-          })),
+        player: ticket.players.map((p) => ({
+          userId: p.userId,
+          ...(p.category?.id && { categoryId: p.category.id }),
+          ...(p.personalizedField && {
+            personalFields: p.personalizedField.map((f) => ({
+              personalizedFieldId: f.personalizedFieldId,
+              answer: f.answer,
+            })),
+          }),
         })),
       })),
-      ...(selectedTickets[0].coupon?.id
-        ? { couponId: selectedTickets[0].coupon.id }
-        : {}),
-      paymentData: selectedTickets[0].paymentData,
+      ...(selectedTickets[0].coupon?.id && {
+        couponId: selectedTickets[0].coupon.id,
+      }),
+      paymentData: {
+        ...selectedTickets[0].paymentData,
+        paymentMethod:
+          calculateFinalTotal(selectedTickets, event) === 0
+            ? "FREE"
+            : selectedTickets[0].paymentData?.paymentMethod,
+      },
     };
 
     try {
@@ -174,6 +182,35 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
         "Ocorreu um erro ao processar o pagamento. Tente novamente mais tarde."
       );
     }
+  };
+
+  const calculateFinalTotal = (
+    tickets: TicketForm[],
+    event: Event | null
+  ): number => {
+    const total = tickets.reduce((acc, ticket) => {
+      const teamSize = ticket.ticketType.teamSize;
+      const price = Number.parseFloat(ticket.ticketLot.price);
+      return acc + price * teamSize;
+    }, 0);
+
+    const totalDiscount = tickets.reduce((acc, ticket) => {
+      const teamSize = ticket.ticketType.teamSize;
+      const price = Number.parseFloat(ticket.ticketLot.price);
+      const teamPrice = price * teamSize;
+
+      if (ticket.coupon?.id) {
+        const discountAmount = teamPrice * ticket.coupon.percentage;
+        return acc + (teamPrice - discountAmount);
+      }
+
+      return acc + teamPrice;
+    }, 0);
+
+    const fee =
+      event?.eventFee !== undefined ? totalDiscount * event.eventFee : 0;
+
+    return totalDiscount + fee;
   };
 
   return (

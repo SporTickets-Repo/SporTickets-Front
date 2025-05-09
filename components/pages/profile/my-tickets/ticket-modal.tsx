@@ -109,10 +109,13 @@ export function TicketModal({ isOpen, onClose, ticket }: TicketModalProps) {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-gray-500">Categoria</p>
-                  <p className="font-medium">{ticket.category.title}</p>
-                </div>
+                {ticket?.category && (
+                  <div>
+                    <p className="text-gray-500">Categoria</p>
+                    <p className="font-medium">{ticket.category.title}</p>
+                  </div>
+                )}
+
                 <div>
                   <p className="text-gray-500">Ingresso</p>
                   <p className="font-medium">
