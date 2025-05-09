@@ -106,7 +106,7 @@ export default function PaymentPage() {
       ticket.ticketType.categories.length > 0 &&
       players.some((p) => !p.category?.id);
 
-    const hasPayment = !!ticket.paymentData?.paymentMethod;
+    const hasPayment = finalTotal === 0 || !!ticket.paymentData?.paymentMethod;
 
     return hasAllPlayers && hasAllPers && !needsCategories && hasPayment;
   });
@@ -179,25 +179,29 @@ export default function PaymentPage() {
               </Button>
             </div>
             <hr className="border-zinc-300" />
-            <div className="flex justify-between items-center">
-              <p className="text-zinc-800/80">Pagamento</p>
-              <Button
-                variant="outline"
-                size="outline"
-                onClick={() => setPaymentMethodDialogOpen(true)}
-              >
-                {currentTicket?.paymentData?.paymentMethod ? (
-                  <PaymentMethodDisplay
-                    key={currentTicket?.paymentData?.paymentMethod}
-                    paymentData={currentTicket.paymentData}
-                  />
-                ) : (
-                  "Selecionar opção"
-                )}
-                <ChevronRight size={16} className="text-zinc-800/80" />
-              </Button>
-            </div>
-            <hr className="border-zinc-300" />
+            {totalDiscount > 0 && (
+              <>
+                <div className="flex justify-between items-center">
+                  <p className="text-zinc-800/80">Pagamento</p>
+                  <Button
+                    variant="outline"
+                    size="outline"
+                    onClick={() => setPaymentMethodDialogOpen(true)}
+                  >
+                    {currentTicket?.paymentData?.paymentMethod ? (
+                      <PaymentMethodDisplay
+                        key={currentTicket?.paymentData?.paymentMethod}
+                        paymentData={currentTicket.paymentData}
+                      />
+                    ) : (
+                      "Selecionar opção"
+                    )}
+                    <ChevronRight size={16} className="text-zinc-800/80" />
+                  </Button>
+                </div>
+                <hr className="border-zinc-300" />
+              </>
+            )}
             {event?.eventFee !== undefined ? (
               <>
                 <div className="flex justify-between items-center">
