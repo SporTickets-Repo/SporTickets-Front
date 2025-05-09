@@ -184,7 +184,7 @@ export function MetricDashboard() {
       date: new Date(ticket.createdAt).toLocaleDateString("pt-BR"),
       event: ticket.ticketLot.ticketType.event.name,
       avatar: ticket.user.profileImageUrl,
-      category: ticket.category.title,
+      category: ticket?.category?.title,
     }));
   }, [filteredTickets]);
 

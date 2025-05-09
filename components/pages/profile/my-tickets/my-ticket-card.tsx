@@ -38,7 +38,7 @@ export function MyTicketsCard({ ticket }: MyTicketsCardProps) {
               {formatDateWithoutYear(event.startDate)} • {event.place}
             </p>
             <p className="text-xs text-zinc-500">
-              Categoria: {ticket.category.title}
+              Categoria: {ticket?.category?.title}
             </p>
           </div>
           <div className="text-right text-xs text-muted-foreground">

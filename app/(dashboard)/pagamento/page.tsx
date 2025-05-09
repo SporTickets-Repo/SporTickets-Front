@@ -19,6 +19,7 @@ import type { Player, TicketForm } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import React from "react";
+import { CgSpinner } from "react-icons/cg";
 import { FiAlertTriangle } from "react-icons/fi";
 
 export default function PaymentPage() {
@@ -321,7 +322,7 @@ export default function PaymentPage() {
                 {submitting ? (
                   <>
                     Processando...
-                    <ArrowRight
+                    <CgSpinner
                       size={16}
                       className="text-white ml-2 animate-spin"
                     />
