@@ -5,26 +5,35 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { rankingService } from "@/service/ranking";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function RankingPage() {
   const { id } = useParams() as { id: string };
   const [url, setUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchRankingUrl = async () => {
+    try {
+      const response = await rankingService.getRankingsById(id);
+      setUrl(response.url);
+    } catch (error) {
+      console.error("Erro ao buscar o Ranking:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchRankingUrl = async () => {
-      try {
-        const response = await rankingService.getRankingsById(id);
-        setUrl(response.url);
-      } catch (error) {
-        console.error("Erro ao buscar o Ranking:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRankingUrl();
+
+    pollingRef.current = setInterval(() => {
+      fetchRankingUrl();
+    }, 120000);
+
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
   }, [id]);
 
   return (
@@ -53,6 +62,7 @@ export default function RankingPage() {
           }}
         >
           <iframe
+            key={url}
             src={url}
             title="Ranking"
             width="100%"
