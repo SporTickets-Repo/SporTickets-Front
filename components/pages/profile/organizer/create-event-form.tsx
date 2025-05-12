@@ -272,7 +272,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               isActive: true,
             }))
           : [],
-        eventFee: eventData.eventFee || 0.1,
+        eventFee: Math.round(Number(eventData.eventFee) * 100),
       });
 
       if (eventData.bannerUrl) {

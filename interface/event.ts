@@ -30,7 +30,7 @@ export interface Event {
   paymentMethods: PaymentMethod[];
   coupons: Coupon[];
   eventDashboardAccess: EventDashboardAccess[];
-  eventFee?: number;
+  eventFee?: string;
   allowIndividualTickets: boolean;
   allowFullTickets: boolean;
 }

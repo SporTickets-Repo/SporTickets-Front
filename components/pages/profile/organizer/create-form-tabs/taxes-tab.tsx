@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useCreateEventContext } from "@/context/create-event";
 import { eventService } from "@/service/event";
 import { Loader2, SaveIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import { mutate } from "swr";
@@ -13,13 +13,7 @@ import { mutate } from "swr";
 export function TaxesTab() {
   const { watch, setValue, getValues } = useFormContext<{ eventFee: number }>();
   const { eventId } = useCreateEventContext();
-  const eventFee = watch("eventFee");
-
-  useEffect(() => {
-    if (eventFee !== undefined && eventFee > 0 && eventFee < 1) {
-      setValue("eventFee", eventFee * 100);
-    }
-  }, [eventFee, setValue]);
+  const rawFee = watch("eventFee");
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -28,8 +22,9 @@ export function TaxesTab() {
       setIsSaving(true);
       const feePercentage = getValues("eventFee") ?? 0;
 
-      const normalizedFee = feePercentage / 100;
+      const normalizedFee = parseFloat((feePercentage / 100).toFixed(2));
       await eventService.eventFee(eventId as string, normalizedFee);
+
       toast.success("Taxa de ingressos salva com sucesso!");
       await mutate(`/events/${eventId}`);
     } catch (error) {
@@ -45,9 +40,7 @@ export function TaxesTab() {
       <div className="flex flex-row items-center justify-between gap-4 mb-6">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold">Taxa dos ingressos</h2>
-          <p className="text-sm text-muted-foreground">
-            Valor: {eventFee ?? 0}%
-          </p>
+          <p className="text-sm text-muted-foreground">Valor: {rawFee ?? 0}%</p>
         </div>
       </div>
 
@@ -58,10 +51,10 @@ export function TaxesTab() {
         <Input
           className="w-1/2"
           placeholder="Ex: 5"
-          value={eventFee ?? ""}
+          value={rawFee ?? ""}
           onChange={(e) => {
-            const raw = e.target.value.replace(/\D/g, "");
-            const num = Number(raw);
+            const value = e.target.value.replace(/[^\d]/g, "");
+            const num = Number(value);
             setValue("eventFee", Math.min(100, isNaN(num) ? 0 : num));
           }}
         />
