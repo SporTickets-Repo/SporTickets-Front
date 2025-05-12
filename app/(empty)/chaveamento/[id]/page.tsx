@@ -28,12 +28,12 @@ export default function BracketPage() {
   }, [id]);
 
   return (
-    <div className="container pb-4">
+    <div className="">
       {loading ? (
         <BracketSkeleton />
       ) : (
         <div
-          className="rounded-lg overflow-hidden border h-[80vh]"
+          className="overflow-hidden h-[100vh]"
           style={{
             WebkitOverflowScrolling: "touch",
             overscrollBehavior: "contain",
@@ -41,7 +41,7 @@ export default function BracketPage() {
           }}
         >
           {url === null || !url.includes("http") ? (
-            <div className="flex-1 flex flex-col min-h-[calc(80vh)] overflow-x-hidden container justify-center items-center text-center gap-4">
+            <div className="flex-1 flex flex-col overflow-x-hidden justify-center items-center text-center gap-4">
               <h2 className="text-sporticket-purple text-4xl font-bold">
                 Desculpe mas não conseguimos encontrar o chaveamento
               </h2>
