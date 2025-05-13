@@ -210,7 +210,9 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }, 0);
 
     const fee =
-      event?.eventFee !== undefined ? totalDiscount * event.eventFee : 0;
+      event?.eventFee !== undefined
+        ? totalDiscount * Number(event.eventFee)
+        : 0;
 
     return totalDiscount + fee;
   };
