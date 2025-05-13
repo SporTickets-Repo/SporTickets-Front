@@ -33,6 +33,7 @@ export interface Event {
   eventFee?: string;
   allowIndividualTickets: boolean;
   allowFullTickets: boolean;
+  emailCustomText: string | null;
 }
 
 export interface EventSummary {

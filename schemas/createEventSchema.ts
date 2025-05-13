@@ -64,6 +64,19 @@ export const eventFormValuesSchema = z
           message: "As informações adicionais devem ter no mínimo 6 caracteres",
         })
     ),
+    emailCustomText: z.preprocess(
+      (val) =>
+        typeof val === "string" && stripHtml(val).trim() === ""
+          ? undefined
+          : val,
+      z
+        .string()
+        .optional()
+        .refine((val) => !val || stripHtml(val).length >= 6, {
+          message:
+            "As informações de email customizado devem ter no mínimo 6 caracteres",
+        })
+    ),
 
     cep: z
       .string()
