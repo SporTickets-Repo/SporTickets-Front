@@ -9,8 +9,8 @@ export interface FreeCheckoutTeam {
 
 export interface FreeCheckoutPlayer {
   userId: string;
-  categoryId: string;
-  personalFields: {
+  categoryId?: string;
+  personalFields?: {
     personalizedFieldId: string;
     answer: string;
   }[];

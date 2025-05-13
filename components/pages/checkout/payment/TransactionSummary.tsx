@@ -1,5 +1,8 @@
 import { Transaction } from "@/interface/transaction";
-import { translatePaymentStatus } from "@/utils/eventTranslations";
+import {
+  translatePaymentMethod,
+  translatePaymentStatus,
+} from "@/utils/eventTranslations";
 import { formatMoneyBR } from "@/utils/formatMoney";
 
 interface Props {
@@ -22,7 +25,7 @@ export function TransactionSummary({ transaction }: Props) {
         </p>
         <p>
           <span className="font-medium">Método de Pagamento:</span>{" "}
-          {transaction.paymentMethod}
+          {translatePaymentMethod(transaction.paymentMethod)}
         </p>
         {transaction.paidAt && (
           <p>

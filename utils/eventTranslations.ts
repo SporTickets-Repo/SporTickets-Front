@@ -77,3 +77,13 @@ export const translatePaymentStatus = (status: TransactionStatus): string => {
 
   return translations[status] || "Desconhecido";
 };
+
+export const translatePaymentMethod = (method: string): string => {
+  const translations: Record<string, string> = {
+    PIX: "PIX",
+    CREDIT_CARD: "Cartão de Crédito",
+    FREE: "Gratuito",
+  };
+
+  return translations[method] || "Desconhecido";
+};

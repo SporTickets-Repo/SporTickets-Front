@@ -23,7 +23,6 @@ interface Props {
 }
 
 export function PlayerForm({ open, onClose, player }: Props) {
-  console.log("PlayerForm", player);
   const { selectedTicket, updatePlayers } = useSendTicketContext();
   const [step, setStep] = useState<"search" | "register" | "fields">(
     player ? "fields" : "search"

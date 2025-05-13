@@ -272,7 +272,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               isActive: true,
             }))
           : [],
-        eventFee: eventData.eventFee || 0.1,
+        eventFee: Math.round(Number(eventData.eventFee) * 100),
       });
 
       if (eventData.bannerUrl) {
@@ -442,16 +442,15 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
       errors.push("Adicione pelo menos um tipo de ingresso.");
     } else {
       const hasValidTicket = event.ticketTypes.some((ticket) => {
-        const hasValidCategory =
-          ticket.categories && ticket.categories.length > 0;
+        // const hasValidCategory =
+        // ticket.categories && ticket.categories.length > 0;
         const hasValidLot = ticket.ticketLots && ticket.ticketLots.length > 0;
-        return hasValidCategory && hasValidLot;
+        // return hasValidCategory && hasValidLot;
+        return hasValidLot;
       });
 
       if (!hasValidTicket) {
-        errors.push(
-          "Cada tipo de ingresso precisa ter ao menos uma categoria e um lote."
-        );
+        errors.push("Cada tipo de ingresso precisa ter ao menos um lote.");
       }
     }
 

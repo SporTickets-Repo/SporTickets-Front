@@ -19,6 +19,7 @@ import type { Player, TicketForm } from "@/interface/tickets";
 import { formatMoneyBR } from "@/utils/formatMoney";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import React from "react";
+import { CgSpinner } from "react-icons/cg";
 import { FiAlertTriangle } from "react-icons/fi";
 
 export default function PaymentPage() {
@@ -94,23 +95,21 @@ export default function PaymentPage() {
 
   const formCompleted = selectedTickets.every((ticket) => {
     const players = ticket.players || [];
-    if (
-      players.length === ticket.ticketType.teamSize &&
-      players.every(
-        (player) =>
-          player.personalizedField?.length ===
-          ticket.ticketType.personalizedFields?.length
-      ) &&
-      players.every((player) => {
-        if (ticket.ticketType?.categories?.length === 0) return true;
-        return player.category?.id !== "";
-      }) &&
-      ticket.paymentData?.paymentMethod
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+
+    const hasAllPlayers = players.length === ticket.ticketType.teamSize;
+    const hasAllPers = players.every(
+      (p) =>
+        (p.personalizedField?.length ?? 0) ===
+        ticket.ticketType.personalizedFields.length
+    );
+
+    const needsCategories =
+      ticket.ticketType.categories.length > 0 &&
+      players.some((p) => !p.category?.id);
+
+    const hasPayment = finalTotal === 0 || !!ticket.paymentData?.paymentMethod;
+
+    return hasAllPlayers && hasAllPers && !needsCategories && hasPayment;
   });
 
   const handleSubmitCheckout = async () => {
@@ -181,25 +180,29 @@ export default function PaymentPage() {
               </Button>
             </div>
             <hr className="border-zinc-300" />
-            <div className="flex justify-between items-center">
-              <p className="text-zinc-800/80">Pagamento</p>
-              <Button
-                variant="outline"
-                size="outline"
-                onClick={() => setPaymentMethodDialogOpen(true)}
-              >
-                {currentTicket?.paymentData?.paymentMethod ? (
-                  <PaymentMethodDisplay
-                    key={currentTicket?.paymentData?.paymentMethod}
-                    paymentData={currentTicket.paymentData}
-                  />
-                ) : (
-                  "Selecionar opção"
-                )}
-                <ChevronRight size={16} className="text-zinc-800/80" />
-              </Button>
-            </div>
-            <hr className="border-zinc-300" />
+            {totalDiscount > 0 && (
+              <>
+                <div className="flex justify-between items-center">
+                  <p className="text-zinc-800/80">Pagamento</p>
+                  <Button
+                    variant="outline"
+                    size="outline"
+                    onClick={() => setPaymentMethodDialogOpen(true)}
+                  >
+                    {currentTicket?.paymentData?.paymentMethod ? (
+                      <PaymentMethodDisplay
+                        key={currentTicket?.paymentData?.paymentMethod}
+                        paymentData={currentTicket.paymentData}
+                      />
+                    ) : (
+                      "Selecionar opção"
+                    )}
+                    <ChevronRight size={16} className="text-zinc-800/80" />
+                  </Button>
+                </div>
+                <hr className="border-zinc-300" />
+              </>
+            )}
             {event?.eventFee !== undefined ? (
               <>
                 <div className="flex justify-between items-center">
@@ -274,6 +277,7 @@ export default function PaymentPage() {
                         player.personalizedField?.length <
                         ticket.ticketType.personalizedFields?.length
                     );
+
                     const needsCategories =
                       ticket.ticketType.categories.length > 0 &&
                       players.some((player) => !player.category?.id);
@@ -318,7 +322,7 @@ export default function PaymentPage() {
                 {submitting ? (
                   <>
                     Processando...
-                    <ArrowRight
+                    <CgSpinner
                       size={16}
                       className="text-white ml-2 animate-spin"
                     />
