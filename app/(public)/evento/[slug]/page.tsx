@@ -60,9 +60,9 @@ export async function generateMetadata({
   const description = `${event.name} acontecerá em ${location} no dia ${eventDate}. Tipo: ${eventType}, status: ${eventStatus}.`;
 
   const bannerUrl =
-    event.bannerUrl || "/logos/Logo-Horizontal-para-fundo-Roxo.png";
+    event.bannerUrl || "/assets/logos/Logo-Horizontal-para-fundo-Roxo.png";
   const smallImageUrl =
-    event.smallImageUrl || "/logos/Logo-Horizontal-para-fundo-Roxo.png";
+    event.smallImageUrl || "/assets/logos/Logo-Horizontal-para-fundo-Roxo.png";
 
   const eventName = event.name || "Evento";
 

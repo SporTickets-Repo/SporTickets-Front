@@ -48,7 +48,7 @@ export const metadata: Metadata = {
       "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
     images: [
       {
-        url: "/logos/Logo-Reduzida-para-fundo-Branco.png",
+        url: "/assets/logos/Logo-Reduzida-para-fundo-Branco.png",
         width: 1200,
         height: 630,
         alt: "SporTickets",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     title: "SporTickets - Seu site de ingressos para eventos esportivos",
     description:
       "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
-    images: ["/logos/Logo-Reduzida-para-fundo-Branco.png"],
+    images: ["/assets/logos/Logo-Reduzida-para-fundo-Branco.png"],
   },
   robots: {
     index: true,
@@ -102,7 +102,7 @@ export default function RootLayout({
               url:
                 process.env.NEXT_PUBLIC_SITE_URL ||
                 "https://www.sportickets.com.br",
-              logo: `${process.env.NEXT_PUBLIC_SITE_URL}/logos/Logo-Reduzida-para-fundo-Branco.png`,
+              logo: `${process.env.NEXT_PUBLIC_SITE_URL}/assets/logos/Logo-Reduzida-para-fundo-Branco.png`,
               contactPoint: {
                 "@type": "ContactPoint",
                 telephone: "+55-61-996476207",
