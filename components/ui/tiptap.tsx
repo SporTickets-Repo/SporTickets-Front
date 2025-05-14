@@ -21,7 +21,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Link } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link as LinkIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface TiptapProps {
   onChange: (content: string) => void;
@@ -45,7 +48,10 @@ export const Tiptap = ({
         ? [
             LinkExtension.configure({
               openOnClick: false,
-              HTMLAttributes: { target: "_blank", rel: "noopener noreferrer" },
+              HTMLAttributes: {
+                target: "_blank",
+                rel: "noopener noreferrer",
+              },
             }),
           ]
         : []),
@@ -78,37 +84,59 @@ export const Tiptap = ({
   );
 };
 
+const linkSchema = z.object({
+  linkText: z
+    .string()
+    .max(100, "Texto do link deve ter no máximo 100 caracteres")
+    .optional(),
+  linkUrl: z
+    .string()
+    .nonempty("URL é obrigatória")
+    .url("Informe uma URL válida (ex: https://...)"),
+});
+
+type LinkForm = z.infer<typeof linkSchema>;
+
 interface MenuBarProps {
   editor: Editor | null;
   enableLinks: boolean;
 }
 
 const MenuBar = ({ editor, enableLinks }: MenuBarProps) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<LinkForm>({
+    resolver: zodResolver(linkSchema),
+    defaultValues: { linkText: "", linkUrl: "" },
+  });
+
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [linkText, setLinkText] = useState("");
-  const [linkUrl, setLinkUrl] = useState("");
 
   if (!editor) return null;
 
-  const applyLink = () => {
-    if (!linkUrl) return;
+  const onSubmit = (data: LinkForm) => {
+    const { linkText, linkUrl } = data;
     const { from, to } = editor.state.selection;
     const selectedText = editor.state.doc.textBetween(from, to);
+
+    editor.chain().focus();
     if (selectedText) {
-      editor.chain().focus().setLink({ href: linkUrl }).run();
+      editor.chain().setLink({ href: linkUrl }).insertContent(" ").run();
     } else {
       editor
         .chain()
-        .focus()
         .insertContent(
           `<a href="${linkUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">${
             linkText || linkUrl
-          }</a>`
+          }</a>&nbsp;`
         )
         .run();
     }
-    setLinkText("");
-    setLinkUrl("");
+
+    reset();
     setDialogOpen(false);
   };
 
@@ -158,57 +186,59 @@ const MenuBar = ({ editor, enableLinks }: MenuBarProps) => {
       </button>
 
       {enableLinks && (
-        <>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <button
-                type="button"
-                className={editor.isActive("link") ? "is-active" : ""}
-              >
-                <Link size={18} />
-              </button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="text-center">
-                  Inserir/Editar Link
-                </DialogTitle>
-                <DialogDescription className="text-center">
-                  Informe o texto do link (opcional) e a URL.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-2">
-                <div className="grid gap-1">
-                  <label className="text-sm font-medium">Texto do Link</label>
-                  <Input
-                    value={linkText}
-                    onChange={(e) => setLinkText(e.target.value)}
-                    placeholder="ex: Página do Evento"
-                  />
-                </div>
-                <div className="grid gap-1">
-                  <label className="text-sm font-medium">URL do Link</label>
-                  <Input
-                    value={linkUrl}
-                    onChange={(e) => setLinkUrl(e.target.value)}
-                    placeholder="https://..."
-                  />
-                </div>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <button type="button">
+              <LinkIcon size={16} />
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-center">
+                Inserir/Editar Link
+              </DialogTitle>
+              <DialogDescription className="text-center">
+                Informe o texto do link (opcional) e a URL.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-2">
+              <div className="grid gap-1">
+                <label className="text-sm font-medium">Texto do Link</label>
+                <Input
+                  {...register("linkText")}
+                  placeholder="ex: Página do Evento"
+                />
+                {errors.linkText && (
+                  <p className="text-xs text-red-600">
+                    {errors.linkText.message}
+                  </p>
+                )}
               </div>
-              <DialogFooter>
+
+              <div className="grid gap-1">
+                <label className="text-sm font-medium">URL do Link</label>
+                <Input {...register("linkUrl")} placeholder="https://..." />
+                {errors.linkUrl && (
+                  <p className="text-xs text-red-600">
+                    {errors.linkUrl.message}
+                  </p>
+                )}
+              </div>
+
+              <DialogFooter className="flex justify-end space-x-2">
                 <DialogClose asChild>
-                  <Button
-                    variant="outline"
-                    onClick={() => setDialogOpen(false)}
-                  >
+                  <Button variant="outline" type="button">
                     Cancelar
                   </Button>
                 </DialogClose>
-                <Button onClick={applyLink}>Inserir</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  Inserir
+                </Button>
               </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </>
+            </form>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
