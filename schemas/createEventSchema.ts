@@ -223,6 +223,21 @@ const rankingSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
+const termSchema = z.object({
+  id: z.string().optional(),
+  title: z
+    .string()
+    .nonempty({ message: "O título do termo é obrigatório" })
+    .min(3, { message: "O título do termo deve ter no mínimo 3 caracteres" }),
+  isObligatory: z.boolean().optional(),
+  fileUrl: z.string().optional(),
+  file: z
+    .instanceof(File, {
+      message: "O arquivo do termo é obrigatório",
+    })
+    .optional(),
+});
+
 export const createEventFormValuesSchema = z.object({
   event: eventFormValuesSchema,
   ticketTypes: z.array(ticketTypeSchema),
@@ -230,6 +245,7 @@ export const createEventFormValuesSchema = z.object({
   bracket: z.array(bracketSchema),
   ranking: z.array(rankingSchema),
   eventFee: z.number().optional(),
+  terms: z.array(termSchema),
 });
 
 export type CreateEventFormValues = z.infer<typeof createEventFormValuesSchema>;

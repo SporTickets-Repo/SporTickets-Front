@@ -33,6 +33,17 @@ export interface Event {
   eventFee?: string;
   allowIndividualTickets: boolean;
   allowFullTickets: boolean;
+  terms: Term[];
+}
+
+export interface Term {
+  id: string;
+  eventId: string;
+  title: string;
+  isObligatory: boolean;
+  fileUrl: string;
+  createdAt: string;
+  deletedAt?: string | null;
 }
 
 export interface EventSummary {
