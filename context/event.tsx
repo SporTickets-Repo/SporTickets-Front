@@ -98,6 +98,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (err) {
         setError("Erro ao carregar evento.");
         console.error("Erro ao carregar evento:", err);
+        localStorage.removeItem("eventSlug");
       } finally {
         setLoading(false);
       }
@@ -188,12 +189,6 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     tickets: TicketForm[],
     event: Event | null
   ): number => {
-    const total = tickets.reduce((acc, ticket) => {
-      const teamSize = ticket.ticketType.teamSize;
-      const price = Number.parseFloat(ticket.ticketLot.price);
-      return acc + price * teamSize;
-    }, 0);
-
     const totalDiscount = tickets.reduce((acc, ticket) => {
       const teamSize = ticket.ticketType.teamSize;
       const price = Number.parseFloat(ticket.ticketLot.price);
@@ -208,7 +203,9 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }, 0);
 
     const fee =
-      event?.eventFee !== undefined ? totalDiscount * event.eventFee : 0;
+      event?.eventFee !== undefined
+        ? totalDiscount * Number(event.eventFee)
+        : 0;
 
     return totalDiscount + fee;
   };
