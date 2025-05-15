@@ -1,25 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { CgClose } from "react-icons/cg";
 
 export function AddToHomeScreenModal() {
   const [promptEvent, setPromptEvent] = useState<any>(null);
-  const [showPrompt, setShowPrompt] = useState(true);
-  const [isMobile, setIsMobile] = useState(true);
+  const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
-    // Verifica se é um dispositivo móvel
-    const checkMobile = () => {
-      const isTouchDevice =
-        "ontouchstart" in window || navigator.maxTouchPoints > 0;
-      const isSmallScreen = window.innerWidth <= 768;
-      return isTouchDevice && isSmallScreen;
-    };
-
-    if (!checkMobile()) return;
-
-    setIsMobile(true);
-
     const handler = (e: any) => {
       e.preventDefault();
       setPromptEvent(e);
@@ -40,19 +29,28 @@ export function AddToHomeScreenModal() {
     }
   };
 
-  if (!showPrompt || !isMobile) return null;
+  if (!promptEvent || !showPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 right-0 z-50 bg-white shadow-lg p-4 rounded-md border border-gray-200 flex justify-between items-center">
-      <p className="text-sm font-medium">
-        Adicione o SporTickets à tela inicial
-      </p>
-      <button
-        className="text-sm bg-sporticket-purple text-white px-3 py-1 rounded ml-4"
-        onClick={handleInstall}
-      >
-        Adicionar
-      </button>
+    <div className="fixed bottom-0 right-4 left-4 z-50 mb-4 shadow-lg bg-white rounded-md ">
+      <div className="flex justify-between items-center px-2 py-2">
+        <p className="text-sm font-medium">
+          Adicione o SporTickets à tela inicial
+        </p>
+        <Button size={"sm"} className="p-2" onClick={handleInstall}>
+          Adicionar
+        </Button>
+        <div className="flex justify-start align-top">
+          <Button
+            variant={"ghost"}
+            size={"sm"}
+            className=""
+            onClick={() => setShowPrompt(false)}
+          >
+            <CgClose />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
