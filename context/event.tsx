@@ -10,7 +10,14 @@ import {
 import { checkoutService } from "@/service/checkout";
 import { eventService } from "@/service/event";
 import { useRouter } from "next/navigation";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
@@ -25,6 +32,8 @@ interface EventContextProps {
   removeTicket: (ticketTypeId: string) => void;
   submitCheckout: () => Promise<void>;
   isHydrated: boolean;
+  acceptedTermIds: string[];
+  setAcceptedTermIds: Dispatch<SetStateAction<string[]>>;
 }
 
 const EventContext = createContext<EventContextProps>({
@@ -38,6 +47,8 @@ const EventContext = createContext<EventContextProps>({
   removeTicket: () => {},
   submitCheckout: async () => {},
   isHydrated: false,
+  acceptedTermIds: [],
+  setAcceptedTermIds: () => {},
 });
 
 export const useEvent = () => useContext(EventContext);
@@ -50,6 +61,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const [slug, setSlug] = useState<string>("");
   const [selectedTickets, setSelectedTickets] = useState<TicketForm[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [acceptedTermIds, setAcceptedTermIds] = useState<string[]>([]);
 
   useEffect(() => {
     const storedSlug = localStorage.getItem("eventSlug");
@@ -169,6 +181,9 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
             ? "FREE"
             : selectedTickets[0].paymentData?.paymentMethod,
       },
+      ...(acceptedTermIds.length && {
+        terms: acceptedTermIds.map((id) => ({ termId: id })),
+      }),
     };
 
     try {
@@ -223,6 +238,8 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
         removeTicket,
         submitCheckout,
         isHydrated,
+        acceptedTermIds,
+        setAcceptedTermIds,
       }}
     >
       {children}
