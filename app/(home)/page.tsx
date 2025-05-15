@@ -148,12 +148,12 @@ export default async function Home() {
 
       {/* Banner intermediário */}
       <div className="container">
-        <div className="mb-6 h-[50vh] relative">
+        <div className="mb-6 h-40 md:h-[50vh] relative">
           <Image
             src="/assets/images/banner1.png"
             alt="Banner"
             fill
-            className="absolute inset-0 w-full h-full -z-10 rounded-xl"
+            className="absolute inset-0 w-full h-full -z-10 rounded-xl object-cover"
             unoptimized
           />
           <div className="flex flex-col justify-end items-start w-full h-full px-8 py-6">
@@ -170,7 +170,7 @@ export default async function Home() {
           src="/assets/backgrounds/arquibancada.png"
           alt="Logo"
           fill
-          className="absolute inset-0 w-full h-full -z-10"
+          className="absolute inset-0 w-full h-full -z-10 object-cover"
           unoptimized
         />
         <div className="container flex justify-between items-center gap-4">
