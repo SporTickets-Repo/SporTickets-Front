@@ -197,6 +197,7 @@ export function InfoTab() {
       description: values.event.description,
       regulation: values.event.regulation,
       additionalInfo: values.event.additionalInfo,
+      emailCustomText: values.event.emailCustomText,
       place: values.event.place,
       paymentMethods: values.event.paymentMethods,
       address: {
@@ -696,6 +697,28 @@ export function InfoTab() {
                       })
                     }
                     initialContent={field.value}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="event.emailCustomText"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Text customizavel do email de confirmação</FormLabel>
+                <FormControl>
+                  <Tiptap
+                    onChange={(value: string) =>
+                      setValue("event.emailCustomText", value, {
+                        shouldValidate: value.length > 0,
+                      })
+                    }
+                    initialContent={field.value}
+                    enableLinks={true}
                   />
                 </FormControl>
                 <FormMessage />
