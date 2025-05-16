@@ -30,6 +30,7 @@ export default function PaymentPage() {
     event,
     isHydrated,
     acceptedTermIds,
+    removeTicket,
   } = useEvent();
 
   const router = useRouter();
@@ -139,6 +140,18 @@ export default function PaymentPage() {
     }
   };
 
+  const handleRemoveTicket = (ticketId: string) => {
+    const updatedTickets = selectedTickets.filter(
+      (ticket) => ticket.id !== ticketId
+    );
+    removeTicket(ticketId);
+    if (updatedTickets.length > 0) {
+      setCurrentTicket(updatedTickets[0]);
+    } else {
+      router.push(event?.slug ? `/evento/${event?.slug}` : "/");
+    }
+  };
+
   return (
     <div className="min-h-screen container-sm">
       <div className="flex items-center space-x-4 mt-2 mb-4 ">
@@ -172,6 +185,7 @@ export default function PaymentPage() {
                 ticket={ticket}
                 isSelected={currentTicket?.id === ticket.id}
                 onSelect={handleSelectTicket}
+                removeTicket={handleRemoveTicket}
               />
             ))}
           </div>
