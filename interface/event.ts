@@ -30,9 +30,21 @@ export interface Event {
   paymentMethods: PaymentMethod[];
   coupons: Coupon[];
   eventDashboardAccess: EventDashboardAccess[];
-  eventFee?: number;
+  eventFee?: string;
   allowIndividualTickets: boolean;
   allowFullTickets: boolean;
+  emailCustomText: string | null;
+  terms: Term[];
+}
+
+export interface Term {
+  id: string;
+  eventId: string;
+  title: string;
+  isObligatory: boolean;
+  fileUrl: string;
+  createdAt: string;
+  deletedAt?: string | null;
 }
 
 export interface EventSummary {

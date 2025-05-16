@@ -31,6 +31,7 @@ export default function EventRanking({ rankings }: EventPolicyProps) {
           <>
             {rankings.map((ranking) => (
               <Link
+                target="_blank"
                 href={`/ranking/${encodeURIComponent(ranking.id)}`}
                 key={ranking.id}
               >

@@ -5,35 +5,44 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { bracketService } from "@/service/bracket";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function BracketPage() {
   const { id } = useParams() as { id: string };
   const [url, setUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchBracketUrl = async () => {
+    try {
+      const response = await bracketService.getBracketsById(id);
+      setUrl(response.url);
+    } catch (error) {
+      console.error("Erro ao buscar o chaveamento:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchBracketUrl = async () => {
-      try {
-        const response = await bracketService.getBracketsById(id);
-        setUrl(response.url);
-      } catch (error) {
-        console.error("Erro ao buscar o chaveamento:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchBracketUrl();
+
+    pollingRef.current = setInterval(() => {
+      fetchBracketUrl();
+    }, 15000); // 15s
+
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
   }, [id]);
 
   return (
-    <div className="container pb-4">
+    <div className="">
       {loading ? (
         <BracketSkeleton />
       ) : (
         <div
-          className="rounded-lg overflow-hidden border h-[80vh]"
+          className="overflow-hidden h-[100vh]"
           style={{
             WebkitOverflowScrolling: "touch",
             overscrollBehavior: "contain",
@@ -41,13 +50,13 @@ export default function BracketPage() {
           }}
         >
           {url === null || !url.includes("http") ? (
-            <div className="flex-1 flex flex-col min-h-[calc(80vh)] overflow-x-hidden container justify-center items-center text-center gap-4">
+            <div className="flex-1 flex flex-col overflow-x-hidden justify-center items-center text-center gap-4">
               <h2 className="text-sporticket-purple text-4xl font-bold">
-                Desculpe mas não conseguimos encontrar o chaveamento
+                Desculpe, mas não conseguimos encontrar o chaveamento
               </h2>
               <p className="text-lg">
-                É possível que esse chaveamento está sendo atualizado ou ainda
-                não está disponível
+                É possível que este chaveamento esteja sendo atualizado ou ainda
+                não esteja disponível.
               </p>
               <Link href="/">
                 <Button>Voltar para a página inicial</Button>
@@ -55,6 +64,7 @@ export default function BracketPage() {
             </div>
           ) : (
             <iframe
+              key={url}
               src={url}
               title="Chaveamento"
               width="100%"

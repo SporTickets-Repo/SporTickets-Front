@@ -10,7 +10,14 @@ import {
 import { checkoutService } from "@/service/checkout";
 import { eventService } from "@/service/event";
 import { useRouter } from "next/navigation";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
@@ -24,7 +31,10 @@ interface EventContextProps {
   addTicket: (ticketTypeId: string) => void;
   removeTicket: (ticketTypeId: string) => void;
   submitCheckout: () => Promise<void>;
+  cleanAllTickets: () => void;
   isHydrated: boolean;
+  acceptedTermIds: string[];
+  setAcceptedTermIds: Dispatch<SetStateAction<string[]>>;
 }
 
 const EventContext = createContext<EventContextProps>({
@@ -37,7 +47,10 @@ const EventContext = createContext<EventContextProps>({
   addTicket: () => {},
   removeTicket: () => {},
   submitCheckout: async () => {},
+  cleanAllTickets: () => {},
   isHydrated: false,
+  acceptedTermIds: [],
+  setAcceptedTermIds: () => {},
 });
 
 export const useEvent = () => useContext(EventContext);
@@ -50,6 +63,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const [slug, setSlug] = useState<string>("");
   const [selectedTickets, setSelectedTickets] = useState<TicketForm[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [acceptedTermIds, setAcceptedTermIds] = useState<string[]>([]);
 
   useEffect(() => {
     const storedSlug = localStorage.getItem("eventSlug");
@@ -98,6 +112,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (err) {
         setError("Erro ao carregar evento.");
         console.error("Erro ao carregar evento:", err);
+        localStorage.removeItem("eventSlug");
       } finally {
         setLoading(false);
       }
@@ -168,6 +183,9 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
             ? "FREE"
             : selectedTickets[0].paymentData?.paymentMethod,
       },
+      ...(acceptedTermIds.length && {
+        terms: acceptedTermIds.map((id) => ({ termId: id })),
+      }),
     };
 
     try {
@@ -188,12 +206,6 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     tickets: TicketForm[],
     event: Event | null
   ): number => {
-    const total = tickets.reduce((acc, ticket) => {
-      const teamSize = ticket.ticketType.teamSize;
-      const price = Number.parseFloat(ticket.ticketLot.price);
-      return acc + price * teamSize;
-    }, 0);
-
     const totalDiscount = tickets.reduce((acc, ticket) => {
       const teamSize = ticket.ticketType.teamSize;
       const price = Number.parseFloat(ticket.ticketLot.price);
@@ -208,9 +220,16 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }, 0);
 
     const fee =
-      event?.eventFee !== undefined ? totalDiscount * event.eventFee : 0;
+      event?.eventFee !== undefined
+        ? totalDiscount * Number(event.eventFee)
+        : 0;
 
     return totalDiscount + fee;
+  };
+
+  const cleanAllTickets = () => {
+    setSelectedTickets([]);
+    localStorage.removeItem("selectedTickets");
   };
 
   return (
@@ -225,7 +244,10 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
         addTicket,
         removeTicket,
         submitCheckout,
+        cleanAllTickets,
         isHydrated,
+        acceptedTermIds,
+        setAcceptedTermIds,
       }}
     >
       {children}

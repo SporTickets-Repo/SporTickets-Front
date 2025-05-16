@@ -15,6 +15,7 @@ import {
   ClipboardList,
   Link,
   Loader2,
+  ShieldX,
   Ticket,
   TicketPercent,
   Trash2Icon,
@@ -64,6 +65,7 @@ import { InfoTab } from "./create-form-tabs/info-tab";
 import { IntegrationsTab } from "./create-form-tabs/integrations-tab";
 import { SendTicketTab } from "./create-form-tabs/send-tickets";
 import { TaxesTab } from "./create-form-tabs/taxes-tab";
+import { TermsTab } from "./create-form-tabs/terms-tab";
 import { TicketsTab } from "./create-form-tabs/tickets-tab";
 
 type TabType =
@@ -73,7 +75,8 @@ type TabType =
   | "collaborators"
   | "integrations"
   | "taxes"
-  | "sendTicket";
+  | "sendTicket"
+  | "terms";
 
 const tabLabels = {
   info: "Informações",
@@ -83,6 +86,7 @@ const tabLabels = {
   integrations: "Integrações",
   taxes: "Taxas",
   sendTicket: "Enviar Ingressos",
+  terms: "Termos e Condições",
 };
 
 interface CreateEventFormProps {
@@ -143,6 +147,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         endDate: "",
         description: "",
         additionalInfo: "",
+        emailCustomText: "",
         cep: "",
         city: "",
         state: "",
@@ -183,6 +188,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             : "",
           description: eventData.description ?? "",
           additionalInfo: eventData.additionalInfo ?? "",
+          emailCustomText: eventData.emailCustomText ?? "",
           cep: eventData.address?.zipCode ?? "",
           city: eventData.address?.city ?? "",
           state: eventData.address?.state ?? "",
@@ -272,7 +278,15 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               isActive: true,
             }))
           : [],
-        eventFee: eventData.eventFee || 0.1,
+        eventFee: Math.round(Number(eventData.eventFee) * 100),
+        terms: eventData.terms
+          ? eventData.terms.map((t) => ({
+              id: t.id,
+              title: t.title,
+              isObligatory: t.isObligatory,
+              fileUrl: t.fileUrl,
+            }))
+          : [],
       });
 
       if (eventData.bannerUrl) {
@@ -303,8 +317,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     "coupons",
     "collaborators",
     "integrations",
-
     "sendTicket",
+    "terms",
   ];
   const tabOrder: TabType[] = isMaster ? [...baseTabs, "taxes"] : baseTabs;
 
@@ -328,6 +342,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             <SendTicketTab />
           </SendTicketProvider>
         );
+      case "terms":
+        return <TermsTab />;
       default:
         return null;
     }
@@ -419,6 +435,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
       endDate: event.endDate,
       description: event.description,
       additionalInfo: event.additionalInfo,
+      emailCustomText: event.emailCustomText,
       cep: event.address?.zipCode,
       city: event.address?.city,
       state: event.address?.state,
@@ -503,6 +520,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                   {tab === "integrations" && <Link className="w-4 h-4" />}
                   {tab === "taxes" && <CgMathPercent className="w-4 h-4" />}
                   {tab === "sendTicket" && <ArrowUpIcon className="w-4 h-4" />}
+                  {tab === "terms" && <ShieldX className="w-4 h-4" />}
                   {tabLabels[tab]}
                 </Button>
               ))}

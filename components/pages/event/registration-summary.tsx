@@ -18,7 +18,8 @@ export default function RegistrationSummary({
   ticketTypes,
   ticketsVisibility,
 }: RegistrationSummaryProps) {
-  const { addTicket, removeTicket, selectedTickets } = useEvent();
+  const { addTicket, removeTicket, selectedTickets, cleanAllTickets } =
+    useEvent();
   const router = useRouter();
 
   const getQuantity = (ticketTypeId: string) => {
@@ -33,7 +34,7 @@ export default function RegistrationSummary({
   }, 0);
 
   const handleSubmit = () => {
-    if (total === 0) return;
+    if (selectedTickets.length === 0) return;
     router.push("/pagamento");
   };
 
@@ -150,14 +151,26 @@ export default function RegistrationSummary({
           <span className="font-light">Total</span>
           <span className="text-lg font-bold">R$ {total.toFixed(2)}</span>
         </div>
+
         <Button
           className="w-full"
           variant="destructive"
-          disabled={total === 0}
+          disabled={selectedTickets.length === 0}
           onClick={handleSubmit}
         >
           Realizar Inscrição
           <ArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className="mt-2 bg-zinc-100 p-2 rounded-lg">
+        <Button
+          className="w-full h-5"
+          variant="outline"
+          disabled={selectedTickets.length === 0}
+          onClick={cleanAllTickets}
+        >
+          Limpar Carrinho
         </Button>
       </div>
     </div>
