@@ -31,6 +31,7 @@ interface EventContextProps {
   addTicket: (ticketTypeId: string) => void;
   removeTicket: (ticketTypeId: string) => void;
   submitCheckout: () => Promise<void>;
+  cleanAllTickets: () => void;
   isHydrated: boolean;
   acceptedTermIds: string[];
   setAcceptedTermIds: Dispatch<SetStateAction<string[]>>;
@@ -46,6 +47,7 @@ const EventContext = createContext<EventContextProps>({
   addTicket: () => {},
   removeTicket: () => {},
   submitCheckout: async () => {},
+  cleanAllTickets: () => {},
   isHydrated: false,
   acceptedTermIds: [],
   setAcceptedTermIds: () => {},
@@ -225,6 +227,11 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     return totalDiscount + fee;
   };
 
+  const cleanAllTickets = () => {
+    setSelectedTickets([]);
+    localStorage.removeItem("selectedTickets");
+  };
+
   return (
     <EventContext.Provider
       value={{
@@ -237,6 +244,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
         addTicket,
         removeTicket,
         submitCheckout,
+        cleanAllTickets,
         isHydrated,
         acceptedTermIds,
         setAcceptedTermIds,
