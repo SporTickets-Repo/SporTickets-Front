@@ -34,7 +34,7 @@ export default function RegistrationSummary({
   }, 0);
 
   const handleSubmit = () => {
-    if (total === 0) return;
+    if (selectedTickets.length === 0) return;
     router.push("/pagamento");
   };
 
@@ -155,7 +155,7 @@ export default function RegistrationSummary({
         <Button
           className="w-full"
           variant="destructive"
-          disabled={total === 0}
+          disabled={selectedTickets.length === 0}
           onClick={handleSubmit}
         >
           Realizar Inscrição
