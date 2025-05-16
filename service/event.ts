@@ -145,4 +145,19 @@ export const eventService = {
       throw error;
     }
   },
+
+  updateEventTerms: async (
+    eventId: string,
+    formData: FormData
+  ): Promise<void> => {
+    try {
+      await api.put(`/events/${eventId}/terms`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  },
 };

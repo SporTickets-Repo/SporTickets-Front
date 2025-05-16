@@ -13,6 +13,7 @@ import { PaymentMethodDisplay } from "@/components/pages/checkout/payment-method
 import { PlayerForm } from "@/components/pages/checkout/player-form/index";
 import { PlayersEmptyList } from "@/components/pages/checkout/players-empty-list";
 import { PlayersList } from "@/components/pages/checkout/players-list";
+import { TermsAcceptance } from "@/components/pages/checkout/terms-acceptance";
 import { TicketCard } from "@/components/pages/checkout/ticket-card";
 import { useEvent } from "@/context/event";
 import type { Player, TicketForm } from "@/interface/tickets";
@@ -23,7 +24,13 @@ import { CgSpinner } from "react-icons/cg";
 import { FiAlertTriangle } from "react-icons/fi";
 
 export default function PaymentPage() {
-  const { selectedTickets, submitCheckout, event, isHydrated } = useEvent();
+  const {
+    selectedTickets,
+    submitCheckout,
+    event,
+    isHydrated,
+    acceptedTermIds,
+  } = useEvent();
 
   const router = useRouter();
 
@@ -86,12 +93,17 @@ export default function PaymentPage() {
 
   const subTotal = totalDiscount;
   const feeAmount =
-    event?.eventFee !== undefined ? subTotal * event.eventFee : 0;
+    event?.eventFee !== undefined ? subTotal * Number(event.eventFee) : 0;
   const finalTotal = subTotal + feeAmount;
 
   if (!selectedTickets || selectedTickets.length === 0 || !currentTicket) {
     return null;
   }
+
+  const requiredTerms = event?.terms?.filter((term) => term.isObligatory) || [];
+  const allRequiredTermsAccepted = requiredTerms.every((term) =>
+    acceptedTermIds.includes(term.id)
+  );
 
   const formCompleted = selectedTickets.every((ticket) => {
     const players = ticket.players || [];
@@ -109,7 +121,13 @@ export default function PaymentPage() {
 
     const hasPayment = finalTotal === 0 || !!ticket.paymentData?.paymentMethod;
 
-    return hasAllPlayers && hasAllPers && !needsCategories && hasPayment;
+    return (
+      hasAllPlayers &&
+      hasAllPers &&
+      !needsCategories &&
+      hasPayment &&
+      allRequiredTermsAccepted
+    );
   });
 
   const handleSubmitCheckout = async () => {
@@ -157,6 +175,10 @@ export default function PaymentPage() {
               />
             ))}
           </div>
+
+          {event?.terms && event.terms.length > 0 && (
+            <TermsAcceptance terms={event.terms} />
+          )}
 
           <div className="p-3 bg-zinc-50 rounded-lg space-y-2">
             <div className="flex justify-between items-center">
@@ -308,6 +330,10 @@ export default function PaymentPage() {
                   {selectedTickets.some(
                     (ticket) => !ticket.paymentData?.paymentMethod
                   ) && <li>Selecione um método de pagamento</li>}
+
+                  {!allRequiredTermsAccepted && (
+                    <li>Aceite todos os termos obrigatórios</li>
+                  )}
                 </ul>
               </div>
             )}
