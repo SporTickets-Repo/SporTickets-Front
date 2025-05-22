@@ -709,7 +709,9 @@ export function InfoTab() {
             name="event.emailCustomText"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Text customizavel do email de confirmação</FormLabel>
+                <FormLabel>
+                  Texto personalizado para o e-mail de confirmação
+                </FormLabel>
                 <FormControl>
                   <Tiptap
                     onChange={(value: string) =>
