@@ -5,9 +5,10 @@ export interface LoginResponse {
 export interface RegisterResponse {
   id: string;
   email: string;
+  country: string;
   phone: string;
-  document: string;
-  documentType: string;
+  document?: string;
+  documentType?: string;
   name: string;
   sex: string;
   role: string;
@@ -31,7 +32,8 @@ export interface ResetPasswordResponse {
 
 export interface RegisterBody {
   name: string;
-  document: string;
+  document?: string;
+  country: string;
   email: string;
   password: string;
   confirmPassword: string;
