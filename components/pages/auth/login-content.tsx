@@ -3,9 +3,9 @@ import StepEnterEmail from "@/components/StepEnterEmail";
 import StepEnterPassword from "@/components/StepEnterPassword";
 import StepLogin from "@/components/StepLogin";
 import StepRegister from "@/components/StepRegister";
+import TranslatedLink from "@/components/translated-link";
 import { AuthStep, useAuthSteps } from "@/hooks/useAuthSteps";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 
 export default function LoginContent() {
@@ -16,7 +16,7 @@ export default function LoginContent() {
     <div className="flex flex-1 container p-8 gap-8">
       <div className="flex flex-1 flex-col items-center justify-center aling-start">
         <div className="flex flex-col">
-          <Link href="/">
+          <TranslatedLink href="/">
             <Image
               src="/assets/logos/Logo-Horizontal-para-fundo-Branco.png"
               alt="Sportickets Logo"
@@ -24,7 +24,7 @@ export default function LoginContent() {
               width={1500}
               height={267}
             />
-          </Link>
+          </TranslatedLink>
         </div>
         {step === AuthStep.LOGIN && <StepLogin nextStep={nextStep} />}
         {step === AuthStep.ENTER_EMAIL && (

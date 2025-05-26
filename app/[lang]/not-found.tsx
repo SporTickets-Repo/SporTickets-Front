@@ -1,7 +1,7 @@
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -14,9 +14,9 @@ export default function NotFound() {
         <p className="text-lg">
           Por favor, verifique o endereço digitado e tente novamente.
         </p>
-        <Link href="/">
+        <TranslatedLink href="/">
           <Button>Voltar para a página inicial</Button>
-        </Link>
+        </TranslatedLink>
       </div>
       <Footer />
     </>

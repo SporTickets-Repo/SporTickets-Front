@@ -1,9 +1,9 @@
 "use client";
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { Event } from "@/interface/event";
 import { eventService } from "@/service/event";
 import { PlusIcon } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ProfileEventCard } from "./profile-event-card";
@@ -57,9 +57,13 @@ export function ProfileEventList({
         {events
           .sort((a, b) => (a.name === null ? -1 : b.name === null ? 1 : 0))
           .map((event, index) => (
-            <Link href={`/evento/criar/${event.id}`} passHref key={index}>
+            <TranslatedLink
+              href={`/evento/criar/${event.id}`}
+              passHref
+              key={index}
+            >
               <ProfileEventCard key={event.id} event={event} />
-            </Link>
+            </TranslatedLink>
           ))}
       </div>
     </div>

@@ -13,9 +13,9 @@ import {
   Loader2,
   Mail,
 } from "lucide-react";
-import Link from "next/link";
 import type React from "react";
 import { useEffect, useState } from "react";
+import TranslatedLink from "./translated-link";
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -130,7 +130,7 @@ export function ForgotPasswordForm() {
                     )}
                   </div>
 
-                  <Link href="/entrar" className="w-full max-w-md">
+                  <TranslatedLink href="/entrar" className="w-full max-w-md">
                     <Button
                       variant="outline"
                       className="w-full group border-2 border-purple-500 text-purple-600 hover:bg-purple-50 transition-all"
@@ -138,7 +138,7 @@ export function ForgotPasswordForm() {
                       Voltar para o login
                       <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
-                  </Link>
+                  </TranslatedLink>
                 </motion.div>
               ) : (
                 <motion.div
@@ -224,7 +224,7 @@ export function ForgotPasswordForm() {
                         )}
                       </Button>
 
-                      <Link href="/entrar" className="block w-full">
+                      <TranslatedLink href="/entrar" className="block w-full">
                         <Button
                           variant="outline"
                           className="w-full group border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition-all"
@@ -232,7 +232,7 @@ export function ForgotPasswordForm() {
                           Voltar
                           <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
-                      </Link>
+                      </TranslatedLink>
                     </div>
                   </form>
                 </motion.div>

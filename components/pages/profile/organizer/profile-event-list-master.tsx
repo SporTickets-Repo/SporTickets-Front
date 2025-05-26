@@ -1,6 +1,6 @@
 "use client";
+import TranslatedLink from "@/components/translated-link";
 import { Event } from "@/interface/event";
-import Link from "next/link";
 import { ProfileEventCard } from "./profile-event-card";
 
 interface ProfileEventListProps {
@@ -18,9 +18,13 @@ export function ProfileEventListMaster({
         {events
           .sort((a, b) => (a.name === null ? -1 : b.name === null ? 1 : 0))
           .map((event, index) => (
-            <Link href={`/evento/criar/${event.id}`} passHref key={index}>
+            <TranslatedLink
+              href={`/evento/criar/${event.id}`}
+              passHref
+              key={index}
+            >
               <ProfileEventCard key={event.id} event={event} />
-            </Link>
+            </TranslatedLink>
           ))}
       </div>
     </div>

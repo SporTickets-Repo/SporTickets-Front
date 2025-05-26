@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
-import Link from "next/link";
+import TranslatedLink from "./translated-link";
 
 export function Footer() {
   return (
@@ -29,28 +29,28 @@ export function Footer() {
               </h3>
               <ul className="space-y-1">
                 <li>
-                  <Link
+                  <TranslatedLink
                     href="/sobre"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Fazer evento
-                  </Link>
+                  </TranslatedLink>
                 </li>
                 <li>
-                  <Link
+                  <TranslatedLink
                     href="https://wa.me/5561996476207"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Suporte
-                  </Link>
+                  </TranslatedLink>
                 </li>
                 <li>
-                  <Link
+                  <TranslatedLink
                     href="/suporte"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     FAQ
-                  </Link>
+                  </TranslatedLink>
                 </li>
               </ul>
             </div>
@@ -62,20 +62,20 @@ export function Footer() {
               </h3>
               <ul className="space-y-1">
                 <li>
-                  <Link
+                  <TranslatedLink
                     href="https://www.instagram.com/sporticketsbr/"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Instagram
-                  </Link>
+                  </TranslatedLink>
                 </li>
                 <li>
-                  <Link
+                  <TranslatedLink
                     href="https://www.linkedin.com/company/sportickets"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     LinkedIn
-                  </Link>
+                  </TranslatedLink>
                 </li>
               </ul>
             </div>
@@ -87,28 +87,28 @@ export function Footer() {
               </h3>
               <ul className="space-y-1">
                 <li>
-                  <Link
+                  <TranslatedLink
                     href="/termos"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Termos de uso
-                  </Link>
+                  </TranslatedLink>
                 </li>
                 <li>
-                  <Link
+                  <TranslatedLink
                     href="/privacidade"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Política de Privacidade
-                  </Link>
+                  </TranslatedLink>
                 </li>
                 <li>
-                  <Link
+                  <TranslatedLink
                     href="/cookies"
                     className="text-sm md:text-md text-muted-foreground hover:text-foreground"
                   >
                     Política de Cookies
-                  </Link>
+                  </TranslatedLink>
                 </li>
               </ul>
             </div>

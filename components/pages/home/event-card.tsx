@@ -1,4 +1,5 @@
 "use client";
+import TranslatedLink from "@/components/translated-link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { EventSummary } from "@/interface/event";
@@ -10,7 +11,6 @@ import {
   translateEventType,
 } from "@/utils/eventTranslations";
 import Image from "next/image";
-import Link from "next/link";
 import { IoPin } from "react-icons/io5";
 import { LuMedal } from "react-icons/lu";
 
@@ -23,7 +23,7 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
   const EventIcon = getEventIcon(event.type);
 
   return (
-    <Link href={`/evento/${event.slug}`}>
+    <TranslatedLink href={`/evento/${event.slug}`}>
       <Card className="overflow-hidden bg-transparent border-0 shadow-none">
         <div className="relative">
           {event.smallImageUrl ? (
@@ -93,6 +93,6 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </TranslatedLink>
   );
 }

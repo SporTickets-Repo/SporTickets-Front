@@ -1,10 +1,10 @@
 "use client";
 
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bracket } from "@/interface/bracket";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 
 interface BracketCardProps {
   bracket: Bracket;
@@ -19,11 +19,11 @@ export default function BracketCard({ bracket }: BracketCardProps) {
           <p className="text-sm text-muted-foreground font-semibold bg-gray-200 rounded-md px-4 py-[3px]">
             {bracket.isActive ? "Ativo" : "Inativo"}
           </p>
-          <Link href={`/chaveamento/${bracket.id}`}>
+          <TranslatedLink href={`/chaveamento/${bracket.id}`}>
             <Button variant="link" className="m-0 underline">
               Visualizar <ArrowRight className="" />
             </Button>
-          </Link>
+          </TranslatedLink>
         </div>
       </CardContent>
     </Card>

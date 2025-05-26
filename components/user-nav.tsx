@@ -13,8 +13,8 @@ import {
 import { useAuth } from "@/context/auth";
 import { LogOut, User, UserIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import TranslatedLink from "./translated-link";
 
 export function UserNav() {
   const { user, logout } = useAuth();
@@ -24,19 +24,15 @@ export function UserNav() {
     <nav className="flex items-center gap-6">
       {user ? (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Link href="/perfil" className="rounded-full overflow-hidden">
-              <Image
-                src={
-                  user?.profileImageUrl ?? "/assets/icons/default-profile.png"
-                }
-                alt="Foto de perfil"
-                width={24}
-                height={24}
-                className="w-12 h-12 rounded-full object-cover"
-                unoptimized
-              />
-            </Link>
+          <DropdownMenuTrigger className="cursor-pointer" asChild>
+            <Image
+              src={user?.profileImageUrl ?? "/assets/icons/default-profile.png"}
+              alt="Foto de perfil"
+              width={24}
+              height={24}
+              className="w-12 h-12 rounded-full object-cover"
+              unoptimized
+            />
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -53,13 +49,13 @@ export function UserNav() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link
+                <TranslatedLink
                   href="/perfil"
                   className="flex items-center cursor-pointer"
                 >
                   <UserIcon className="w-4 h-4 mr-3 text-muted-foreground" />
                   Meu Perfil
-                </Link>
+                </TranslatedLink>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -73,7 +69,7 @@ export function UserNav() {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Link href={`/entrar?redirect=${pathname}`}>
+        <TranslatedLink href={`/entrar?redirect=${pathname}`}>
           <Button
             variant="secondary"
             className="px-2 sm:px-4 flex items-center"
@@ -81,7 +77,7 @@ export function UserNav() {
             <User size={24} />
             <span className="font-extrabold">Entrar</span>
           </Button>
-        </Link>
+        </TranslatedLink>
       )}
     </nav>
   );

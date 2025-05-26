@@ -1,9 +1,9 @@
 "use client";
 
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { bracketService } from "@/service/bracket";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -58,9 +58,9 @@ export default function BracketPage() {
                 É possível que este chaveamento esteja sendo atualizado ou ainda
                 não esteja disponível.
               </p>
-              <Link href="/">
+              <TranslatedLink href="/">
                 <Button>Voltar para a página inicial</Button>
-              </Link>
+              </TranslatedLink>
             </div>
           ) : (
             <iframe

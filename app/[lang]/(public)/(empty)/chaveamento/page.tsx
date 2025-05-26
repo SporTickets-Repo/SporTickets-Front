@@ -1,11 +1,11 @@
 "use client";
 
 import BracketCard from "@/components/pages/brackets/bracket-card";
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEvent } from "@/context/event";
 import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function ChaveamentoPage() {
@@ -23,9 +23,9 @@ export default function ChaveamentoPage() {
           Chaveamentos do Evento
         </h2>
         <p className="text-lg">Nenhum chaveamento disponível nesse evento!</p>
-        <Link href={`/evento/${event?.slug}`}>
+        <TranslatedLink href={`/evento/${event?.slug}`}>
           <Button>Voltar para a página inicial</Button>
-        </Link>
+        </TranslatedLink>
       </div>
     );
   }

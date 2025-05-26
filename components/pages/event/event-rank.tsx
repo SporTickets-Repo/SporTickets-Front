@@ -1,9 +1,9 @@
 "use client";
 
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { Ranking } from "@/interface/ranking";
 import { Trophy } from "lucide-react";
-import Link from "next/link";
 
 interface EventPolicyProps {
   rankings: Ranking[];
@@ -15,12 +15,12 @@ export default function EventRanking({ rankings }: EventPolicyProps) {
   };
   return (
     <div className="bg-zinc-50 mb-4 p-4 rounded-lg">
-      <Link href="/ranking">
+      <TranslatedLink href="/ranking">
         <div className="flex align-center items-center gap-3 mb-2 ">
           <Trophy size={20} className="text-zinc-400" />
           <h2 className="text-lg font-bold">Ranqueamento</h2>
         </div>
-      </Link>
+      </TranslatedLink>
 
       <div className="text-sm text-gray-700">
         <p>
@@ -30,7 +30,7 @@ export default function EventRanking({ rankings }: EventPolicyProps) {
         {rankings?.length > 0 ? (
           <>
             {rankings.map((ranking) => (
-              <Link
+              <TranslatedLink
                 target="_blank"
                 href={`/ranking/${encodeURIComponent(ranking.id)}`}
                 key={ranking.id}
@@ -44,7 +44,7 @@ export default function EventRanking({ rankings }: EventPolicyProps) {
                   {"• "}
                   {ranking.name}
                 </Button>
-              </Link>
+              </TranslatedLink>
             ))}
           </>
         ) : (

@@ -1,5 +1,6 @@
 "use client";
 
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { MyTicket } from "@/interface/myTickets";
@@ -9,7 +10,6 @@ import { formatMoneyBR } from "@/utils/formatMoney";
 import { toPng } from "html-to-image";
 import { CalendarIcon, Download } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { useRef } from "react";
 
@@ -77,7 +77,7 @@ export function TicketModal({ isOpen, onClose, ticket }: TicketModalProps) {
                 height={150}
                 className="w-full rounded-lg object-cover h-40"
               />
-              <Link href={`/evento/${event.slug}`}>
+              <TranslatedLink href={`/evento/${event.slug}`}>
                 <Button
                   variant="outline"
                   size="sm"
@@ -85,7 +85,7 @@ export function TicketModal({ isOpen, onClose, ticket }: TicketModalProps) {
                 >
                   Ir para o evento
                 </Button>
-              </Link>
+              </TranslatedLink>
             </div>
 
             <div className="w-full space-y-4 text-sm">

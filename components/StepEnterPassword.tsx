@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils";
 import { passwordSchema } from "@/utils/validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import TranslatedLink from "./translated-link";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
@@ -97,12 +97,12 @@ const StepEnterPassword = ({ nextStep, email }: StepEnterPasswordProps) => {
         </div>
 
         <div>
-          <Link
+          <TranslatedLink
             href="/esqueceu-senha"
             className="text-cyan-700 font-medium underline"
           >
             Esqueci minha senha
-          </Link>
+          </TranslatedLink>
         </div>
 
         <Button

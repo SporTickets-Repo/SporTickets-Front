@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -25,6 +24,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { z } from "zod";
+import TranslatedLink from "./translated-link";
 
 const resetPasswordSchema = z
   .object({
@@ -174,14 +174,14 @@ export function ResetPasswordForm() {
                             Por favor, solicite um novo link de recuperação.
                           </p>
                         </div>
-                        <Link
+                        <TranslatedLink
                           href="/esqueceu-senha"
                           className="w-full max-w-md"
                         >
                           <Button className="w-full py-6 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium text-lg transition-all">
                             Solicitar novo link
                           </Button>
-                        </Link>
+                        </TranslatedLink>
                       </div>
                     </motion.div>
                   )}
@@ -205,12 +205,15 @@ export function ResetPasswordForm() {
                           fazer login com sua nova senha.
                         </p>
                       </div>
-                      <Link href="/entrar" className="w-full max-w-md">
+                      <TranslatedLink
+                        href="/entrar"
+                        className="w-full max-w-md"
+                      >
                         <Button className="w-full py-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl font-medium text-lg transition-all">
                           Ir para o login
                           <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
-                      </Link>
+                      </TranslatedLink>
                     </motion.div>
                   )}
 
@@ -313,7 +316,10 @@ export function ResetPasswordForm() {
                                 ? "Redefinindo senha..."
                                 : "Redefinir senha"}
                             </Button>
-                            <Link href="/entrar" className="block w-full">
+                            <TranslatedLink
+                              href="/entrar"
+                              className="block w-full"
+                            >
                               <Button
                                 variant="outline"
                                 className="w-full group border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl py-6 transition-all"
@@ -322,7 +328,7 @@ export function ResetPasswordForm() {
                                 Voltar
                                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                               </Button>
-                            </Link>
+                            </TranslatedLink>
                           </div>
                         </form>
                       </Form>

@@ -1,11 +1,11 @@
 "use client";
 
 import RankingCard from "@/components/pages/rankings/ranking-card";
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEvent } from "@/context/event";
 import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function RankingPage() {
@@ -23,9 +23,9 @@ export default function RankingPage() {
           Rankings do Evento
         </h2>
         <p className="text-lg">Nenhum Ranking disponível nesse evento!</p>
-        <Link href={`/evento/${event?.slug}`}>
+        <TranslatedLink href={`/evento/${event?.slug}`}>
           <Button>Voltar para o evento</Button>
-        </Link>
+        </TranslatedLink>
       </div>
     );
   }

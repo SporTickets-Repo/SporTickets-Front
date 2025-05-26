@@ -1,9 +1,9 @@
 "use client";
 
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { rankingService } from "@/service/ranking";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -48,9 +48,9 @@ export default function RankingPage() {
           <p className="text-lg">
             É possível que esse ranking está sendo atualizado
           </p>
-          <Link href="/">
+          <TranslatedLink href="/">
             <Button>Voltar para a página inicial</Button>
-          </Link>
+          </TranslatedLink>
         </div>
       ) : (
         <div

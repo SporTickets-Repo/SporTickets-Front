@@ -1,8 +1,8 @@
 "use client";
 
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
-import Link from "next/link";
 
 export function TransactionSuccess() {
   return (
@@ -14,9 +14,9 @@ export function TransactionSuccess() {
         detalhes no seu perfil.
       </p>
       <div>
-        <Link href="/perfil">
+        <TranslatedLink href="/perfil">
           <Button variant="default">Ir para meu perfil</Button>
-        </Link>
+        </TranslatedLink>
       </div>
     </div>
   );

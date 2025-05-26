@@ -3,6 +3,7 @@ import { CarouselEvents } from "@/components/pages/home/carrosel-events";
 import { EmptyEventCard } from "@/components/pages/home/empty-events";
 import { HomeSearchBar } from "@/components/pages/home/search-bar";
 import SportTypeCard from "@/components/pages/home/sport-type-card";
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { getDictionary } from "@/get-dictionary";
 import { Locale } from "@/i18n-config";
@@ -11,7 +12,6 @@ import { getEventIcon } from "@/utils/eventIcons";
 import { translateEventType } from "@/utils/eventTranslations";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 const apiUrl =
   process.env.NEXT_PUBLIC_API_URL || "https://api.sportickets.com.br";
@@ -86,13 +86,13 @@ export default async function Home(props: {
           </div>
           <div className="flex flex-wrap w-full gap-2 justify-center align-center">
             {eventTypes.map((type, index) => (
-              <Link key={index} href={`/evento/buscar?type=${type}`}>
+              <TranslatedLink key={index} href={`/evento/buscar?type=${type}`}>
                 <SportTypeCard
                   className="w-[165px]"
                   Icon={getEventIcon(type)}
                   title={translateEventType(type)}
                 />
-              </Link>
+              </TranslatedLink>
             ))}
           </div>
         </div>
@@ -105,9 +105,9 @@ export default async function Home(props: {
                 Tendências da semana
               </h2>
               <Button variant="tertiary" size="sm" asChild>
-                <Link href={handleLinkSearch}>
+                <TranslatedLink href={handleLinkSearch}>
                   <ArrowRight size={16} />
-                </Link>
+                </TranslatedLink>
               </Button>
             </div>
             {upcomingEvents.length > 0 ? (
@@ -126,9 +126,9 @@ export default async function Home(props: {
             {dictionary.eventosDisponiveis}
           </h2>
           <Button variant="tertiary" size="sm" asChild>
-            <Link href={handleLinkSearch}>
+            <TranslatedLink href={handleLinkSearch}>
               <ArrowRight size={16} />
-            </Link>
+            </TranslatedLink>
           </Button>
         </div>
         {recentEvents.length > 0 ? (
@@ -143,9 +143,9 @@ export default async function Home(props: {
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-md md:text-lg font-bold">Inscrições abertas</h2>
           <Button variant="tertiary" size="sm" asChild>
-            <Link href={handleLinkSearch}>
+            <TranslatedLink href={handleLinkSearch}>
               <ArrowRight size={16} />
-            </Link>
+            </TranslatedLink>
           </Button>
         </div>
         {registrationEvents.length > 0 ? (
@@ -192,11 +192,11 @@ export default async function Home(props: {
               gente!
             </p>
           </div>
-          <Link href="/sobre">
+          <TranslatedLink href="/sobre">
             <Button variant="secondary" className="text-sm md:text-sm">
               Sou produtor
             </Button>
-          </Link>
+          </TranslatedLink>
         </div>
       </div>
 
@@ -207,9 +207,9 @@ export default async function Home(props: {
             Eventos acontecendo ou finalizados
           </h2>
           <Button variant="tertiary" size="sm" asChild>
-            <Link href={handleLinkSearch}>
+            <TranslatedLink href={handleLinkSearch}>
               <ArrowRight size={16} />
-            </Link>
+            </TranslatedLink>
           </Button>
         </div>
         {finishedEvents.length > 0 ? (

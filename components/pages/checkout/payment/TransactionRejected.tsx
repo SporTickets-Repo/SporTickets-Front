@@ -1,8 +1,8 @@
 "use client";
 
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
-import Link from "next/link";
 
 export function TransactionRejected() {
   return (
@@ -16,9 +16,9 @@ export function TransactionRejected() {
         e tente novamente.
       </p>
       <div>
-        <Link href="/perfil">
+        <TranslatedLink href="/perfil">
           <Button variant="default">Sair</Button>
-        </Link>
+        </TranslatedLink>
       </div>
     </div>
   );

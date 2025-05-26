@@ -1,8 +1,8 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import TranslatedLink from "./translated-link";
 
 export function RegisterForm() {
   return (
@@ -50,9 +50,12 @@ export function RegisterForm() {
             </form>
             <div className="text-center text-sm mt-4">
               Já tem uma conta?{" "}
-              <Link href="/entrar" className="text-blue-600 hover:underline">
+              <TranslatedLink
+                href="/entrar"
+                className="text-blue-600 hover:underline"
+              >
                 Entrar
-              </Link>
+              </TranslatedLink>
             </div>
           </div>
           <div className="relative hidden md:block">

@@ -13,7 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
-  Link,
+  LinkIcon,
   Loader2,
   ShieldX,
   Ticket,
@@ -517,7 +517,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                   {tab === "tickets" && <Ticket className="w-4 h-4" />}
                   {tab === "coupons" && <TicketPercent className="w-4 h-4" />}
                   {tab === "collaborators" && <Users2 className="w-4 h-4" />}
-                  {tab === "integrations" && <Link className="w-4 h-4" />}
+                  {tab === "integrations" && <LinkIcon className="w-4 h-4" />}
                   {tab === "taxes" && <CgMathPercent className="w-4 h-4" />}
                   {tab === "sendTicket" && <ArrowUpIcon className="w-4 h-4" />}
                   {tab === "terms" && <ShieldX className="w-4 h-4" />}

@@ -1,9 +1,9 @@
 "use client";
 
+import TranslatedLink from "@/components/translated-link";
 import { Button } from "@/components/ui/button";
 import { Bracket } from "@/interface/bracket";
 import { Split } from "lucide-react";
-import Link from "next/link";
 
 interface EventBracketProps {
   brackets: Bracket[];
@@ -12,12 +12,12 @@ interface EventBracketProps {
 export default function EventBracket({ brackets }: EventBracketProps) {
   return (
     <div className="bg-zinc-50 mb-4 p-4 rounded-lg">
-      <Link href="/chaveamento">
+      <TranslatedLink href="/chaveamento">
         <div className="flex align-center items-center gap-3 mb-2 ">
           <Split size={20} className="text-zinc-400" />
           <h2 className="text-lg font-bold">Chaveamento</h2>
         </div>
-      </Link>
+      </TranslatedLink>
 
       <div className="text-sm text-gray-700">
         <p>
@@ -26,7 +26,7 @@ export default function EventBracket({ brackets }: EventBracketProps) {
         {brackets?.length > 0 ? (
           <>
             {brackets.map((bracket) => (
-              <Link
+              <TranslatedLink
                 target="_blank"
                 href={`/chaveamento/${encodeURIComponent(bracket.id)}`}
                 key={bracket.id}
@@ -38,7 +38,7 @@ export default function EventBracket({ brackets }: EventBracketProps) {
                   {"• "}
                   {bracket.name}
                 </Button>
-              </Link>
+              </TranslatedLink>
             ))}
           </>
         ) : (
