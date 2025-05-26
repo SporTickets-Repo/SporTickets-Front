@@ -6,7 +6,7 @@ import { i18n, type Locale } from "@/i18n-config";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { type Metadata } from "next";
 import { Rubik } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -19,20 +19,32 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID!;
 export async function generateMetadata({
   params,
 }: {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }): Promise<Metadata> {
-  const dictionary = await getDictionary(params.lang);
+  const { lang } = await params;
+  const dictionary = await getDictionary(lang);
 
   return {
     title: dictionary.metadata.title,
     description: dictionary.metadata.description,
     keywords: dictionary.metadata.keywords,
+    authors: [{ name: "SporTickets" }],
+    creator: "SporTickets",
+    publisher: "SporTickets",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
     metadataBase: new URL(
       process.env.NEXT_PUBLIC_SITE_URL || "https://www.sportickets.com.br"
     ),
+    alternates: {
+      canonical: "/",
+    },
     openGraph: {
       type: "website",
-      locale: params.lang === "pt" ? "pt_BR" : "en_US",
+      locale: lang === "pt" ? "pt_BR" : "en_US",
       url: "/",
       siteName: "SporTickets",
       title: dictionary.metadata.ogTitle,
@@ -73,15 +85,17 @@ export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({ lang: locale }));
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }) {
+  const { lang } = await params;
+
   return (
-    <html lang={params.lang}>
+    <html lang={lang}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -90,6 +104,27 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="theme-color" content="#ffffff" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "SporTickets",
+              url:
+                process.env.NEXT_PUBLIC_SITE_URL ||
+                "https://www.sportickets.com.br",
+              logo: `${process.env.NEXT_PUBLIC_SITE_URL}/assets/logos/Logo-Reduzida-para-fundo-Branco.png`,
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: "+55-61-996476207",
+                contactType: "customer support",
+                areaServed: "BR",
+                availableLanguage: "Portuguese",
+              },
+            }),
+          }}
+        />
       </head>
       <body className={rubik.className}>
         <AuthProvider>

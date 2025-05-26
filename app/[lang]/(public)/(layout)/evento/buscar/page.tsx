@@ -14,7 +14,7 @@ import { Loader2 } from "lucide-react";
 import { EventSummary } from "@/interface/event";
 import { eventService } from "@/service/event";
 
-import useHome from "@/app/(home)/useHome";
+import useHome from "@/app/[lang]/(public)/(home)/useHome";
 import {
   Select,
   SelectContent,
