@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
-
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/auth";
 import { EventProvider } from "@/context/event";
+import { getDictionary } from "@/get-dictionary";
+import { i18n, type Locale } from "@/i18n-config";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { type Metadata } from "next";
+import { Rubik } from "next/font/google";
 import "./globals.css";
 
 const rubik = Rubik({
@@ -13,80 +14,74 @@ const rubik = Rubik({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "SporTickets",
-  description:
-    "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
-  keywords: [
-    "ingressos esportivos",
-    "eventos esportivos",
-    "comprar ingressos",
-    "esportes",
-    "tickets esportivos",
-  ],
-  authors: [{ name: "SporTickets" }],
-  creator: "SporTickets",
-  publisher: "SporTickets",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.sportickets.com.br"
-  ),
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    locale: "pt_BR",
-    url: "/",
-    siteName: "SporTickets",
-    title: "SporTickets - Seu site de ingressos para eventos esportivos",
-    description:
-      "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
-    images: [
-      {
-        url: "/assets/logos/Logo-Reduzida-para-fundo-Branco.png",
-        width: 1200,
-        height: 630,
-        alt: "SporTickets",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "SporTickets - Seu site de ingressos para eventos esportivos",
-    description:
-      "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
-    images: ["/assets/logos/Logo-Reduzida-para-fundo-Branco.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID!;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  const dictionary = await getDictionary(params.lang);
+
+  return {
+    title: dictionary.metadata.title,
+    description: dictionary.metadata.description,
+    keywords: dictionary.metadata.keywords,
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_SITE_URL || "https://www.sportickets.com.br"
+    ),
+    openGraph: {
+      type: "website",
+      locale: params.lang === "pt" ? "pt_BR" : "en_US",
+      url: "/",
+      siteName: "SporTickets",
+      title: dictionary.metadata.ogTitle,
+      description: dictionary.metadata.description,
+      images: [
+        {
+          url: "/assets/logos/Logo-Reduzida-para-fundo-Branco.png",
+          width: 1200,
+          height: 630,
+          alt: "SporTickets",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dictionary.metadata.ogTitle,
+      description: dictionary.metadata.description,
+      images: ["/assets/logos/Logo-Reduzida-para-fundo-Branco.png"],
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
-  },
-};
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    },
+  };
+}
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID!;
+export async function generateStaticParams() {
+  return i18n.locales.map((locale) => ({ lang: locale }));
+}
 
 export default function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { lang: Locale };
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang={params.lang}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -95,27 +90,6 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="theme-color" content="#ffffff" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "SporTickets",
-              url:
-                process.env.NEXT_PUBLIC_SITE_URL ||
-                "https://www.sportickets.com.br",
-              logo: `${process.env.NEXT_PUBLIC_SITE_URL}/assets/logos/Logo-Reduzida-para-fundo-Branco.png`,
-              contactPoint: {
-                "@type": "ContactPoint",
-                telephone: "+55-61-996476207",
-                contactType: "customer support",
-                areaServed: "BR",
-                availableLanguage: "Portuguese",
-              },
-            }),
-          }}
-        />
       </head>
       <body className={rubik.className}>
         <AuthProvider>

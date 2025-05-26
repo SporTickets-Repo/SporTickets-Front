@@ -1,6 +1,27 @@
+import { match as matchLocale } from "@formatjs/intl-localematcher";
+import Negotiator from "negotiator";
 import { NextRequest, NextResponse } from "next/server";
 
+const i18n = {
+  locales: ["pt", "en"],
+  defaultLocale: "pt",
+};
+
 const privateRoutes = ["/perfil", "/evento/criar", "/pagamento", "/usuario"];
+
+function getLocale(request: NextRequest): string {
+  const negotiatorHeaders: Record<string, string> = {};
+  request.headers.forEach((value, key) => {
+    negotiatorHeaders[key] = value;
+  });
+
+  const languages = new Negotiator({ headers: negotiatorHeaders }).languages(
+    i18n.locales
+  );
+  const locale = matchLocale(languages, i18n.locales, i18n.defaultLocale);
+
+  return locale;
+}
 
 export function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
@@ -34,6 +55,20 @@ export function middleware(req: NextRequest) {
     const loginUrl = new URL("/entrar", req.url);
     loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  const pathnameIsMissingLocale = i18n.locales.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+  );
+
+  if (pathnameIsMissingLocale) {
+    const locale = getLocale(req);
+    return NextResponse.redirect(
+      new URL(
+        `/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`,
+        req.url
+      )
+    );
   }
 
   return NextResponse.next();
