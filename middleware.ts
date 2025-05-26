@@ -1,6 +1,10 @@
+import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
+import routing from "./lib/i18n/routing";
 
 const privateRoutes = ["/perfil", "/evento/criar", "/pagamento", "/usuario"];
+
+export default createMiddleware(routing);
 
 export function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;

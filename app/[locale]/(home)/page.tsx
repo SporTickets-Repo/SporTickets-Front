@@ -8,6 +8,7 @@ import { EventStatus, EventSummary } from "@/interface/event";
 import { getEventIcon } from "@/utils/eventIcons";
 import { translateEventType } from "@/utils/eventTranslations";
 import { ArrowRight } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -29,7 +30,8 @@ async function getEvents(): Promise<EventSummary[]> {
   );
 }
 
-export default async function Home() {
+export default async function Home({ locale }: { locale: "pt" | "en" }) {
+  const t = await getTranslations("HomePage");
   const events = await getEvents();
   const now = new Date();
 
@@ -115,7 +117,7 @@ export default async function Home() {
       {/* Recentes */}
       <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-md md:text-lg font-bold">Eventos disponíveis</h2>
+          <h2 className="text-md md:text-lg font-bold">{t("title")}</h2>
           <Button variant="tertiary" size="sm" asChild>
             <Link href={handleLinkSearch}>
               <ArrowRight size={16} />

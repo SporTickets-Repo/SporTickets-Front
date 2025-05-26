@@ -4,8 +4,11 @@ import { Rubik } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/auth";
 import { EventProvider } from "@/context/event";
+import routing from "@/lib/i18n/routing";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import "./globals.css";
+import { hasLocale } from "next-intl";
+import { notFound } from "next/navigation";
+import "../globals.css";
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -80,13 +83,20 @@ export const metadata: Metadata = {
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID!;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
   return (
-    <html lang="pt-BR">
+    <html lang={locale}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
