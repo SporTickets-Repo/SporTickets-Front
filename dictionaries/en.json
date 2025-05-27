@@ -1,5 +1,12 @@
 {
   "eventosDisponiveis": "Available events",
+  "destaques": "Trending this week",
+  "inscricoesAbertas": "Open registrations",
+  "bannerChamada": "Ready to play? Discover events and secure your ticket!",
+  "eProdutor": "Are you an event organizer?",
+  "vantagensProdutor": "See all the benefits of creating your event with us!",
+  "botaoSouProdutor": "I'm a producer",
+  "eventosFinalizadosOuAndamento": "Ongoing or finished events",
   "metadata": {
     "title": "SporTickets",
     "description": "Buy tickets for sports events easily and safely. Find the best sports events and guarantee your participation.",

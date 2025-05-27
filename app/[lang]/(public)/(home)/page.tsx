@@ -102,7 +102,7 @@ export default async function Home(props: {
           <div className="container">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-md md:text-lg font-bold">
-                Tendências da semana
+                {dictionary.destaques}
               </h2>
               <Button variant="tertiary" size="sm" asChild>
                 <TranslatedLink href={handleLinkSearch}>
@@ -141,7 +141,9 @@ export default async function Home(props: {
       {/* Inscrições abertas */}
       <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-md md:text-lg font-bold">Inscrições abertas</h2>
+          <h2 className="text-md md:text-lg font-bold">
+            {dictionary.inscricoesAbertas}
+          </h2>
           <Button variant="tertiary" size="sm" asChild>
             <TranslatedLink href={handleLinkSearch}>
               <ArrowRight size={16} />
@@ -167,7 +169,7 @@ export default async function Home(props: {
           />
           <div className="flex flex-col justify-end items-start w-full h-full px-8 py-6">
             <h2 className="text-xl md:text-2xl font-bold text-white mb-4 italic">
-              Pronto para jogar? Descubra eventos e garanta seu ingresso!
+              {dictionary.bannerChamada}
             </h2>
           </div>
         </div>
@@ -185,16 +187,15 @@ export default async function Home(props: {
         <div className="container flex justify-between items-center gap-4">
           <div className="flex flex-col gap-1">
             <h1 className="text-md md:text-xl font-semibold">
-              É um produtor de eventos?
+              {dictionary.eProdutor}
             </h1>
             <p className="text-zinc-400 text-sm md:text-base">
-              Veja todas as vantagens e benefícios de criar seu evento com a
-              gente!
+              {dictionary.vantagensProdutor}
             </p>
           </div>
           <TranslatedLink href="/sobre">
             <Button variant="secondary" className="text-sm md:text-sm">
-              Sou produtor
+              {dictionary.botaoSouProdutor}
             </Button>
           </TranslatedLink>
         </div>
@@ -204,7 +205,7 @@ export default async function Home(props: {
       <div className="container mb-6">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-md md:text-lg font-bold">
-            Eventos acontecendo ou finalizados
+            {dictionary.eventosFinalizadosOuAndamento}
           </h2>
           <Button variant="tertiary" size="sm" asChild>
             <TranslatedLink href={handleLinkSearch}>

@@ -1,5 +1,12 @@
 {
   "eventosDisponiveis": "Eventos disponíveis",
+  "destaques": "Tendências da semana",
+  "inscricoesAbertas": "Inscrições abertas",
+  "bannerChamada": "Pronto para jogar? Descubra eventos e garanta seu ingresso!",
+  "eProdutor": "É um produtor de eventos?",
+  "vantagensProdutor": "Veja todas as vantagens e benefícios de criar seu evento com a gente!",
+  "botaoSouProdutor": "Sou produtor",
+  "eventosFinalizadosOuAndamento": "Eventos acontecendo ou finalizados",
   "metadata": {
     "title": "SporTickets",
     "description": "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
