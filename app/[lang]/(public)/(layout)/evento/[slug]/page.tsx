@@ -1,11 +1,10 @@
+import { getTranslations } from "@/app/utils/translate";
 import EventSlugContent from "@/components/pages/event/event-slug-content";
 import EventSlugInitializer from "@/components/pages/event/event-slug-initializer";
+import { getDictionary } from "@/get-dictionary";
+import { Locale } from "@/i18n-config";
 import { Event, EventStatus } from "@/interface/event";
-import { formatDate, formatDateWithoutYear } from "@/utils/dateTime";
-import {
-  translateEventStatus,
-  translateEventType,
-} from "@/utils/eventTranslations";
+import { formatDate } from "@/utils/dateTime";
 import { Metadata } from "next";
 
 const apiUrl =
@@ -16,17 +15,19 @@ const baseUrl =
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; lang: Locale }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, lang } = await params;
+  const dictionary = await getDictionary(lang);
+  const t = await getTranslations(lang);
 
   const res = await fetch(`${apiUrl}/events/slug/${slug}`, {
-    next: { revalidate: 21600 }, // cache por 6 horas
+    next: { revalidate: 21600 },
   });
 
   if (!res.ok) {
     return {
-      title: "Evento não encontrado | SporTickets",
+      title: `${dictionary.eventoNaoEncontrado} | SporTickets`,
       robots: { index: false, follow: false },
     };
   }
@@ -39,32 +40,30 @@ export async function generateMetadata({
     event.status === EventStatus.CANCELLED
   ) {
     return {
-      title: "Evento não encontrado | SporTickets",
+      title: `${dictionary.eventoNaoEncontrado} | SporTickets`,
       robots: { index: false, follow: false },
     };
   }
 
   const eventUrl = `${baseUrl}/evento/${slug}`;
-
-  formatDateWithoutYear;
   const eventDate = event?.startDate
     ? formatDate(event.startDate)
-    : "data não disponível";
+    : dictionary.dataIndisponivel;
 
   const location =
     event.place || `${event.address?.street}, ${event.address?.city}`;
 
-  const eventType = translateEventType(event.type).toLowerCase();
-  const eventStatus = translateEventStatus(event.status).toLowerCase();
+  const eventType = t.eventType(event.type).toLowerCase();
+  const eventStatus = t.eventStatus(event.status).toLowerCase();
 
-  const description = `${event.name} acontecerá em ${location} no dia ${eventDate}. Tipo: ${eventType}, status: ${eventStatus}.`;
+  const description = `${event.name} ${dictionary.ocorreraEm} ${location} ${dictionary.noDia} ${eventDate}. ${dictionary.tipo}: ${eventType}, ${dictionary.status}: ${eventStatus}.`;
 
   const bannerUrl =
     event.bannerUrl || "/assets/logos/Logo-Horizontal-para-fundo-Roxo.png";
   const smallImageUrl =
     event.smallImageUrl || "/assets/logos/Logo-Horizontal-para-fundo-Roxo.png";
 
-  const eventName = event.name || "Evento";
+  const eventName = event.name || dictionary.evento;
 
   return {
     title: `${eventName} | SporTickets`,
@@ -74,11 +73,8 @@ export async function generateMetadata({
       description,
       url: eventUrl,
       siteName: "SporTickets",
-      images: [
-        { url: smallImageUrl, width: 700, height: 350 },
-        // { url: bannerUrl, width: 1268, height: 464 },
-      ],
-      locale: "pt_BR",
+      images: [{ url: smallImageUrl, width: 700, height: 350 }],
+      locale: lang === "en" ? "en_US" : "pt_BR",
       type: "website",
     },
     twitter: {
@@ -96,15 +92,16 @@ export async function generateMetadata({
 export default async function EventPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; lang: Locale }>;
 }) {
-  const { slug } = await params;
+  const { slug, lang } = await params;
+  const dictionary = await getDictionary(lang);
 
   const res = await fetch(`${apiUrl}/events/slug/${slug}`, {
-    next: { revalidate: 300 }, // cache por 5 minutos
+    next: { revalidate: 300 },
   });
 
-  if (!res.ok) return <div>Evento não encontrado</div>;
+  if (!res.ok) return <div>{dictionary.eventoNaoEncontrado}</div>;
 
   const event: Event = await res.json();
 
@@ -112,13 +109,13 @@ export default async function EventPage({
     event.status === EventStatus.DRAFT ||
     event.status === EventStatus.CANCELLED
   ) {
-    return <div>Evento indisponível</div>;
+    return <div>{dictionary.eventoIndisponivel}</div>;
   }
 
   return (
     <>
       <EventSlugInitializer slug={slug} />
-      <EventSlugContent event={event} />;
+      <EventSlugContent event={event} lang={lang} />
     </>
   );
 }

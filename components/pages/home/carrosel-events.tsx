@@ -28,20 +28,20 @@ export function Example() {
 
 interface CarouselEventsProps {
   events: EventSummary[];
+  dictionary: any;
   max?: number;
   dark?: boolean;
 }
 
 export function CarouselEvents({
   events,
+  dictionary,
   max = 10,
   dark = false,
 }: CarouselEventsProps) {
   return (
     <Carousel
-      opts={{
-        align: "start",
-      }}
+      opts={{ align: "start" }}
       className="w-full"
       plugins={[
         Autoplay({
@@ -56,7 +56,7 @@ export function CarouselEvents({
             className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
           >
             <div className="p-1">
-              <EventCard event={event} dark={dark} />
+              <EventCard event={event} dark={dark} dictionary={dictionary} />
             </div>
           </CarouselItem>
         ))}

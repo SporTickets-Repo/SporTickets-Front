@@ -1,4 +1,4 @@
-// app/(public)/page.tsx ou app/page.tsx
+import { getTranslations } from "@/app/utils/translate";
 import { CarouselEvents } from "@/components/pages/home/carrosel-events";
 import { EmptyEventCard } from "@/components/pages/home/empty-events";
 import { HomeSearchBar } from "@/components/pages/home/search-bar";
@@ -9,7 +9,6 @@ import { getDictionary } from "@/get-dictionary";
 import { Locale } from "@/i18n-config";
 import { EventStatus, EventSummary } from "@/interface/event";
 import { getEventIcon } from "@/utils/eventIcons";
-import { translateEventType } from "@/utils/eventTranslations";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
@@ -36,6 +35,7 @@ export default async function Home(props: {
 }) {
   const { lang } = await props.params;
   const dictionary = await getDictionary(lang);
+  const t = await getTranslations(lang);
 
   const events = await getEvents();
   const now = new Date();
@@ -90,7 +90,7 @@ export default async function Home(props: {
                 <SportTypeCard
                   className="w-[165px]"
                   Icon={getEventIcon(type)}
-                  title={translateEventType(type)}
+                  title={t.eventType(type)}
                 />
               </TranslatedLink>
             ))}
@@ -111,7 +111,12 @@ export default async function Home(props: {
               </Button>
             </div>
             {upcomingEvents.length > 0 ? (
-              <CarouselEvents events={upcomingEvents} max={5} dark />
+              <CarouselEvents
+                events={upcomingEvents}
+                max={5}
+                dark
+                dictionary={dictionary}
+              />
             ) : (
               <EmptyEventCard dark />
             )}
@@ -132,7 +137,11 @@ export default async function Home(props: {
           </Button>
         </div>
         {recentEvents.length > 0 ? (
-          <CarouselEvents events={recentEvents} max={8} />
+          <CarouselEvents
+            events={recentEvents}
+            max={8}
+            dictionary={dictionary}
+          />
         ) : (
           <EmptyEventCard />
         )}
@@ -151,7 +160,11 @@ export default async function Home(props: {
           </Button>
         </div>
         {registrationEvents.length > 0 ? (
-          <CarouselEvents events={registrationEvents} max={4} />
+          <CarouselEvents
+            events={registrationEvents}
+            max={4}
+            dictionary={dictionary}
+          />
         ) : (
           <EmptyEventCard />
         )}
@@ -214,7 +227,11 @@ export default async function Home(props: {
           </Button>
         </div>
         {finishedEvents.length > 0 ? (
-          <CarouselEvents events={finishedEvents} max={10} />
+          <CarouselEvents
+            events={finishedEvents}
+            max={10}
+            dictionary={dictionary}
+          />
         ) : (
           <EmptyEventCard />
         )}

@@ -5,22 +5,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { EventSummary } from "@/interface/event";
 import { formatDateWithoutYear, formatHour } from "@/utils/dateTime";
 import { getEventIcon } from "@/utils/eventIcons";
-import {
-  translateEventLevel,
-  translateEventStatus,
-  translateEventType,
-} from "@/utils/eventTranslations";
+import { createTranslator } from "@/utils/eventTranslations";
 import Image from "next/image";
 import { IoPin } from "react-icons/io5";
 import { LuMedal } from "react-icons/lu";
 
 interface EventCardProps {
   event: EventSummary;
+  dictionary: any;
   dark?: boolean;
 }
 
-export default function EventCard({ event, dark = false }: EventCardProps) {
+export default function EventCard({
+  event,
+  dictionary,
+  dark = false,
+}: EventCardProps) {
   const EventIcon = getEventIcon(event.type);
+  const t = createTranslator(dictionary);
 
   return (
     <TranslatedLink href={`/evento/${event.slug}`}>
@@ -29,7 +31,7 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
           {event.smallImageUrl ? (
             <Image
               src={event.smallImageUrl}
-              alt={event.name || "Evento sem nome"}
+              alt={event.name || dictionary.eventoSemNome}
               width={600}
               height={400}
               className="w-full h-44 object-cover rounded-lg bg-gray-500"
@@ -43,11 +45,11 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
           >
             {event.startDate
               ? formatDateWithoutYear(event.startDate)
-              : "Data não informada"}{" "}
+              : dictionary.dataIndisponivel}{" "}
             •{" "}
             {event.startDate
               ? formatHour(event.startDate)
-              : "Hora não informada"}
+              : dictionary.horarioIndisponivel}
           </Badge>
         </div>
 
@@ -61,7 +63,7 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
               <div className="flex items-center gap-1">
                 <EventIcon className="text-gray-400" />
                 <span className={`${dark ? "text-white" : "text-gray-600"}`}>
-                  {translateEventType(event.type)}
+                  {t.eventType(event.type)}
                 </span>
                 <span className="mr-1 text-gray-600">•</span>
               </div>
@@ -70,7 +72,7 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
             <div className="flex items-center gap-1">
               <LuMedal size={12} className="text-gray-400" />
               <span className={`${dark ? "text-white" : "text-gray-600"}`}>
-                {translateEventLevel(event.level) || "Nível não informado"}
+                {t.eventLevel(event.level) || dictionary.desconhecido}
               </span>
             </div>
           </div>
@@ -80,16 +82,15 @@ export default function EventCard({ event, dark = false }: EventCardProps) {
             <span
               className={`text-xs ${dark ? "text-white" : "text-zinc-600"}`}
             >
-              {event.place || "Local não informado"}
+              {event.place || dictionary.localNaoInformado}
             </span>
           </div>
 
           <div className="flex items-center mt-2 text-xs text-sporticket-green-500 font-semibold">
-            <span className="">
-              {translateEventStatus(event.status) || "ABERTO"}
+            <span>
+              {t.eventStatus(event.status) ||
+                dictionary.eventStatus.REGISTRATION}
             </span>
-            {/* <span className="mx-1">•</span>
-            <span className="">{"Vagas não informadas"}</span> */}
           </div>
         </CardContent>
       </Card>

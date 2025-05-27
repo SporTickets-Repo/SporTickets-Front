@@ -18,5 +18,71 @@
       "esportes",
       "tickets esportivos"
     ]
+  },
+  "eventoSemNome": "Evento sem nome",
+  "horarioIndisponivel": "Horário não disponível",
+  "eventoEsgotado": "ESGOTADO",
+  "vagaDisponivel": "vaga disponível",
+  "vagasDisponiveis": "vagas disponíveis",
+  "eventoNaoEncontrado": "Evento não encontrado",
+  "eventoIndisponivel": "Evento indisponível",
+  "evento": "Evento",
+  "dataIndisponivel": "data não disponível",
+  "ocorreraEm": "acontecerá em",
+  "noDia": "no dia",
+  "tipo": "Tipo",
+  "status": "Status",
+  "desconhecido": "Desconhecido",
+  "eventStatus": {
+    "DRAFT": "RASCUNHO",
+    "REGISTRATION": "ABERTO",
+    "PROGRESS": "EM ANDAMENTO",
+    "CANCELLED": "CANCELADO",
+    "FINISHED": "FINALIZADO"
+  },
+  "eventStatusOrganizer": {
+    "DRAFT": "RASCUNHO",
+    "REGISTRATION": "PUBLICADO",
+    "PROGRESS": "EM ANDAMENTO",
+    "CANCELLED": "CANCELADO",
+    "FINISHED": "FINALIZADO"
+  },
+  "eventTypes": {
+    "FUTVOLEI": "Futevôlei",
+    "BEACH_TENIS": "Beach Tênis",
+    "ALTINHA": "Altinha",
+    "FUTEBOL": "Futebol",
+    "FUTEBOL_ARREIA": "Futebol de Areia",
+    "FUTSAL": "Futsal",
+    "VOLEI": "Vôlei",
+    "GENERAL": "Geral",
+    "CORRIDA": "Corrida"
+  },
+  "eventLevels": {
+    "BEGINNER": "Iniciante",
+    "AMATEUR": "Amador",
+    "SEMIPROFESSIONAL": "Semiprofissional",
+    "PROFESSIONAL": "Profissional",
+    "GENERAL": "Geral"
+  },
+  "sex": {
+    "MALE": "Masculino",
+    "FEMALE": "Feminino"
+  },
+  "paymentStatus": {
+    "PENDING": "Pendente",
+    "APPROVED": "Aprovado",
+    "AUTHORIZED": "Autorizado",
+    "IN_PROCESS": "Em processo",
+    "IN_MEDIATION": "Em mediação",
+    "REJECTED": "Rejeitado",
+    "CANCELLED": "Cancelado",
+    "REFUNDED": "Reembolsado",
+    "CHARGED_BACK": "Estornado"
+  },
+  "paymentMethod": {
+    "PIX": "PIX",
+    "CREDIT_CARD": "Cartão de Crédito",
+    "FREE": "Gratuito"
   }
 }

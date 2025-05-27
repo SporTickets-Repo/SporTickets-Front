@@ -18,5 +18,78 @@
       "sports",
       "sports passes"
     ]
+  },
+  "eventoSemNome": "Unnamed event",
+  "horarioIndisponivel": "Time not available",
+  "eventoEsgotado": "SOLD OUT",
+  "vagaDisponivel": "spot available",
+  "vagasDisponiveis": "spots available",
+  "eventoNaoEncontrado": "Event not found",
+  "eventoIndisponivel": "Event unavailable",
+  "evento": "Event",
+  "dataIndisponivel": "date not available",
+  "ocorreraEm": "will take place in",
+  "noDia": "on",
+  "tipo": "Type",
+  "status": "Status",
+  "desconhecido": "Unknown",
+
+  "eventStatus": {
+    "DRAFT": "DRAFT",
+    "REGISTRATION": "OPEN",
+    "PROGRESS": "IN PROGRESS",
+    "CANCELLED": "CANCELLED",
+    "FINISHED": "FINISHED"
+  },
+
+  "eventStatusOrganizer": {
+    "DRAFT": "DRAFT",
+    "REGISTRATION": "PUBLISHED",
+    "PROGRESS": "IN PROGRESS",
+    "CANCELLED": "CANCELLED",
+    "FINISHED": "FINISHED"
+  },
+
+  "eventTypes": {
+    "FUTVOLEI": "Footvolley",
+    "BEACH_TENIS": "Beach Tennis",
+    "ALTINHA": "Altinha",
+    "FUTEBOL": "Soccer",
+    "FUTEBOL_ARREIA": "Beach Soccer",
+    "FUTSAL": "Futsal",
+    "VOLEI": "Volleyball",
+    "GENERAL": "General",
+    "CORRIDA": "Running"
+  },
+
+  "eventLevels": {
+    "BEGINNER": "Beginner",
+    "AMATEUR": "Amateur",
+    "SEMIPROFESSIONAL": "Semi-professional",
+    "PROFESSIONAL": "Professional",
+    "GENERAL": "General"
+  },
+
+  "sex": {
+    "MALE": "Male",
+    "FEMALE": "Female"
+  },
+
+  "paymentStatus": {
+    "PENDING": "Pending",
+    "APPROVED": "Approved",
+    "AUTHORIZED": "Authorized",
+    "IN_PROCESS": "Processing",
+    "IN_MEDIATION": "In mediation",
+    "REJECTED": "Rejected",
+    "CANCELLED": "Cancelled",
+    "REFUNDED": "Refunded",
+    "CHARGED_BACK": "Charged back"
+  },
+
+  "paymentMethod": {
+    "PIX": "PIX",
+    "CREDIT_CARD": "Credit Card",
+    "FREE": "Free"
   }
 }

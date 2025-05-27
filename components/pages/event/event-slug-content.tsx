@@ -1,13 +1,11 @@
+import { getTranslations } from "@/app/utils/translate";
 import { Badge } from "@/components/ui/badge";
+import { getDictionary } from "@/get-dictionary";
+import { Locale } from "@/i18n-config";
 import { Address } from "@/interface/address";
 import { Event } from "@/interface/event";
 import { formatDateWithoutYear, formatHour } from "@/utils/dateTime";
 import { getEventIcon } from "@/utils/eventIcons";
-import {
-  translateEventLevel,
-  translateEventStatus,
-  translateEventType,
-} from "@/utils/eventTranslations";
 import { stripHtml } from "@/utils/format";
 import { IoPin } from "react-icons/io5";
 import { LuMedal } from "react-icons/lu";
@@ -20,7 +18,14 @@ import EventPolicy from "./event-policy";
 import EventRanking from "./event-rank";
 import RegistrationSummary from "./registration-summary";
 
-export default function EventSlugContent({ event }: { event: Event }) {
+interface Props {
+  event: Event;
+  lang: Locale;
+}
+
+export default async function EventSlugContent({ event, lang }: Props) {
+  const dictionary = await getDictionary(lang);
+  const t = await getTranslations(lang);
   const EventIcon = getEventIcon(event.type);
 
   const totalAvailable = event.ticketTypes.reduce((acc, ticket) => {
@@ -32,7 +37,7 @@ export default function EventSlugContent({ event }: { event: Event }) {
   return (
     <div className="container-sm">
       <EventHeader
-        alt={event?.name || "Evento sem nome"}
+        alt={event?.name || dictionary.eventoSemNome}
         image={event.bannerUrl || "default-banner.jpg"}
       />
 
@@ -46,15 +51,15 @@ export default function EventSlugContent({ event }: { event: Event }) {
               {event.startDate && formatDateWithoutYear(event.startDate)} •{" "}
               {event.startDate
                 ? formatHour(event.startDate)
-                : "Horário não disponível"}
+                : dictionary.horarioIndisponivel}
             </Badge>
             <h1 className="text-2xl font-bold italic">{event.name}</h1>
-            <div className="flex items-center text-xs my-1 ">
+            <div className="flex items-center text-xs my-1">
               {event.type && (
                 <div className="flex items-center gap-2">
                   <EventIcon className="text-gray-400" />
                   <span className="text-gray-600">
-                    {translateEventType(event.type)}
+                    {t.eventType(event.type)}
                   </span>
                   <span className="mr-1 text-gray-600">•</span>
                 </div>
@@ -62,7 +67,7 @@ export default function EventSlugContent({ event }: { event: Event }) {
               <div className="flex items-center gap-1">
                 <LuMedal size={12} className="text-gray-400" />
                 <span className="text-gray-600">
-                  {translateEventLevel(event.level || "GERAL")}
+                  {t.eventLevel(event.level || "GERAL")}
                 </span>
                 <span className="mr-1 text-gray-600">•</span>
               </div>
@@ -76,17 +81,19 @@ export default function EventSlugContent({ event }: { event: Event }) {
             </div>
 
             <div className="flex items-center mt-2 text-xs text-sporticket-green-500 font-semibold">
-              <span>{translateEventStatus(event.status)}</span>
+              <span>{t.eventStatus(event.status)}</span>
               <span className="mx-1">•</span>
               {totalAvailable === 0 ? (
                 <span className="text-sporticket-orange-500 font-medium">
-                  ESGOTADO
+                  {dictionary.eventoEsgotado}
                 </span>
               ) : (
                 event.allowFullTickets && (
                   <span>
-                    {totalAvailable} vaga{totalAvailable > 1 ? "s" : ""}{" "}
-                    disponíveis
+                    {totalAvailable}{" "}
+                    {totalAvailable === 1
+                      ? dictionary.vagaDisponivel
+                      : dictionary.vagasDisponiveis}
                   </span>
                 )
               )}
