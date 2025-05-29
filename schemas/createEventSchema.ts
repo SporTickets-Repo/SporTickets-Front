@@ -1,3 +1,5 @@
+import { Country } from "@/interface/auth";
+import { Currency } from "@/interface/event";
 import { formatCEP, stripHtml } from "@/utils/format";
 import * as z from "zod";
 
@@ -93,6 +95,23 @@ export const eventFormValuesSchema = z
     neighborhood: z.string().nonempty({ message: "O bairro é obrigatório" }),
     place: z.string().nonempty({ message: "O local é obrigatório" }),
     allowIndividualTickets: z.boolean().optional(),
+    country: z.nativeEnum(Country, {
+      errorMap: () => ({
+        message: "País é obrigatório e deve ser um valor válido.",
+      }),
+    }),
+    currency: z.nativeEnum(Currency, {
+      errorMap: () => ({
+        message: "Moeda é obrigatória e deve ser um valor válido.",
+      }),
+    }),
+    eventFee: z
+      .number({
+        required_error: "Taxa do evento é obrigatória.",
+        invalid_type_error: "Taxa deve ser um número.",
+      })
+      .min(0, { message: "Taxa mínima é 0." })
+      .max(100, { message: "Taxa máxima é 100." }),
     allowFullTickets: z.boolean().optional(),
     bannerImageFile: z
       .instanceof(File, {
@@ -257,7 +276,6 @@ export const createEventFormValuesSchema = z.object({
   coupons: z.array(couponSchema),
   bracket: z.array(bracketSchema),
   ranking: z.array(rankingSchema),
-  eventFee: z.number().optional(),
   terms: z.array(termSchema),
 });
 
