@@ -151,5 +151,13 @@
     "passwordsMismatch": "Passwords do not match",
     "requiredCep": "CEP is required",
     "invalidCep": "Invalid CEP"
+  },
+  "userNav": {
+    "profilePictureAlt": "Profile picture",
+    "defaultUserName": "User",
+    "emailNotProvided": "Not provided",
+    "myProfile": "My Profile",
+    "logout": "Logout",
+    "login": "Login"
   }
 }

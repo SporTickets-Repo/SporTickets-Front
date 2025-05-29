@@ -11,12 +11,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/auth";
+import { getDictionary } from "@/get-dictionary";
 import { LogOut, User, UserIcon } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import TranslatedLink from "./translated-link";
 
-export function UserNav() {
+type Dictionary = Awaited<ReturnType<typeof getDictionary>>;
+interface UserNavProps {
+  dictionary: Dictionary;
+}
+
+export function UserNav({ dictionary }: UserNavProps) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
 
@@ -27,7 +33,7 @@ export function UserNav() {
           <DropdownMenuTrigger className="cursor-pointer" asChild>
             <Image
               src={user?.profileImageUrl ?? "/assets/icons/default-profile.png"}
-              alt="Foto de perfil"
+              alt={dictionary.userNav.profilePictureAlt}
               width={24}
               height={24}
               className="w-12 h-12 rounded-full object-cover"
@@ -39,10 +45,10 @@ export function UserNav() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {user?.name || "Usuário"}
+                  {user?.name || dictionary.userNav.defaultUserName}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {user?.email || "Não informado"}
+                  {user?.email || dictionary.userNav.emailNotProvided}
                 </p>
               </div>
             </DropdownMenuLabel>
@@ -54,7 +60,7 @@ export function UserNav() {
                   className="flex items-center cursor-pointer"
                 >
                   <UserIcon className="w-4 h-4 mr-3 text-muted-foreground" />
-                  Meu Perfil
+                  {dictionary.userNav.myProfile}
                 </TranslatedLink>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -64,7 +70,7 @@ export function UserNav() {
               onClick={logout}
             >
               <LogOut className="w-4 h-4 mr-3" />
-              Sair
+              {dictionary.userNav.logout}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -75,7 +81,7 @@ export function UserNav() {
             className="px-2 sm:px-4 flex items-center"
           >
             <User size={24} />
-            <span className="font-extrabold">Entrar</span>
+            <span className="font-extrabold">{dictionary.userNav.login}</span>
           </Button>
         </TranslatedLink>
       )}

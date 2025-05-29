@@ -145,5 +145,13 @@
     "passwordsMismatch": "Senhas não conferem",
     "requiredCep": "CEP obrigatório",
     "invalidCep": "CEP inválido"
+  },
+  "userNav": {
+    "profilePictureAlt": "Foto de perfil",
+    "defaultUserName": "Usuário",
+    "emailNotProvided": "Não informado",
+    "myProfile": "Meu Perfil",
+    "logout": "Sair",
+    "login": "Entrar"
   }
 }

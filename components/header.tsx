@@ -1,17 +1,20 @@
-"use client";
+import { getDictionary } from "@/get-dictionary";
 import Image from "next/image";
 import LanguageSwitcher from "./language-switcher";
 import TranslatedLink from "./translated-link";
 import { UserNav } from "./user-nav";
 
+type Dictionary = Awaited<ReturnType<typeof getDictionary>>;
 interface HeaderProps {
   logoImage?: string;
   className?: string;
+  dictionary: Dictionary;
 }
 
 export function Header({
   className,
   logoImage = "/assets/logos/Logo-Horizontal-para-fundo-Roxo.png",
+  dictionary,
 }: HeaderProps) {
   return (
     <header
@@ -31,7 +34,7 @@ export function Header({
       {/* Navegação à direita */}
       <div className="flex items-center gap-4">
         <LanguageSwitcher />
-        <UserNav />
+        <UserNav dictionary={dictionary} />
       </div>
     </header>
   );
