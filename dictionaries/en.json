@@ -11,6 +11,8 @@
     "title": "SporTickets",
     "description": "Buy tickets for sports events easily and safely. Find the best sports events and guarantee your participation.",
     "ogTitle": "SporTickets - Your sports event ticket site",
+    "searchTitle": "Search Event",
+    "searchDescription": "Find the perfect event for you!",
     "keywords": [
       "sports tickets",
       "sports events",
@@ -33,7 +35,7 @@
   "tipo": "Type",
   "status": "Status",
   "desconhecido": "Unknown",
-
+  "localNaoInformado": "Location not provided",
   "eventStatus": {
     "DRAFT": "DRAFT",
     "REGISTRATION": "OPEN",
@@ -91,5 +93,23 @@
     "PIX": "PIX",
     "CREDIT_CARD": "Credit Card",
     "FREE": "Free"
+  },
+  "transactionSummary": {
+    "title": "Purchase Summary",
+    "paymentMethod": "Payment Method",
+    "paidAt": "Paid at",
+    "total": "Total Amount",
+    "tickets": "Tickets",
+    "transactionId": "Transaction ID"
+  },
+  "todos": "All",
+  "search": {
+    "eventName": "Event Name",
+    "eventNamePlaceholder": "Enter the event name",
+    "clearDate": "Clear date",
+    "selectType": "Select a type",
+    "all": "All",
+    "error": "An error occurred while fetching events.",
+    "noEvents": "No events found"
   }
 }

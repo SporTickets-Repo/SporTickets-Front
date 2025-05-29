@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { EventSummary } from "@/interface/event";
 import { formatDateWithoutYear, formatHour } from "@/utils/dateTime";
 import { getEventIcon } from "@/utils/eventIcons";
-import { createTranslator } from "@/utils/eventTranslations";
 import Image from "next/image";
 import { IoPin } from "react-icons/io5";
 import { LuMedal } from "react-icons/lu";
@@ -22,7 +21,6 @@ export default function EventCard({
   dark = false,
 }: EventCardProps) {
   const EventIcon = getEventIcon(event.type);
-  const t = createTranslator(dictionary);
 
   return (
     <TranslatedLink href={`/evento/${event.slug}`}>
@@ -63,7 +61,7 @@ export default function EventCard({
               <div className="flex items-center gap-1">
                 <EventIcon className="text-gray-400" />
                 <span className={`${dark ? "text-white" : "text-gray-600"}`}>
-                  {t.eventType(event.type)}
+                  {dictionary.eventTypes[event.type]}
                 </span>
                 <span className="mr-1 text-gray-600">•</span>
               </div>
@@ -72,7 +70,7 @@ export default function EventCard({
             <div className="flex items-center gap-1">
               <LuMedal size={12} className="text-gray-400" />
               <span className={`${dark ? "text-white" : "text-gray-600"}`}>
-                {t.eventLevel(event.level) || dictionary.desconhecido}
+                {dictionary.eventLevels[event.level]}
               </span>
             </div>
           </div>
@@ -88,7 +86,7 @@ export default function EventCard({
 
           <div className="flex items-center mt-2 text-xs text-sporticket-green-500 font-semibold">
             <span>
-              {t.eventStatus(event.status) ||
+              {dictionary.eventStatus[event.status] ||
                 dictionary.eventStatus.REGISTRATION}
             </span>
           </div>

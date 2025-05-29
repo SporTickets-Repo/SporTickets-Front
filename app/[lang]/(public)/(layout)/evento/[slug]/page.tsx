@@ -1,4 +1,3 @@
-import { getTranslations } from "@/app/utils/translate";
 import EventSlugContent from "@/components/pages/event/event-slug-content";
 import EventSlugInitializer from "@/components/pages/event/event-slug-initializer";
 import { getDictionary } from "@/get-dictionary";
@@ -19,7 +18,6 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, lang } = await params;
   const dictionary = await getDictionary(lang);
-  const t = await getTranslations(lang);
 
   const res = await fetch(`${apiUrl}/events/slug/${slug}`, {
     next: { revalidate: 21600 },
@@ -53,8 +51,8 @@ export async function generateMetadata({
   const location =
     event.place || `${event.address?.street}, ${event.address?.city}`;
 
-  const eventType = t.eventType(event.type).toLowerCase();
-  const eventStatus = t.eventStatus(event.status).toLowerCase();
+  const eventType = dictionary.eventTypes[event.type] || event.type;
+  const eventStatus = dictionary.eventStatus[event.status] || event.status;
 
   const description = `${event.name} ${dictionary.ocorreraEm} ${location} ${dictionary.noDia} ${eventDate}. ${dictionary.tipo}: ${eventType}, ${dictionary.status}: ${eventStatus}.`;
 

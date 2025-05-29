@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -14,12 +12,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Locale } from "@/i18n-config";
 import { cn } from "@/lib/utils";
 import { eachMonthOfInterval, endOfYear, format, startOfYear } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { enUS, ptBR } from "date-fns/locale";
 import { CalendarIcon, Clock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { isMobile } from "react-device-detect";
+
+const localeMap = {
+  pt: ptBR,
+  en: enUS,
+};
+
+const translation = {
+  pt: {
+    selectDate: "Selecione a data",
+    selectDateTime: "Selecione a data e hora",
+    year: "Ano",
+    month: "Mês",
+    hours: "Horas",
+    minutes: "Minutos",
+  },
+  en: {
+    selectDate: "Select date",
+    selectDateTime: "Select date and time",
+    year: "Year",
+    month: "Month",
+    hours: "Hours",
+    minutes: "Minutes",
+  },
+};
 
 interface DateTimePickerProps {
   date: Date | undefined;
@@ -27,6 +50,7 @@ interface DateTimePickerProps {
   placeholder?: string;
   showTime?: boolean;
   disabled?: boolean;
+  lang: Locale;
 }
 
 export function DatePicker({
@@ -35,17 +59,19 @@ export function DatePicker({
   placeholder,
   showTime = false,
   disabled = false,
+  lang,
 }: DateTimePickerProps) {
-  const [month, setMonth] = useState<number>(
-    date ? date.getMonth() : new Date().getMonth()
+  const t = translation[lang];
+  const locale = localeMap[lang];
+
+  const [month, setMonth] = useState(date?.getMonth() ?? new Date().getMonth());
+  const [year, setYear] = useState(
+    date?.getFullYear() ?? new Date().getFullYear()
   );
-  const [year, setYear] = useState<number>(
-    date ? date.getFullYear() : new Date().getFullYear()
-  );
-  const [hours, setHours] = useState<string>(
+  const [hours, setHours] = useState(
     date ? String(date.getHours()).padStart(2, "0") : "00"
   );
-  const [minutes, setMinutes] = useState<string>(
+  const [minutes, setMinutes] = useState(
     date ? String(date.getMinutes()).padStart(2, "0") : "00"
   );
 
@@ -70,7 +96,6 @@ export function DatePicker({
   const hoursArray = Array.from({ length: 24 }, (_, i) =>
     String(i).padStart(2, "0")
   );
-
   const minutesArray = Array.from({ length: 60 }, (_, i) =>
     String(i).padStart(2, "0")
   );
@@ -84,97 +109,48 @@ export function DatePicker({
     }
   }, [date]);
 
-  const handleYearChange = (selectedYear: string) => {
-    const newYear = Number.parseInt(selectedYear, 10);
-    setYear(newYear);
-    updateDateTime(newYear, month);
-  };
-
-  const handleMonthChange = (selectedMonth: string) => {
-    const newMonth = Number.parseInt(selectedMonth, 10);
-    setMonth(newMonth);
-    updateDateTime(year, newMonth);
-  };
-
-  const handleHoursChange = (selectedHours: string) => {
-    setHours(selectedHours);
-    if (date) {
-      const newDate = new Date(date);
-      newDate.setHours(Number.parseInt(selectedHours, 10));
-      setDate(newDate);
-    } else {
-      const newDate = new Date(year, month, 1);
-      newDate.setHours(Number.parseInt(selectedHours, 10));
-      newDate.setMinutes(Number.parseInt(minutes, 10));
-      setDate(newDate);
-    }
-  };
-
-  const handleMinutesChange = (selectedMinutes: string) => {
-    setMinutes(selectedMinutes);
-    if (date) {
-      const newDate = new Date(date);
-      newDate.setMinutes(Number.parseInt(selectedMinutes, 10));
-      setDate(newDate);
-    } else {
-      const newDate = new Date(year, month, 1);
-      newDate.setHours(Number.parseInt(hours, 10));
-      newDate.setMinutes(Number.parseInt(selectedMinutes, 10));
-      setDate(newDate);
-    }
-  };
-
   const updateDateTime = (newYear: number, newMonth: number) => {
-    if (date) {
-      const newDate = new Date(date);
-      newDate.setFullYear(newYear);
-      newDate.setMonth(newMonth);
-      setDate(newDate);
-    } else {
-      const newDate = new Date(newYear, newMonth, 1);
-      newDate.setHours(Number.parseInt(hours, 10));
-      newDate.setMinutes(Number.parseInt(minutes, 10));
-      setDate(newDate);
-    }
+    const newDate = new Date(newYear, newMonth, 1);
+    newDate.setHours(Number(hours));
+    newDate.setMinutes(Number(minutes));
+    setDate(newDate);
   };
 
   const handleDateSelect = (newDate: Date | undefined) => {
     if (newDate) {
-      newDate.setHours(Number.parseInt(hours, 10));
-      newDate.setMinutes(Number.parseInt(minutes, 10));
+      newDate.setHours(Number(hours));
+      newDate.setMinutes(Number(minutes));
     }
     setDate(newDate);
   };
 
   if (isMobile) {
     return (
-      <div>
-        <input
-          type={showTime ? "datetime-local" : "date"}
-          disabled={disabled}
-          value={
-            date
-              ? showTime
-                ? `${date.toISOString().split("T")[0]}T${hours}:${minutes}`
-                : date.toISOString().split("T")[0]
-              : ""
+      <input
+        type={showTime ? "datetime-local" : "date"}
+        disabled={disabled}
+        value={
+          date
+            ? showTime
+              ? `${date.toISOString().split("T")[0]}T${hours}:${minutes}`
+              : date.toISOString().split("T")[0]
+            : ""
+        }
+        onChange={(e) => {
+          if (e.target.value) {
+            const newDate = new Date(e.target.value);
+            setDate(newDate);
+            setHours(String(newDate.getHours()).padStart(2, "0"));
+            setMinutes(String(newDate.getMinutes()).padStart(2, "0"));
+          } else {
+            setDate(undefined);
           }
-          onChange={(e) => {
-            if (e.target.value) {
-              const newDate = new Date(e.target.value);
-              setDate(newDate);
-              setHours(String(newDate.getHours()).padStart(2, "0"));
-              setMinutes(String(newDate.getMinutes()).padStart(2, "0"));
-            } else {
-              setDate(undefined);
-            }
-          }}
-          className="w-full bg-neutral-100 border rounded px-3 py-2 text-sm"
-          placeholder={
-            placeholder || `Selecione a data${showTime ? " e hora" : ""}`
-          }
-        />
-      </div>
+        }}
+        className="w-full bg-neutral-100 border rounded px-3 py-2 text-sm"
+        placeholder={
+          placeholder || (showTime ? t.selectDateTime : t.selectDate)
+        }
+      />
     );
   }
 
@@ -183,7 +159,7 @@ export function DatePicker({
       <PopoverTrigger asChild>
         <Button
           disabled={disabled}
-          variant={"outline"}
+          variant="outline"
           className={cn(
             "w-full justify-start text-left font-normal bg-neutral-100 border",
             !date && "text-muted-foreground"
@@ -192,22 +168,23 @@ export function DatePicker({
           <CalendarIcon className="mr-2 h-4 w-4" color="#6426B1" />
           {date ? (
             format(date, showTime ? "dd/MM/yyyy HH:mm" : "dd/MM/yyyy", {
-              locale: ptBR,
+              locale,
             })
           ) : (
             <span>
-              {placeholder
-                ? placeholder
-                : `Selecione a data${showTime ? " e hora" : ""}`}
+              {placeholder || (showTime ? t.selectDateTime : t.selectDate)}
             </span>
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <div className="flex justify-between p-2 space-x-1">
-          <Select onValueChange={handleYearChange} value={year.toString()}>
+          <Select
+            onValueChange={(v) => updateDateTime(Number(v), month)}
+            value={year.toString()}
+          >
             <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Year" />
+              <SelectValue placeholder={t.year} />
             </SelectTrigger>
             <SelectContent>
               {years.map((y) => (
@@ -217,21 +194,24 @@ export function DatePicker({
               ))}
             </SelectContent>
           </Select>
-          <Select onValueChange={handleMonthChange} value={month.toString()}>
+          <Select
+            onValueChange={(v) => updateDateTime(year, Number(v))}
+            value={month.toString()}
+          >
             <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Month" />
+              <SelectValue placeholder={t.month} />
             </SelectTrigger>
             <SelectContent>
               {months.map((m, index) => (
                 <SelectItem key={index} value={index.toString()}>
-                  {format(m, "MMMM", { locale: ptBR })}
+                  {format(m, "MMMM", { locale })}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
         <Calendar
-          locale={ptBR}
+          locale={locale}
           mode="single"
           selected={date}
           onSelect={handleDateSelect}
@@ -245,9 +225,9 @@ export function DatePicker({
         {showTime && (
           <div className="flex items-center justify-center p-2 space-x-2 border-t">
             <Clock className="h-4 w-4" color="#6426B1" />
-            <Select onValueChange={handleHoursChange} value={hours}>
+            <Select onValueChange={setHours} value={hours}>
               <SelectTrigger className="w-[80px]">
-                <SelectValue placeholder="Hours" />
+                <SelectValue placeholder={t.hours} />
               </SelectTrigger>
               <SelectContent>
                 {hoursArray.map((hour) => (
@@ -258,9 +238,9 @@ export function DatePicker({
               </SelectContent>
             </Select>
             <span>:</span>
-            <Select onValueChange={handleMinutesChange} value={minutes}>
+            <Select onValueChange={setMinutes} value={minutes}>
               <SelectTrigger className="w-[80px]">
-                <SelectValue placeholder="Minutes" />
+                <SelectValue placeholder={t.minutes} />
               </SelectTrigger>
               <SelectContent>
                 {minutesArray.map((minute) => (

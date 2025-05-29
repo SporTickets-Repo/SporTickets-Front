@@ -11,6 +11,8 @@
     "title": "SporTickets",
     "description": "Compre ingressos para eventos esportivos de forma segura e fácil. Encontre os melhores eventos esportivos e garanta sua participação.",
     "ogTitle": "SporTickets - Seu site de ingressos para eventos esportivos",
+    "searchTitle": "Buscar Evento",
+    "searchDescription": "Encontre o evento perfeito para você!",
     "keywords": [
       "ingressos esportivos",
       "eventos esportivos",
@@ -33,6 +35,7 @@
   "tipo": "Tipo",
   "status": "Status",
   "desconhecido": "Desconhecido",
+  "localNaoInformado": "Local não informado",
   "eventStatus": {
     "DRAFT": "RASCUNHO",
     "REGISTRATION": "ABERTO",
@@ -84,5 +87,23 @@
     "PIX": "PIX",
     "CREDIT_CARD": "Cartão de Crédito",
     "FREE": "Gratuito"
+  },
+  "transactionSummary": {
+    "title": "Resumo da Compra",
+    "paymentMethod": "Método de Pagamento",
+    "paidAt": "Pago em",
+    "total": "Valor Total",
+    "tickets": "Ingressos",
+    "transactionId": "ID da Transação"
+  },
+  "todos": "Todos",
+  "search": {
+    "eventName": "Nome do Evento",
+    "eventNamePlaceholder": "Digite o nome do evento",
+    "clearDate": "Limpar data",
+    "selectType": "Selecione um tipo",
+    "all": "Todos",
+    "error": "Ocorreu um erro ao buscar eventos.",
+    "noEvents": "Nenhum evento encontrado"
   }
 }

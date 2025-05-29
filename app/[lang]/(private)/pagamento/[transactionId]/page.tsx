@@ -8,13 +8,17 @@ import { TransactionQRCode } from "@/components/pages/checkout/payment/Transacti
 import { TransactionRejected } from "@/components/pages/checkout/payment/TransactionRejected";
 import { TransactionSuccess } from "@/components/pages/checkout/payment/TransactionSuccess";
 import { TransactionSummary } from "@/components/pages/checkout/payment/TransactionSummary";
+import { Locale } from "@/i18n-config";
 import { Transaction, TransactionStatus } from "@/interface/transaction";
 import { transactionService } from "@/service/transaction";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function TransactionPage() {
-  const { transactionId } = useParams<{ transactionId: string }>();
+  const { transactionId, lang } = useParams<{
+    transactionId: string;
+    lang: Locale;
+  }>();
   const [transaction, setTransaction] = useState<Transaction | null>(null);
 
   const [initialLoading, setInitialLoading] = useState(true);
@@ -134,7 +138,7 @@ export default function TransactionPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto min-h-[calc(60vh)]">
         <div className="flex justify-center items-center">{renderStatus()}</div>
         <div className="flex justify-center md:justify-start">
-          <TransactionSummary transaction={transaction} />
+          <TransactionSummary transaction={transaction} lang={lang} />
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-import { getTranslations } from "@/app/utils/translate";
 import { Badge } from "@/components/ui/badge";
 import { getDictionary } from "@/get-dictionary";
 import { Locale } from "@/i18n-config";
@@ -25,7 +24,6 @@ interface Props {
 
 export default async function EventSlugContent({ event, lang }: Props) {
   const dictionary = await getDictionary(lang);
-  const t = await getTranslations(lang);
   const EventIcon = getEventIcon(event.type);
 
   const totalAvailable = event.ticketTypes.reduce((acc, ticket) => {
@@ -59,7 +57,7 @@ export default async function EventSlugContent({ event, lang }: Props) {
                 <div className="flex items-center gap-2">
                   <EventIcon className="text-gray-400" />
                   <span className="text-gray-600">
-                    {t.eventType(event.type)}
+                    {dictionary.eventTypes[event.type]}
                   </span>
                   <span className="mr-1 text-gray-600">•</span>
                 </div>
@@ -67,7 +65,7 @@ export default async function EventSlugContent({ event, lang }: Props) {
               <div className="flex items-center gap-1">
                 <LuMedal size={12} className="text-gray-400" />
                 <span className="text-gray-600">
-                  {t.eventLevel(event.level || "GERAL")}
+                  {dictionary.eventLevels[event.level]}
                 </span>
                 <span className="mr-1 text-gray-600">•</span>
               </div>
@@ -81,7 +79,7 @@ export default async function EventSlugContent({ event, lang }: Props) {
             </div>
 
             <div className="flex items-center mt-2 text-xs text-sporticket-green-500 font-semibold">
-              <span>{t.eventStatus(event.status)}</span>
+              <span>{dictionary.eventStatus[event.status]}</span>
               <span className="mx-1">•</span>
               {totalAvailable === 0 ? (
                 <span className="text-sporticket-orange-500 font-medium">

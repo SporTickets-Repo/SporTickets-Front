@@ -1,4 +1,3 @@
-import { getTranslations } from "@/app/utils/translate";
 import { CarouselEvents } from "@/components/pages/home/carrosel-events";
 import { EmptyEventCard } from "@/components/pages/home/empty-events";
 import { HomeSearchBar } from "@/components/pages/home/search-bar";
@@ -35,7 +34,6 @@ export default async function Home(props: {
 }) {
   const { lang } = await props.params;
   const dictionary = await getDictionary(lang);
-  const t = await getTranslations(lang);
 
   const events = await getEvents();
   const now = new Date();
@@ -90,7 +88,7 @@ export default async function Home(props: {
                 <SportTypeCard
                   className="w-[165px]"
                   Icon={getEventIcon(type)}
-                  title={t.eventType(type)}
+                  title={dictionary.eventTypes[type]}
                 />
               </TranslatedLink>
             ))}

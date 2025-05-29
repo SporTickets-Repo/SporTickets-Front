@@ -20,7 +20,7 @@ export interface Transaction {
   updatedAt: string;
   status: TransactionStatus;
   createdById: string;
-  paymentMethod: string;
+  paymentMethod: "PIX" | "CREDIT_CARD" | "FREE" | string;
   externalPaymentId: string;
   externalStatus: string;
   pixQRCode: string | null;
