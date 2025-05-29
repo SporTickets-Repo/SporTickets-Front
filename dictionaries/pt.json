@@ -13,6 +13,8 @@
     "ogTitle": "SporTickets - Seu site de ingressos para eventos esportivos",
     "searchTitle": "Buscar Evento",
     "searchDescription": "Encontre o evento perfeito para você!",
+    "loginTitle": "Entrar",
+    "loginDescription": "Acesse sua conta SporTickets para comprar ingressos para os melhores eventos esportivos do Brasil.",
     "keywords": [
       "ingressos esportivos",
       "eventos esportivos",
@@ -105,5 +107,43 @@
     "all": "Todos",
     "error": "Ocorreu um erro ao buscar eventos.",
     "noEvents": "Nenhum evento encontrado"
+  },
+  "auth": {
+    "enterEmailTitle": "Digite seu e-mail",
+    "enterEmailSubtitle": "A SporTickets agradece a preferência",
+    "emailPlaceholder": "E-mail",
+    "continue": "Continuar",
+    "loading": "Carregando...",
+    "back": "Voltar",
+    "welcomeTitle": "Seja bem-vindo!",
+    "welcomeSubtitle": "Encontre, crie e participe de eventos esportivos com facilidade. Junte-se à comunidade!",
+    "continueWithEmail": "Continuar com Email",
+    "termsStart": "Ao continuar você aceita nossos",
+    "termsOfService": "Termos de Serviço",
+    "privacyPolicy": "Política de Privacidade",
+    "termsEnd": "e confirma que leu."
+  },
+  "errors": {
+    "invalidEmail": "E-mail inválido",
+    "requiredEmail": "E-mail obrigatório",
+    "requiredPassword": "Senha obrigatória",
+    "minPassword": "Mínimo 6 caracteres",
+    "invalidCpf": "CPF inválido",
+    "requiredCpf": "Documento obrigatório",
+    "requiredName": "Nome obrigatório",
+    "requiredBornAt": "Data de nascimento obrigatória",
+    "requiredPhone": "Telefone obrigatório",
+    "invalidPhone": "Telefone inválido",
+    "invalidSex": "Sexo inválido",
+    "passwordMin": "A senha deve ter no mínimo 6 caracteres",
+    "passwordMax": "A senha deve ter no máximo 20 caracteres",
+    "passwordUpper": "A senha deve conter pelo menos uma letra maiúscula",
+    "passwordLower": "A senha deve conter pelo menos uma letra minúscula",
+    "passwordNumber": "A senha deve conter pelo menos um número",
+    "passwordSymbol": "A senha deve conter pelo menos um símbolo",
+    "requiredConfirmPassword": "Confirmação de senha obrigatória",
+    "passwordsMismatch": "Senhas não conferem",
+    "requiredCep": "CEP obrigatório",
+    "invalidCep": "CEP inválido"
   }
 }

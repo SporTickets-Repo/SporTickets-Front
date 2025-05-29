@@ -4,11 +4,17 @@ import StepEnterPassword from "@/components/StepEnterPassword";
 import StepLogin from "@/components/StepLogin";
 import StepRegister from "@/components/StepRegister";
 import TranslatedLink from "@/components/translated-link";
+import { getDictionary } from "@/get-dictionary";
 import { AuthStep, useAuthSteps } from "@/hooks/useAuthSteps";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function LoginContent() {
+type Dictionary = Awaited<ReturnType<typeof getDictionary>>;
+interface Props {
+  dictionary: Dictionary;
+}
+
+export default function LoginContent({ dictionary }: Props) {
   const { step, nextStep } = useAuthSteps();
   const [email, setEmail] = useState<string>("");
 
@@ -26,9 +32,15 @@ export default function LoginContent() {
             />
           </TranslatedLink>
         </div>
-        {step === AuthStep.LOGIN && <StepLogin nextStep={nextStep} />}
+        {step === AuthStep.LOGIN && (
+          <StepLogin nextStep={nextStep} dictionary={dictionary} />
+        )}
         {step === AuthStep.ENTER_EMAIL && (
-          <StepEnterEmail nextStep={nextStep} setEmail={setEmail} />
+          <StepEnterEmail
+            nextStep={nextStep}
+            setEmail={setEmail}
+            dictionary={dictionary}
+          />
         )}
         {step === AuthStep.ENTER_PASSWORD && (
           <StepEnterPassword nextStep={nextStep} email={email} />

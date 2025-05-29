@@ -1,5 +1,6 @@
 "use client";
 import { useAuth } from "@/context/auth";
+import { getDictionary } from "@/get-dictionary";
 import { AuthStep } from "@/hooks/useAuthSteps";
 import { cn } from "@/lib/utils";
 import { passwordSchema } from "@/utils/validationSchema";
@@ -11,9 +12,12 @@ import TranslatedLink from "./translated-link";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
+type Dictionary = Awaited<ReturnType<typeof getDictionary>>;
+
 interface StepEnterPasswordProps {
   nextStep: (next: AuthStep) => void;
   email: string;
+  dictionary: Dictionary;
 }
 
 type FormData = {

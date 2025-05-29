@@ -13,6 +13,8 @@
     "ogTitle": "SporTickets - Your sports event ticket site",
     "searchTitle": "Search Event",
     "searchDescription": "Find the perfect event for you!",
+    "loginTitle": "Login",
+    "loginDescription": "Access your SporTickets account to purchase tickets for the best sports events in Brazil.",
     "keywords": [
       "sports tickets",
       "sports events",
@@ -111,5 +113,43 @@
     "all": "All",
     "error": "An error occurred while fetching events.",
     "noEvents": "No events found"
+  },
+  "auth": {
+    "enterEmailTitle": "Enter your email",
+    "enterEmailSubtitle": "SporTickets thanks you for your preference",
+    "emailPlaceholder": "Email",
+    "continue": "Continue",
+    "loading": "Loading...",
+    "back": "Back",
+    "welcomeTitle": "Welcome!",
+    "welcomeSubtitle": "Find, create, and join sports events easily. Join the community!",
+    "continueWithEmail": "Continue with Email",
+    "termsStart": "By continuing you agree to our",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "termsEnd": "and confirm that you have read them."
+  },
+  "errors": {
+    "invalidEmail": "Invalid email",
+    "requiredEmail": "Email is required",
+    "requiredPassword": "Password is required",
+    "minPassword": "Minimum 6 characters",
+    "invalidCpf": "Invalid CPF",
+    "requiredCpf": "Document is required",
+    "requiredName": "Name is required",
+    "requiredBornAt": "Date of birth is required",
+    "requiredPhone": "Phone is required",
+    "invalidPhone": "Invalid phone",
+    "invalidSex": "Invalid sex",
+    "passwordMin": "Password must be at least 6 characters",
+    "passwordMax": "Password must be at most 20 characters",
+    "passwordUpper": "Password must contain at least one uppercase letter",
+    "passwordLower": "Password must contain at least one lowercase letter",
+    "passwordNumber": "Password must contain at least one number",
+    "passwordSymbol": "Password must contain at least one symbol",
+    "requiredConfirmPassword": "Password confirmation is required",
+    "passwordsMismatch": "Passwords do not match",
+    "requiredCep": "CEP is required",
+    "invalidCep": "Invalid CEP"
   }
 }

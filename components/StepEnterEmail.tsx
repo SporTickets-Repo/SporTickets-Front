@@ -1,28 +1,43 @@
 "use client";
+
+import { getDictionary } from "@/get-dictionary";
 import { AuthStep } from "@/hooks/useAuthSteps";
 import { cn } from "@/lib/utils";
 import { authService } from "@/service/auth";
-import { emailSchema } from "@/utils/validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import * as Yup from "yup";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
-interface StepEnterEmailProps {
+type Dictionary = Awaited<ReturnType<typeof getDictionary>>;
+
+type StepEnterEmailProps = {
   nextStep: (next: AuthStep) => void;
   setEmail: (email: string) => void;
-}
+  dictionary: Dictionary;
+};
 
 type FormData = {
   email: string;
 };
 
-const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
+const StepEnterEmail = ({
+  nextStep,
+  setEmail,
+  dictionary,
+}: StepEnterEmailProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  const emailSchema = Yup.object().shape({
+    email: Yup.string()
+      .email(dictionary.errors.invalidEmail)
+      .required(dictionary.errors.requiredEmail),
+  });
 
   const {
     register,
@@ -35,11 +50,9 @@ const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      const response = await authService.checkEmail(
-        data.email.toLocaleLowerCase()
-      );
+      const response = await authService.checkEmail(data.email.toLowerCase());
       if (response) {
-        setEmail(data.email.toLocaleLowerCase());
+        setEmail(data.email.toLowerCase());
         nextStep(AuthStep.ENTER_PASSWORD);
       } else {
         setEmail(data.email);
@@ -68,16 +81,16 @@ const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
             <ArrowLeft />
           </Button>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Digite seu e-mail
+            {dictionary.auth.enterEmailTitle}
           </h1>
           <p className="text-sm text-muted-foreground">
-            A SporTickets agradece a preferência
+            {dictionary.auth.enterEmailSubtitle}
           </p>
         </div>
 
         <Input
           type="email"
-          placeholder="E-mail"
+          placeholder={dictionary.auth.emailPlaceholder}
           className={cn("w-full", errors.email && "border-red-500")}
           {...register("email")}
           error={errors.email?.message}
@@ -92,11 +105,11 @@ const StepEnterEmail = ({ nextStep, setEmail }: StepEnterEmailProps) => {
           {isLoading ? (
             <span className="flex items-center">
               <Loader2 className="animate-spin h-5 w-5 text-muted-foreground mr-2" />
-              Carregando...
+              {dictionary.auth.loading}
             </span>
           ) : (
             <span className="flex items-center">
-              Continuar
+              {dictionary.auth.continue}
               <ArrowRight className="ml-2 text-cyan-400 transition-transform" />
             </span>
           )}

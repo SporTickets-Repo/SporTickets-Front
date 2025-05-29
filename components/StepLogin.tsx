@@ -1,22 +1,25 @@
+import { getDictionary } from "@/get-dictionary";
 import { AuthStep } from "@/hooks/useAuthSteps";
 import { cn } from "@/lib/utils";
 import { Mail } from "lucide-react";
 import { Button } from "./ui/button";
 
+type Dictionary = Awaited<ReturnType<typeof getDictionary>>;
+
 interface StepLoginProps {
   nextStep: (next: AuthStep) => void;
+  dictionary: Dictionary;
 }
 
-const StepLogin = ({ nextStep }: StepLoginProps) => {
+const StepLogin = ({ nextStep, dictionary }: StepLoginProps) => {
   return (
     <div className="w-full max-w-md space-y-8">
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight">
-          Seja bem-vindo!
+          {dictionary.auth.welcomeTitle}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Encontre, crie e participe de eventos esportivos com facilidade.
-          Junte-se à comunidade!
+          {dictionary.auth.welcomeSubtitle}
         </p>
       </div>
 
@@ -27,7 +30,7 @@ const StepLogin = ({ nextStep }: StepLoginProps) => {
           )}
           onClick={() => nextStep(AuthStep.ENTER_EMAIL)}
         >
-          Continuar com Email
+          {dictionary.auth.continueWithEmail}
           <Mail className="mr-2 h-5 w-5" />
         </Button>
       </div>
@@ -52,18 +55,19 @@ const StepLogin = ({ nextStep }: StepLoginProps) => {
         </div> */}
 
         <p className="text-xs text-muted-foreground text-center">
-          Ao continuar você aceita nossos{" "}
+          {dictionary.auth.termsStart}{" "}
           <a href="#" className="text-orange-500 underline">
-            Termos de Serviço
+            {dictionary.auth.termsOfService}
           </a>
           ,{" "}
           <a href="#" className="text-orange-500 underline">
-            Política de Privacidade
+            {dictionary.auth.privacyPolicy}
           </a>{" "}
-          e confirma que leu.
+          {dictionary.auth.termsEnd}
         </p>
       </div>
     </div>
   );
 };
+
 export default StepLogin;
