@@ -60,8 +60,6 @@ const slugSugestion = (name: string): string => {
 export function InfoTab() {
   const { user } = useAuth();
 
-  const isMaster = user?.role === "MASTER";
-
   const { control, watch, setValue, getValues, trigger, setError } =
     useFormContext();
   const eventName = watch("event.name");
@@ -861,95 +859,6 @@ export function InfoTab() {
         </div>
       </section>
 
-      {/* Payment Section */}
-
-      {isMaster && (
-        <section className="space-y-6">
-          <h2 className="text-lg font-medium text-muted-foreground">
-            Pagamento
-          </h2>
-          <FormField
-            control={control}
-            name="event.paymentMethods"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className={cn(
-                        "justify-start gap-2 text-sm w-fit text-wrap h-fit text-start",
-                        {
-                          "text-primary border-primary border":
-                            field.value?.includes(PaymentMethod.CREDIT_CARD),
-                        }
-                      )}
-                      onClick={() => {
-                        const current = field.value || [];
-                        if (current.includes(PaymentMethod.CREDIT_CARD)) {
-                          field.onChange(
-                            current.filter(
-                              (item: string) =>
-                                item !== PaymentMethod.CREDIT_CARD
-                            )
-                          );
-                        } else {
-                          field.onChange([
-                            ...current,
-                            PaymentMethod.CREDIT_CARD,
-                          ]);
-                        }
-                      }}
-                    >
-                      <FaCreditCard className="w-4 h-4" />
-                      Cartão de Crédito
-                      {field.value?.includes(PaymentMethod.CREDIT_CARD) ? (
-                        <CircleCheck className="w-4 h-4" />
-                      ) : (
-                        <Circle className="w-4 h-4" />
-                      )}
-                    </Button>
-
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className={cn(
-                        "justify-start gap-2 w-fit text-wrap h-fit text-start",
-                        {
-                          "text-primary border-primary border":
-                            field.value?.includes(PaymentMethod.PIX),
-                        }
-                      )}
-                      onClick={() => {
-                        const current = field.value || [];
-                        if (current.includes(PaymentMethod.PIX)) {
-                          field.onChange(
-                            current.filter(
-                              (item: string) => item !== PaymentMethod.PIX
-                            )
-                          );
-                        } else {
-                          field.onChange([...current, PaymentMethod.PIX]);
-                        }
-                      }}
-                    >
-                      <FaPix className="w-4 h-4" />
-                      Pix
-                      {field.value?.includes(PaymentMethod.PIX) ? (
-                        <CircleCheck className="w-4 h-4" />
-                      ) : (
-                        <Circle className="w-4 h-4" />
-                      )}
-                    </Button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </section>
-      )}
       <div className="flex justify-end pt-4">
         <Button
           type="button"

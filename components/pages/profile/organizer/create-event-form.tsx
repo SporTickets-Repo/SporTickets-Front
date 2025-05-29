@@ -21,7 +21,6 @@ import {
   Trash2Icon,
   Users2,
 } from "lucide-react";
-import { CgMathPercent } from "react-icons/cg";
 
 import {
   Dialog,
@@ -42,8 +41,10 @@ import { useAuth } from "@/context/auth";
 import { useCreateEventContext } from "@/context/create-event";
 import { SendTicketProvider } from "@/context/send-ticket";
 //import { EventDashboardAccess } from "@/interface/collaborator";
+import { Country } from "@/interface/auth";
 import { EventDashboardAccess } from "@/interface/collaborator";
 import {
+  Currency,
   EventLevel,
   EventStatus,
   EventType,
@@ -58,13 +59,14 @@ import {
 import { eventService } from "@/service/event";
 import { translateEventStatusOrganizer } from "@/utils/eventTranslations";
 import { useRouter } from "next/navigation";
+import { BiMoney } from "react-icons/bi";
 import { mutate } from "swr";
 import { CollaboratorsTab } from "./create-form-tabs/collaborators-tab";
 import { CouponsTab } from "./create-form-tabs/coupons-tab";
 import { InfoTab } from "./create-form-tabs/info-tab";
 import { IntegrationsTab } from "./create-form-tabs/integrations-tab";
+import { PaymentTab } from "./create-form-tabs/payment-tab";
 import { SendTicketTab } from "./create-form-tabs/send-tickets";
-import { TaxesTab } from "./create-form-tabs/taxes-tab";
 import { TermsTab } from "./create-form-tabs/terms-tab";
 import { TicketsTab } from "./create-form-tabs/tickets-tab";
 
@@ -74,7 +76,7 @@ type TabType =
   | "coupons"
   | "collaborators"
   | "integrations"
-  | "taxes"
+  | "payment"
   | "sendTicket"
   | "terms";
 
@@ -84,7 +86,7 @@ const tabLabels = {
   coupons: "Cupons",
   collaborators: "Colaboradores",
   integrations: "Integrações",
-  taxes: "Taxas",
+  payment: "Pagamento",
   sendTicket: "Enviar Ingressos",
   terms: "Termos e Condições",
 };
@@ -161,6 +163,9 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         allowFullTickets: false,
         bannerImageFile: undefined,
         smallImageFile: undefined,
+        country: Country.BRAZIL,
+        currency: Currency.BRL,
+        eventFee: 0,
       },
       ticketTypes: [],
     },
@@ -204,6 +209,9 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
             eventData.paymentMethods && eventData.paymentMethods.length > 0
               ? eventData.paymentMethods
               : [PaymentMethod.PIX],
+          eventFee: Math.round(Number(eventData.eventFee) * 100),
+          country: eventData.country ?? Country.BRAZIL,
+          currency: eventData.currency ?? Currency.BRL,
           bannerImageFile: undefined,
           smallImageFile: undefined,
         },
@@ -278,7 +286,6 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
               isActive: true,
             }))
           : [],
-        eventFee: Math.round(Number(eventData.eventFee) * 100),
         terms: eventData.terms
           ? eventData.terms.map((t) => ({
               id: t.id,
@@ -319,8 +326,9 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
     "integrations",
     "sendTicket",
     "terms",
+    "payment",
   ];
-  const tabOrder: TabType[] = isMaster ? [...baseTabs, "taxes"] : baseTabs;
+  const tabOrder: TabType[] = baseTabs;
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -334,8 +342,8 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
         return <CollaboratorsTab />;
       case "integrations":
         return <IntegrationsTab />;
-      case "taxes":
-        return <TaxesTab />;
+      case "payment":
+        return <PaymentTab />;
       case "sendTicket":
         return (
           <SendTicketProvider>
@@ -447,7 +455,12 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
       regulation: event.regulation,
       allowIndividualTickets: event.allowIndividualTickets,
       allowFullTickets: event.allowFullTickets,
+      country: event.country,
+      currency: event.currency,
+      eventFee: Number(event.eventFee),
     });
+
+    console.log("Event check result:", eventCheck);
 
     if (!eventCheck.success) {
       errors.push(
@@ -479,6 +492,9 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
   useEffect(() => {
     if (eventData) {
       const errors = getPublishRequirementsErrors(eventData);
+
+      console.log("Publish requirements errors:", errors);
+
       setPublishErrors(errors);
     }
   }, [eventData]);
@@ -518,7 +534,7 @@ export function CreateEventForm({ eventId }: CreateEventFormProps) {
                   {tab === "coupons" && <TicketPercent className="w-4 h-4" />}
                   {tab === "collaborators" && <Users2 className="w-4 h-4" />}
                   {tab === "integrations" && <Link className="w-4 h-4" />}
-                  {tab === "taxes" && <CgMathPercent className="w-4 h-4" />}
+                  {tab === "payment" && <BiMoney className="w-4 h-4" />}
                   {tab === "sendTicket" && <ArrowUpIcon className="w-4 h-4" />}
                   {tab === "terms" && <ShieldX className="w-4 h-4" />}
                   {tabLabels[tab]}
