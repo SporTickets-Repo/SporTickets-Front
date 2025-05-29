@@ -160,4 +160,12 @@ export const eventService = {
       throw error;
     }
   },
+
+  async updatePaymentSettings(eventId: string, data: any): Promise<void> {
+    try {
+      await api.put(`/events/${eventId}/payment-settings`, data);
+    } catch (error) {
+      throw error;
+    }
+  },
 };
