@@ -1,3 +1,4 @@
+import { Country } from "@/interface/auth";
 import * as Yup from "yup";
 import { isValidCPF } from "./validate";
 
@@ -16,16 +17,23 @@ export const registerSchema = Yup.object().shape({
   email: Yup.string().email("E-mail inválido").required("E-mail obrigatório"),
   name: Yup.string().required("Nome obrigatório"),
   document: Yup.string()
-    .required("Documento obrigatório")
+    .notRequired()
     .test(
       "is-valid-cpf",
       "CPF inválido",
-      (value) => !!value && isValidCPF(value)
+      (value) => !value || isValidCPF(value)
     ),
   bornAt: Yup.date().required("Data de nascimento obrigatória"),
+  country: Yup.mixed<Country>()
+    .oneOf(Object.values(Country))
+    .required("País obrigatório"),
   phone: Yup.string()
     .required("Telefone obrigatório")
-    .matches(/^\d{10,11}$/, "Telefone inválido"),
+    .when("country", {
+      is: Country.BRAZIL,
+      then: (schema) => schema.matches(/^\d{10,11}$/, "Telefone inválido"),
+      otherwise: (schema) => schema.matches(/^\d{9,10}$/, "Telefone inválido"),
+    }),
   sex: Yup.string()
     .oneOf(["MALE", "FEMALE"], "Sexo inválido")
     .required("Sexo obrigatório"),
@@ -42,5 +50,9 @@ export const registerSchema = Yup.object().shape({
     .required("Confirmação de senha obrigatória"),
   cep: Yup.string()
     .required("CEP obrigatório")
-    .matches(/^\d{8}$/, "CEP inválido"),
+    .when("country", {
+      is: Country.BRAZIL,
+      then: (schema) => schema.matches(/^\d{8}$/, "CEP inválido"),
+      otherwise: (schema) => schema.matches(/^\d{4}$/, "Postcode inválido"),
+    }),
 });

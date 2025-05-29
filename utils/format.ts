@@ -1,7 +1,11 @@
+import { Country } from "@/interface/auth";
+
 export const stripHtml = (html: string) =>
   html.replace(/<[^>]*>/g, "").replace(/\s/g, "");
 
-export function formatCPF(value: string) {
+export function formatCPF(value?: string | null) {
+  if (!value) return "";
+
   return value
     .replace(/\D/g, "")
     .slice(0, 11)
@@ -17,8 +21,26 @@ export function formatCEP(value: string) {
     .replace(/(\d{5})(\d)/, "$1-$2");
 }
 
-export function formatPhone(value: string) {
-  const cleaned = value.replace(/\D/g, "").slice(0, 11);
+export function formatPhone(
+  value: string,
+  country: Country = Country.BRAZIL
+): string {
+  let digits = value.replace(/\D/g, "");
+
+  if (country === Country.AUSTRALIA) {
+    if (digits.startsWith("0")) digits = digits.slice(1);
+    digits = digits.slice(0, 9);
+
+    if (digits.length <= 4) {
+      return digits;
+    }
+    if (digits.length <= 7) {
+      return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+    }
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
+  }
+
+  const cleaned = digits.slice(0, 11);
   if (cleaned.length <= 10) {
     return cleaned
       .replace(/(\d{2})(\d)/, "($1) $2")
