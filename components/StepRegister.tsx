@@ -10,7 +10,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 import { useAuth } from "@/context/auth";
-import { RegisterBody } from "@/interface/auth";
+import { Country, RegisterBody } from "@/interface/auth";
 import { cn } from "@/lib/utils";
 import { clearMask, formatCEP, formatCPF, formatPhone } from "@/utils/format";
 import { DatePicker } from "./ui/datePicker";
@@ -23,7 +23,8 @@ type FormData = {
   name: string;
   password: string;
   confirmPassword: string;
-  document: string;
+  document?: string | null;
+  country: Country;
   bornAt: Date;
   phone: string;
   sex: "MALE" | "FEMALE";
@@ -38,6 +39,7 @@ interface StepRegisterProps {
 const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
   const { registration } = useAuth();
   const [success, setSuccess] = useState(false);
+  const [phoneCountryCode, setPhoneCountryCode] = useState("+55");
   const {
     register,
     handleSubmit,
@@ -52,20 +54,33 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
 
   useEffect(() => {
     setValue("email", email);
+    setValue("country", Country.BRAZIL);
   }, [email, setValue]);
 
   const onSubmit = async (data: FormData) => {
+    const localPhone = clearMask(data.phone);
+
+    const phoneWithCountryCode =
+      data.country === Country.BRAZIL ? `+55${localPhone}` : `+61${localPhone}`;
+
     const body = {
       name: data.name,
-      document: clearMask(data.document),
+      document:
+        data.country === Country.BRAZIL
+          ? data.document
+            ? clearMask(data.document)
+            : undefined
+          : undefined,
       email: data.email.toLowerCase(),
       password: data.password,
       confirmPassword: data.confirmPassword,
       bornAt: data.bornAt.toISOString(),
-      cep: clearMask(data.cep),
+      cep: data.country === "BRAZIL" ? clearMask(data.cep) : data.cep,
       sex: data.sex,
-      phone: clearMask(data.phone),
+      phone: phoneWithCountryCode,
+      country: data.country,
     } as RegisterBody;
+
     try {
       await registration(body);
       setSuccess(true);
@@ -99,10 +114,22 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
     setValue("email", email);
   }, [email]);
 
+  useEffect(() => {
+    const country = watch("country");
+    if (country === "BRAZIL") {
+      setPhoneCountryCode("+55");
+    } else if (country === "AUSTRALIA") {
+      setPhoneCountryCode("+61");
+    }
+  }, [watch("country")]);
+
   const isLoading = isSubmitting || success;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
+    <form
+      onSubmit={handleSubmit(onSubmit, (err) => console.log("Erros:", err))}
+      className="w-full max-w-md"
+    >
       <div className="w-full space-y-4">
         <div className="space-y-2 mb-6">
           <Button
@@ -130,7 +157,6 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
           )}
         </div>
 
-        {/* Campos do Formulário */}
         <Input
           type="email"
           placeholder="E-mail"
@@ -144,33 +170,65 @@ const StepRegister = ({ email, nextStep }: StepRegisterProps) => {
           {...register("name")}
           error={errors.name?.message}
         />
-        <Input
-          type="text"
-          maxLength={14}
-          placeholder="Documento (CPF)"
-          value={formatCPF(watch("document") || "")}
-          onChange={(e) =>
-            setValue("document", e.target.value.replace(/\D/g, ""))
-          }
-          error={errors.document?.message}
-        />
+        <SelectDemo
+          name="country"
+          control={control}
+          placeholder="Selecione o país"
+        >
+          <SelectItem value={Country.BRAZIL}>Brasil</SelectItem>
+          <SelectItem value={Country.AUSTRALIA}>Austrália</SelectItem>
+        </SelectDemo>
+        {watch("country") === "BRAZIL" && (
+          <Input
+            type="text"
+            maxLength={14}
+            placeholder="Documento (CPF)"
+            value={formatCPF(watch("document") || "")}
+            onChange={(e) =>
+              setValue("document", e.target.value.replace(/\D/g, ""))
+            }
+            error={errors.document?.message}
+          />
+        )}
 
-        <Input
-          type="text"
-          maxLength={9}
-          placeholder="CEP"
-          value={formatCEP(watch("cep") || "")}
-          onChange={(e) => setValue("cep", e.target.value.replace(/\D/g, ""))}
-          error={errors.cep?.message}
-        />
+        {watch("country") === "BRAZIL" ? (
+          <Input
+            type="text"
+            maxLength={9}
+            placeholder="CEP"
+            value={formatCEP(watch("cep") || "")}
+            onChange={(e) => setValue("cep", e.target.value.replace(/\D/g, ""))}
+            error={errors.cep?.message}
+          />
+        ) : (
+          <Input
+            type="text"
+            maxLength={4}
+            placeholder="Postcode"
+            value={watch("cep") || ""}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, "");
+              setValue("cep", value);
+            }}
+            error={errors.cep?.message}
+          />
+        )}
 
-        <Input
-          type="text"
-          placeholder="Telefone"
-          value={formatPhone(watch("phone") || "")}
-          onChange={(e) => setValue("phone", e.target.value.replace(/\D/g, ""))}
-          error={errors.phone?.message}
-        />
+        <div className="flex">
+          <div className="flex items-center justify-center bg-muted px-3 rounded-l-md border border-r-0">
+            {phoneCountryCode}
+          </div>
+          <Input
+            type="text"
+            className="rounded-l-none"
+            placeholder="Telefone"
+            value={formatPhone(watch("phone") || "", watch("country"))}
+            onChange={(e) =>
+              setValue("phone", e.target.value.replace(/\D/g, ""))
+            }
+            error={errors.phone?.message}
+          />
+        </div>
 
         {/* DatePicker */}
         <DatePicker

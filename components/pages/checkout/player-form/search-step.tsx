@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/auth";
+import { useCreateEventContext } from "@/context/create-event";
+import { Country } from "@/interface/auth";
 import { Player, TicketForm } from "@/interface/tickets";
 import { userService } from "@/service/user";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,6 +44,8 @@ export function SearchStep({
   const { user } = useAuth();
   const [customError, setCustomError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const { event } = useCreateEventContext();
 
   const form = useForm<z.infer<typeof emailFormSchema>>({
     resolver: zodResolver(emailFormSchema),
@@ -92,9 +96,18 @@ export function SearchStep({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email ou CPF</FormLabel>
+              <FormLabel>
+                {event?.country !== Country.BRAZIL ? "Email" : "Email ou CPF"}
+              </FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Digite o e-mail ou CPF" />
+                <Input
+                  {...field}
+                  placeholder={
+                    event?.country !== Country.BRAZIL
+                      ? "Digite o e-mail"
+                      : "Digite o e-mail ou CPF"
+                  }
+                />
               </FormControl>
               <FormMessage />
               {customError && (
