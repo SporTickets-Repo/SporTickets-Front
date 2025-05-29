@@ -5,7 +5,7 @@ export interface LoginResponse {
 export interface RegisterResponse {
   id: string;
   email: string;
-  country: string;
+  country: Country;
   phone: string;
   document?: string;
   documentType?: string;
@@ -41,4 +41,9 @@ export interface RegisterBody {
   cep: string;
   sex: string;
   phone: string;
+}
+
+export enum Country {
+  BRAZIL = "BRAZIL",
+  AUSTRALIA = "AUSTRALIA",
 }

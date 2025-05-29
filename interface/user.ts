@@ -1,11 +1,14 @@
+import { Country } from "./auth";
+
 export interface UserProfile {
   id: string;
   email: string;
   phone: string;
-  document: string;
-  documentType: string;
+  document?: string;
+  documentType?: string;
   name: string;
   sex: string;
+  country: Country;
   role: UserRole | string;
   bornAt: string;
   cep: string;
@@ -31,8 +34,9 @@ export enum UserSex {
 
 export interface registerWithoutPassword {
   name: string;
-  document: string;
+  document?: string;
   email: string;
+  country: Country;
   cep: string;
   sex: string;
   bornAt: string;

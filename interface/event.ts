@@ -1,4 +1,5 @@
 import { Address } from "./address";
+import { Country } from "./auth";
 import { Bracket } from "./bracket";
 import { EventDashboardAccess } from "./collaborator";
 import { Coupon } from "./coupons";
@@ -11,6 +12,8 @@ export interface Event {
   slug: string | null;
   status: EventStatus;
   type: EventType;
+  country: Country;
+  currency: Currency;
   level: EventLevel;
   name: string | null;
   place: string | null;
@@ -99,4 +102,10 @@ export enum PaymentMethod {
   PIX = "PIX",
   CREDIT_CARD = "CREDIT_CARD",
   BOLETO = "BOLETO",
+  STRIPE = "STRIPE",
+}
+
+export enum Currency {
+  BRL = "BRL",
+  AUD = "AUD",
 }
