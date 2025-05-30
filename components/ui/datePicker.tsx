@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -15,7 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { eachMonthOfInterval, endOfYear, format, startOfYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Calendar as CalendarIcon, Clock } from "lucide-react";
+import { CalendarIcon, Clock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { isMobile } from "react-device-detect";
 
@@ -83,13 +85,13 @@ export function DatePicker({
   }, [date]);
 
   const handleYearChange = (selectedYear: string) => {
-    const newYear = parseInt(selectedYear, 10);
+    const newYear = Number.parseInt(selectedYear, 10);
     setYear(newYear);
     updateDateTime(newYear, month);
   };
 
   const handleMonthChange = (selectedMonth: string) => {
-    const newMonth = parseInt(selectedMonth, 10);
+    const newMonth = Number.parseInt(selectedMonth, 10);
     setMonth(newMonth);
     updateDateTime(year, newMonth);
   };
@@ -98,12 +100,12 @@ export function DatePicker({
     setHours(selectedHours);
     if (date) {
       const newDate = new Date(date);
-      newDate.setHours(parseInt(selectedHours, 10));
+      newDate.setHours(Number.parseInt(selectedHours, 10));
       setDate(newDate);
     } else {
       const newDate = new Date(year, month, 1);
-      newDate.setHours(parseInt(selectedHours, 10));
-      newDate.setMinutes(parseInt(minutes, 10));
+      newDate.setHours(Number.parseInt(selectedHours, 10));
+      newDate.setMinutes(Number.parseInt(minutes, 10));
       setDate(newDate);
     }
   };
@@ -112,12 +114,12 @@ export function DatePicker({
     setMinutes(selectedMinutes);
     if (date) {
       const newDate = new Date(date);
-      newDate.setMinutes(parseInt(selectedMinutes, 10));
+      newDate.setMinutes(Number.parseInt(selectedMinutes, 10));
       setDate(newDate);
     } else {
       const newDate = new Date(year, month, 1);
-      newDate.setHours(parseInt(hours, 10));
-      newDate.setMinutes(parseInt(selectedMinutes, 10));
+      newDate.setHours(Number.parseInt(hours, 10));
+      newDate.setMinutes(Number.parseInt(selectedMinutes, 10));
       setDate(newDate);
     }
   };
@@ -130,35 +132,49 @@ export function DatePicker({
       setDate(newDate);
     } else {
       const newDate = new Date(newYear, newMonth, 1);
-      newDate.setHours(parseInt(hours, 10));
-      newDate.setMinutes(parseInt(minutes, 10));
+      newDate.setHours(Number.parseInt(hours, 10));
+      newDate.setMinutes(Number.parseInt(minutes, 10));
       setDate(newDate);
     }
   };
 
   const handleDateSelect = (newDate: Date | undefined) => {
     if (newDate) {
-      newDate.setHours(parseInt(hours, 10));
-      newDate.setMinutes(parseInt(minutes, 10));
+      newDate.setHours(Number.parseInt(hours, 10));
+      newDate.setMinutes(Number.parseInt(minutes, 10));
     }
     setDate(newDate);
   };
 
   if (isMobile) {
     return (
-      <input
-        type="date"
-        disabled={disabled}
-        value={date ? date.toISOString().split("T")[0] : ""}
-        onChange={(e) => {
-          const newDate = new Date(e.target.value);
-          newDate.setHours(parseInt(hours, 10));
-          newDate.setMinutes(parseInt(minutes, 10));
-          setDate(newDate);
-        }}
-        className="w-full bg-neutral-100 border rounded px-3 py-2 text-sm"
-        placeholder={placeholder || "Selecione a data"}
-      />
+      <div>
+        <input
+          type={showTime ? "datetime-local" : "date"}
+          disabled={disabled}
+          value={
+            date
+              ? showTime
+                ? `${date.toISOString().split("T")[0]}T${hours}:${minutes}`
+                : date.toISOString().split("T")[0]
+              : ""
+          }
+          onChange={(e) => {
+            if (e.target.value) {
+              const newDate = new Date(e.target.value);
+              setDate(newDate);
+              setHours(String(newDate.getHours()).padStart(2, "0"));
+              setMinutes(String(newDate.getMinutes()).padStart(2, "0"));
+            } else {
+              setDate(undefined);
+            }
+          }}
+          className="w-full bg-neutral-100 border rounded px-3 py-2 text-sm"
+          placeholder={
+            placeholder || `Selecione a data${showTime ? " e hora" : ""}`
+          }
+        />
+      </div>
     );
   }
 

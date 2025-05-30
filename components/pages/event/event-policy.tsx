@@ -56,14 +56,6 @@ export default function EventPolicy({ regulation }: EventPolicyProps) {
             evento.
           </p>
         </div>
-
-        <div>
-          <h3 className="font-medium">Edição de participantes</h3>
-          <p>
-            Você poderá editar o participante de um ingresso apenas uma vez.
-            Essa opção ficará disponível até 24 horas antes do início do evento.
-          </p>
-        </div>
       </div>
     </div>
   );

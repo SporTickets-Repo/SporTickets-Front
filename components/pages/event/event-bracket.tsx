@@ -27,6 +27,7 @@ export default function EventBracket({ brackets }: EventBracketProps) {
           <>
             {brackets.map((bracket) => (
               <Link
+                target="_blank"
                 href={`/chaveamento/${encodeURIComponent(bracket.id)}`}
                 key={bracket.id}
               >
