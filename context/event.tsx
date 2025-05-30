@@ -178,10 +178,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       }),
       paymentData: {
         ...selectedTickets[0].paymentData,
-        paymentMethod:
-          calculateFinalTotal(selectedTickets, event) === 0
-            ? "FREE"
-            : selectedTickets[0].paymentData?.paymentMethod,
+        paymentMethod: "STRIPE",
       },
       ...(acceptedTermIds.length && {
         terms: acceptedTermIds.map((id) => ({ termId: id })),
@@ -190,7 +187,9 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       const response = await checkoutService.checkout(payload);
-      const transactionId = response.transactionId;
+      const { transactionId, clientSecret } = response;
+      console.log("Transaction ID e cliente:", transactionId, clientSecret);
+      localStorage.setItem("stripeClientSecret", clientSecret);
       localStorage.removeItem("selectedTickets");
       localStorage.removeItem("eventSlug");
       router.push(`/pagamento/${transactionId}`);

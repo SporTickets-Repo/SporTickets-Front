@@ -101,7 +101,7 @@ export default async function EventPage({
   const { slug } = await params;
 
   const res = await fetch(`${apiUrl}/events/slug/${slug}`, {
-    next: { revalidate: 300 }, // cache por 5 minutos
+    next: { revalidate: 0 }, // cache por 5 minutos
   });
 
   if (!res.ok) return <div>Evento não encontrado</div>;

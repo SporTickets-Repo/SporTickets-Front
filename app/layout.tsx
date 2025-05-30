@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
 
-import { Toaster } from "@/components/ui/sonner";
-import { AuthProvider } from "@/context/auth";
-import { EventProvider } from "@/context/event";
+import { ClientProviders } from "@/components/client-providers";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
@@ -78,8 +76,6 @@ export const metadata: Metadata = {
   },
 };
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID!;
-
 export default function RootLayout({
   children,
 }: {
@@ -118,17 +114,12 @@ export default function RootLayout({
         />
       </head>
       <body className={rubik.className}>
-        <AuthProvider>
-          <EventProvider>
-            <div className="flex min-h-screen flex-col">
-              <GoogleAnalytics gaId={GA_ID} />
-              <main className="flex-1 flex flex-col min-h-[calc(100vh_-_81px)] overflow-x-hidden">
-                {children}
-              </main>
-              <Toaster />
-            </div>
-          </EventProvider>
-        </AuthProvider>
+        <div className="flex min-h-screen flex-col">
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
+          <main className="flex-1 flex flex-col min-h-[calc(100vh_-_81px)] overflow-x-hidden">
+            <ClientProviders>{children}</ClientProviders>
+          </main>
+        </div>
       </body>
     </html>
   );

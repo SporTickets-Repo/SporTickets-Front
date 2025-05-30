@@ -8,6 +8,7 @@ import { TransactionQRCode } from "@/components/pages/checkout/payment/Transacti
 import { TransactionRejected } from "@/components/pages/checkout/payment/TransactionRejected";
 import { TransactionSuccess } from "@/components/pages/checkout/payment/TransactionSuccess";
 import { TransactionSummary } from "@/components/pages/checkout/payment/TransactionSummary";
+import { StripePaymentForm } from "@/components/pages/checkout/stripe-payment-form";
 import { Transaction, TransactionStatus } from "@/interface/transaction";
 import { transactionService } from "@/service/transaction";
 import { Loader2 } from "lucide-react";
@@ -94,12 +95,19 @@ export default function TransactionPage() {
       status === TransactionStatus.IN_PROCESS ||
       status === TransactionStatus.AUTHORIZED
     ) {
-      return transaction.paymentMethod === "PIX" ? (
-        <TransactionQRCode
-          pixQRCode={transaction.pixQRCode || ""}
-          onRefresh={(isUserAction) => fetchTransaction({ isUserAction })}
-        />
-      ) : (
+      if (transaction.paymentMethod === "PIX") {
+        return (
+          <TransactionQRCode
+            pixQRCode={transaction.pixQRCode || ""}
+            onRefresh={(isUserAction) => fetchTransaction({ isUserAction })}
+          />
+        );
+      }
+      if (transaction.paymentMethod === "STRIPE") {
+        console.log("STRIPE");
+        return <StripePaymentForm />;
+      }
+      return (
         <TransactionAwaiting
           onRefresh={(isUserAction) => fetchTransaction({ isUserAction })}
         />
